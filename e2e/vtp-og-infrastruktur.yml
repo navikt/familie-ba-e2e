@@ -25,7 +25,7 @@ services:
     image: postgres:11
     environment:
       POSTGRES_USER: familie
-      POSTGRES_DB: familiekssak
+      POSTGRES_DB: familiebasak
       POSTGRES_PASSWORD: familie-pwd
     ports:
       - 5432:5432
@@ -33,5 +33,5 @@ services:
     image: postgres:11
     environment:
       POSTGRES_USER: familie
-      POSTGRES_DB: familieksmottak
+      POSTGRES_DB: familiebamottak
       POSTGRES_PASSWORD: familie-pwd
