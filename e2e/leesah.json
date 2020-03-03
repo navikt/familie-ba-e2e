@@ -1,0 +1,12 @@
+{
+  "topics": [
+    {
+      "topicName": "aapen-person-pdl-leesah-v1",
+      "members": [
+        {"member":"srvc01", "role":"CONSUMER"},
+        {"member":"srvp01", "role":"PRODUCER"}
+      ],
+      "numPartitions": 1
+    }
+  ]
+}

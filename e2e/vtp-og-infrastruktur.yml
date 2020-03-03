@@ -15,12 +15,12 @@ services:
       - 10001:8080
     environment:
       SPRING_PROFILES_ACTIVE: e2e
-  localstack:
-    image: localstack/localstack
-    ports:
-      - 10000:10000
-    environment:
-      - SERVICES=s3,sts
+  #localstack:
+  #  image: localstack/localstack
+  #  ports:
+  #    - 10000:10000
+  #  environment:
+  #    - SERVICES=s3,sts
   postgres-sak:
     image: postgres:11
     environment:

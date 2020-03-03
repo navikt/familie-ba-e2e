@@ -1,0 +1,82 @@
+version: '3'
+services:
+  openldap:
+    build: ldap
+    container_name: ldap
+    ports:
+      - "10636:636"
+      - "10389:389"
+    environment:
+      - "LDAP_TLS_VERIFY_CLIENT=try"
+  zookeeper:
+    #image: confluentinc/cp-zookeeper
+    build: zookeeper
+    container_name: zookeeper
+    environment:
+      - "ZOOKEEPER_CLIENT_PORT=2181"
+      - "ZOOKEEPER_AUTH_PROVIDER_1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider"
+    ports:
+      - "2181:2181"
+  kafka:
+    build: kafka
+    container_name: kafka
+    environment:
+      - "KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181"
+      - "KAFKA_LISTENERS=SASLPLAINTEXT://0.0.0.0:9092,SASLINTERNAL://kafka:9093"
+      - "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=SASLPLAINTEXT:SASL_PLAINTEXT,SASLINTERNAL:SASL_PLAINTEXT"
+      - "KAFKA_ADVERTISED_LISTENERS=SASLPLAINTEXT://localhost:9092,SASLINTERNAL://kafka:9093"
+      - "KAFKA_PROTOCOL_NAME=SASLPLAINTEXT,SASLINTERNAL"
+      - "KAFKA_LISTENER_NAME_SASLPLAINTEXT_PLAIN_SASL_SERVER_CALLBACK_HANDLER_CLASS=no.nav.common.security.authentication.SimpleLDAPAuthentication"
+      - "KAFKA_LISTENER_NAME_SASLINTERNAL_PLAIN_SASL_SERVER_CALLBACK_HANDLER_CLASS=no.nav.common.security.authentication.SimpleLDAPAuthentication"
+      - "KAFKA_AUTHORIZER_CLASS_NAME=no.nav.common.security.authorization.SimpleLDAPAuthorizer"
+      - "KAFKA_SUPER_USERS=User:igroup"
+      - "KAFKA_INTER_BROKER_LISTENER_NAME=SASLINTERNAL"
+      - "KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL=PLAIN"
+      - "KAFKA_SASL_ENABLED_MECHANISMS=PLAIN"
+      - "KAFKA_DEFAULT_REPLICATION_FACTOR=1"
+      - "KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1"
+      - "KAFKA_AUTO_CREATE_TOPICS_ENABLE=false"
+    ports:
+      - "9092:9092"
+    depends_on:
+      - "zookeeper"
+      - "openldap"
+  kafkadminrest:
+    image: "navikt/kafka-adminrest"
+    ports:
+      - "8840:8080"
+    environment:
+      - "LDAP_CONNTIMEOUT=2000"
+      - "LDAP_USERATTRNAME=cn"
+      - "LDAP_AUTH_HOST=ldap"
+      - "LDAP_AUTH_PORT=636"
+      - "LDAP_SRVUSERBASE=OU=ServiceAccounts,DC=test,DC=local"
+      - "LDAP_GROUPBASE=OU=kafka,OU=AccountGroupNotInRemedy,OU=Groups,OU=NAV,OU=BusinessUnits,DC=test,DC=local"
+      - "LDAP_GROUPATTRNAME=cn"
+      - "LDAP_GRPMEMBERATTRNAME=member"
+      - "LDAP_USER=igroup"
+      - "LDAP_PASSWORD=itest"
+      - "KAFKA_BROKERS=kafka:9093"
+      - "KAFKA_CLIENTID=kafka-adminrest"
+      - "KAFKA_SECURITY=TRUE"
+      - "KAFKA_SECPROT=SASL_PLAINTEXT"
+      - "KAFKA_SASLMEC=PLAIN"
+      - "KAFKA_USER=igroup"
+      - "LDAP_HOST=ldap"
+      - "LDAP_PORT=636"
+      - "LDAP_AUTH_USERBASE=ou=Users,ou=NAV,dc=test,dc=local"
+      - "KAFKA_PASSWORD=itest"
+  schema-registry:
+    image: "confluentinc/cp-schema-registry:5.0.1"
+    depends_on:
+      - "zookeeper"
+      - "kafka"
+    ports:
+      - "8081:8081"
+    environment:
+      - "SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS=SASL_PLAINTEXT://kafka:9093"
+      - "SCHEMA_REGISTRY_KAFKASTORE_SASL_MECHANISM=PLAIN"
+      - "SCHEMA_REGISTRY_KAFKASTORE_SASL_JAAS_CONFIG=org.apache.kafka.common.security.plain.PlainLoginModule required username=\"igroup\" password=\"itest\";"
+      - "SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL=SASL_PLAINTEXT"
+      - "SCHEMA_REGISTRY_HOST_NAME=schema-registry"
+      - "SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081"
