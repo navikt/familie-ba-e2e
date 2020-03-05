@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+export COMPOSE_IGNORE_ORPHANS=true
+
 docker-compose -f kafka-med-venner.yml pull
 docker-compose -f kafka-med-venner.yml build
 docker-compose -f kafka-med-venner.yml up -d
