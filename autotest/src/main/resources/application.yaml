@@ -18,7 +18,7 @@ spring:
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
 
 
-KAFKA_BROKERS: kafka:9092
+KAFKA_BROKERS: localhost:9092
 
 logging:
   level:
