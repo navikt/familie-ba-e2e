@@ -2,17 +2,17 @@ version: '3.2'
 
 services:
   familie-ba-sak:
-    image: navikt/familie-ba-sak:1-e548e5a07e9ce59e09f4331964b8663eff2f5192
+    image: navikt/familie-ba-sak:1-971c636aff482fb590e8bf8029b888c8475bd2c4
     environment:
       SPRING_PROFILES_ACTIVE: e2e
     ports:
       - 8089:8089
   familie-ba-mottak:
-    image: docker.pkg.github.com/navikt/familie-ba-mottak/familie-ba-mottak:ee5b552fc0e6209d54f6368a8731e05357dde398
+    image: docker.pkg.github.com/navikt/familie-ba-mottak/familie-ba-mottak:latest
     environment:
       SPRING_PROFILES_ACTIVE: e2e
   familie-integrasjoner:
-    image: docker.pkg.github.com/navikt/familie-integrasjoner/familie-integrasjoner:2019.12.06-eff6bd7
+    image: docker.pkg.github.com/navikt/familie-integrasjoner/familie-integrasjoner:latest
     environment:
       SPRING_PROFILES_ACTIVE: e2e
     ports:
