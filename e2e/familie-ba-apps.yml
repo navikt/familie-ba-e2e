@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
   familie-ba-sak:
-    image: navikt/familie-ba-sak:1-971c636aff482fb590e8bf8029b888c8475bd2c4
+    image: navikt/familie-ba-sak:1-145c62e638be0726eaf1328dde286d249c1bad52
     environment:
       SPRING_PROFILES_ACTIVE: e2e
     ports:
