@@ -81,3 +81,62 @@ services:
       - "SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL=SASL_PLAINTEXT"
       - "SCHEMA_REGISTRY_HOST_NAME=schema-registry"
       - "SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081"
+  vtp:
+    image: docker.pkg.github.com/navikt/vtp/vtp:latest
+    environment:
+      ISSO_OAUTH2_ISSUER: azuread
+    volumes:
+      - ./modig:/root/.modig
+    ports:
+      - 8060:8060
+      - 8063:8063
+  postgres-sak:
+    image: postgres:11
+    environment:
+      POSTGRES_USER: familie
+      POSTGRES_DB: familiebasak
+      POSTGRES_PASSWORD: familie-pwd
+    ports:
+      - 5432:5432
+  postgres-mottak:
+    image: postgres:11
+    environment:
+      POSTGRES_USER: familie
+      POSTGRES_DB: familiebamottak
+      POSTGRES_PASSWORD: familie-pwd
+    ports:
+      - 5439:5432
+  familie-ba-mottak:
+    restart: always
+    depends_on:
+      - kafka
+    image: docker.pkg.github.com/navikt/familie-ba-mottak/familie-ba-mottak:latest
+    environment:
+      SPRING_PROFILES_ACTIVE: e2e
+      MOTTAK_CLIENT_ID: ${MOTTAK_CLIENT_ID}
+      MOTTAK_FRONTEND_CLIENT_ID: ${MOTTAK_FRONTEND_CLIENT_ID}
+      MOTTAK_CLIENT_SECRET: ${MOTTAK_CLIENT_SECRET}
+      MOTTAK_BA_SAK_SCOPE: ${MOTTAK_BA_SAK_SCOPE}
+      MOTTAK_FAMILIE_INTEGRASJONER_SCOPE: ${MOTTAK_FAMILIE_INTEGRASJONER_SCOPE}
+  familie-ba-sak:
+    restart: always
+    depends_on:
+      - familie-ba-mottak
+    image: navikt/familie-ba-sak:1-145c62e638be0726eaf1328dde286d249c1bad52
+    environment:
+      SPRING_PROFILES_ACTIVE: e2e
+    ports:
+      - 8089:8089
+  familie-integrasjoner:
+    restart: always
+    image: docker.pkg.github.com/navikt/familie-integrasjoner/familie-integrasjoner:latest
+    volumes:
+      - ./modig:/root/.modig
+    environment:
+      SPRING_PROFILES_ACTIVE: e2e
+      INTEGRASJONER_CLIENT_ID: ${INTEGRASJONER_CLIENT_ID}
+      INTEGRASJONER_CLIENT_SECRET: ${INTEGRASJONER_CLIENT_SECRET}
+      INTEGRASJONER_INFOTRYGD_KS_SCOPE: ${INTEGRASJONER_INFOTRYGD_KS_SCOPE}
+      INTEGRASJONER_AAD_GRAPH_SCOPE: ${INTEGRASJONER_AAD_GRAPH_SCOPE}
+    ports:
+      - 8085:8085
