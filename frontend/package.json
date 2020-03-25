@@ -2,7 +2,7 @@
   "name": "cypress",
   "version": "1.0.0",
   "main": "index.js",
-  "author": "Henning Håkonsen",
+  "author": "NAV",
   "license": "MIT",
   "scripts": {
     "open": "set NODE_OPTIONS=--max-http-header-size=120000 && cypress open"
