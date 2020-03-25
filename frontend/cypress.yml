@@ -1,4 +1,4 @@
-version: '3.2'
+version: "3.2"
 
 services:
   cypress:
@@ -6,7 +6,7 @@ services:
     image: "cypress/included:3.5.0"
     environment:
       # pass base url to test pointing at the web application
-      - CYPRESS_baseUrl=http://soknad-kontantstotte
+      - CYPRESS_baseUrl=http://familie-ba-sak-frontend
     # share the current folder as volume to avoid copying
     working_dir: /e2e
     volumes:
