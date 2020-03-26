@@ -1,7 +1,7 @@
 ## IntelliJ konfigurasjon for lokal e2e testing/debugging
 
-I runConfigurations-mappa ligger det 90% ferdig oppsett for ba-mottak, ba-sak og familie-integrasjoner,
-samt ferdig oppsett for [navkafka-docker-compose][1] og for parallell oppstart av alle Maven-applikasjonene
+I runConfigurations-mappa ligger det nær ferdige oppsett for ba-mottak, ba-sak og familie-integrasjoner,
+samt ferdig oppsett for [navkafka-docker-compose][1] og parallell oppstart av alle Maven-applikasjonene
 i e2e-riggen.
 
 Det som gjenstår i konfigurasjonen av de førstnevnte er å bytte ut alle placeholder-verdier
@@ -14,7 +14,7 @@ File -> Project Structure... -> Modules -> Add (+) -> Import Module -> pom.xml -
 
 Next -> Next -> Finish
 
-Det er forøvrig noe som kan anbefales generelt, fremfor å jobbe isolert med hvert enkelt prosjekt i eget vindu.
+(Det er forøvrig noe som kan anbefales generelt, fremfor å jobbe isolert med hvert enkelt prosjekt i eget vindu)
 
 Etter det skal run-konfigurasjonene være klare, og tilgjengelige fra IntelliJ
 
