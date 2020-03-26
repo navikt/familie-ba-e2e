@@ -170,7 +170,7 @@ services:
       SLACK_TOKEN: SLACK_TOKEN
   familie-integrasjoner:
     restart: always
-    image: docker.pkg.github.com/navikt/familie-integrasjoner/familie-integrasjoner:2020.03.24-a8358b6
+    image: docker.pkg.github.com/navikt/familie-integrasjoner/familie-integrasjoner:latest
     depends_on:
       - familie-mock-server
     volumes:
