@@ -1,4 +1,4 @@
-### IntelliJ konfigurasjon for lokal e2e testing/debugging
+## IntelliJ konfigurasjon for lokal e2e testing/debugging
 
 I runConfigurations-mappa ligger det 90% ferdig oppsett for ba-mottak, ba-sak og familie-integrasjoner,
 samt ferdig oppsett for [navkafka-docker-compose][1] og for parallell oppstart av alle Maven-applikasjonene
