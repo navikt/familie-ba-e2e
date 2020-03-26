@@ -94,6 +94,11 @@ services:
     image: docker.pkg.github.com/navikt/familie-mock-server
     ports:
       - 1337:1337
+  mock-oauth2-server:
+    image: docker.pkg.github.com/navikt/mock-oauth2-server/mock-oauth2-server:0.1.33
+    ports:
+      - 1111:1111
+    hostname: host.docker.internal
   nav-auth-mock:
     image: docker.pkg.github.com/navikt/nav-auth-mock/nav-auth-mock
     ports:
@@ -152,6 +157,7 @@ services:
     depends_on:
       - familie-ba-sak
       - familie-redis
+      - mock-oauth2-server
     image: 74801b3fc5b9
     ports:
       - 8000:8000
