@@ -81,6 +81,13 @@ services:
       - "SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL=SASL_PLAINTEXT"
       - "SCHEMA_REGISTRY_HOST_NAME=schema-registry"
       - "SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081"
+  mq:
+    image: "ibmcom/mq"
+    ports:
+      - "1414:1414"
+    environment:
+      - "LICENSE=accept"
+      - "MQ_QMGR_NAME=QM1"
   vtp:
     image: docker.pkg.github.com/navikt/vtp/vtp:latest
     environment:
@@ -106,6 +113,14 @@ services:
       POSTGRES_PASSWORD: familie-pwd
     ports:
       - 5439:5432
+  postgres-oppdrag:
+    image: postgres:11
+    environment:
+      POSTGRES_USER: familie
+      POSTGRES_DB: familieoppdrag
+      POSTGRES_PASSWORD: familie-pwd
+    ports:
+      - 5433:5432
   familie-ba-mottak:
     restart: always
     depends_on:
@@ -140,3 +155,14 @@ services:
       INTEGRASJONER_AAD_GRAPH_SCOPE: ${INTEGRASJONER_AAD_GRAPH_SCOPE}
     ports:
       - 8085:8085
+  familie-oppdrag:
+    restart: always
+    image: navikt/familie-oppdrag:1.0-7e34df7a88c4e4e4b2e01baf55401204354875e9
+    depends_on:
+      - mq
+    environment:
+      SPRING_PROFILES_ACTIVE: e2e
+      OPPDRAG_CLIENT_ID: ${OPPDRAG_CLIENT_ID}
+      ACCEPTED_CLIENTS: ${OPPDRAG_BA_SAK_CLIENT_ID}
+    ports:
+      - 8087:8087
