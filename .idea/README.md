@@ -11,6 +11,7 @@ I tillegg må alle Maven-prosjektene det er laget run-konfigurasjon for importer
 
 File -> Project Structure... -> Modules -> Add (+) -> Import Module -> pom.xml -> Open
 ![](cfrVmUeWAM.gif)
+
 Next -> Next -> Finish
 
 Det er forøvrig noe som kan anbefales generelt, fremfor å jobbe isolert med hvert prosjekt i sitt eget vindu.
