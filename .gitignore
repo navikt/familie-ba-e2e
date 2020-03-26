@@ -1,1 +1,5 @@
 /e2e/.env
+.idea/*
+!.idea/runConfigurations
+!.idea/README.md
+!.idea/**.gif

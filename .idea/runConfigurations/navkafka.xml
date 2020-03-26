@@ -1,0 +1,20 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="navkafka" type="docker-deploy" factoryName="docker-compose.yml" singleton="false" server-name="Docker">
+    <deployment type="docker-compose.yml">
+      <settings>
+        <option name="commandLineOptions" value="--build" />
+        <option name="services">
+          <list>
+            <option value="openldap" />
+            <option value="zookeeper" />
+            <option value="kafka" />
+            <option value="kafkadminrest" />
+            <option value="schema-registry" />
+          </list>
+        </option>
+        <option name="sourceFilePath" value="e2e/docker-compose.yml" />
+      </settings>
+    </deployment>
+    <method v="2" />
+  </configuration>
+</component>
