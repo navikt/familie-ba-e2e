@@ -1,0 +1,16 @@
+{
+  "name": "cypress",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "NAV",
+  "license": "MIT",
+  "scripts": {
+    "open": "set NODE_OPTIONS=--max-http-header-size=120000 && cypress open"
+  },
+  "dependencies": {
+    "cypress": "^4.2.0"
+  },
+  "devDependencies": {
+    "puppeteer": "^2.1.1"
+  }
+}

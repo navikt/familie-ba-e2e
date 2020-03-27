@@ -1,4 +1,4 @@
-/e2e/.env
+**/*.env
 .idea/*
 !.idea/runConfigurations
 !.idea/README.md
