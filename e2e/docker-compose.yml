@@ -157,7 +157,7 @@ services:
       - 8085:8085
   familie-oppdrag:
     restart: always
-    image: navikt/familie-oppdrag:1.0-7e34df7a88c4e4e4b2e01baf55401204354875e9
+    image: docker.pkg.github.com/navikt/familie-oppdrag/familie-oppdrag:latest
     depends_on:
       - mq
     environment:
