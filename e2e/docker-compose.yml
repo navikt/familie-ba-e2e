@@ -144,7 +144,7 @@ services:
       MOTTAK_CLIENT_ID: ${MOTTAK_CLIENT_ID}
       MOTTAK_FRONTEND_CLIENT_ID: ${MOTTAK_FRONTEND_CLIENT_ID}
       MOTTAK_CLIENT_SECRET: ${MOTTAK_CLIENT_SECRET}
-      MOTTAK_BA_SAK_SCOPE: ${BA_SAK_SCOPE}
+      MOTTAK_BA_SAK_SCOPE: ${SAK_SCOPE}
       MOTTAK_FAMILIE_INTEGRASJONER_SCOPE: ${INTEGRASJONER_SCOPE}
       JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-e2e
   familie-ba-sak:
@@ -152,6 +152,7 @@ services:
     image: docker.pkg.github.com/navikt/familie-ba-sak/familie-ba-sak:latest
     depends_on:
       - familie-integrasjoner
+      - familie-oppdrag
     environment:
       SPRING_PROFILES_ACTIVE: e2e
       BA_SAK_CLIENT_ID: ${SAK_CLIENT_ID}
@@ -212,6 +213,6 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: e2e
       OPPDRAG_CLIENT_ID: ${OPPDRAG_CLIENT_ID}
-      OPPDRAG_BA_SAK_CLIENT_ID: ${OPPDRAG_BA_SAK_CLIENT_ID}
+      OPPDRAG_BA_SAK_CLIENT_ID: ${SAK_CLIENT_ID}
     ports:
       - 8087:8087
