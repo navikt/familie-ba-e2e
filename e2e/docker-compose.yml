@@ -155,10 +155,10 @@ services:
   familie-ba-sak-frontend:
     restart: always
     depends_on:
+      - mock-oauth2-server
       - familie-ba-sak
       - familie-redis
-      - mock-oauth2-server
-    image: 74801b3fc5b9
+    image: d693a9ddcf63
     ports:
       - 8000:8000
     environment:
