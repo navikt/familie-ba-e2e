@@ -5,7 +5,7 @@ samt konfigurasjoner klare til bruk for [navkafka-docker-compose][1] og parallel
 i e2e-riggen.
 
 Det som gjenstår i konfigurasjonen for de førstnevnte er å bytte ut alle placeholder-verdier
-for CLIENT_ID, CLIENT_SECRET osv., med de som ligger i Vault. (Spring-profilen de kjører er heller ikke spikret, og baserer seg "dev"-profilene p.t)
+for CLIENT_ID, CLIENT_SECRET osv., med de som ligger i Vault. (Spring-profilen de kjører er heller ikke spikret, og baserer seg på "dev"-profilene foreløpig)
 
 I tillegg må alle Maven-prosjektene det er laget run-konfigurasjon for importeres som moduler (sak, mottak, integrasjoner og evt. autotest')
 
