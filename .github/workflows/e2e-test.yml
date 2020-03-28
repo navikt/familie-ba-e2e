@@ -34,7 +34,6 @@ jobs:
           BA_SAK_SCOPE: ${{ secrets.BA_SAK_SCOPE }}
         run: |
           sudo echo "127.0.0.1 host.docker.internal" | sudo tee -a /etc/hosts
-          cat /etc/hosts
           cd e2e
           ./e2e.sh
           #cd ../frontend
