@@ -16,8 +16,11 @@ jobs:
           echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin docker.pkg.github.com
       - name: Test
         if: "!contains(github.event.head_commit.message, 'e2e skip')"
+        env:
+          E2E_ENV: ${{ secrets.E2E_ENV}}
         run: |
           sudo echo "127.0.0.1 host.docker.internal" | sudo tee -a /etc/hosts
+          source E2E_ENV
           cd e2e
           ./e2e.sh
           cd ../frontend
