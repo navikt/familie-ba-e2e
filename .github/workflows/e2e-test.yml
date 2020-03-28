@@ -15,4 +15,9 @@ jobs:
         run: |
           echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin docker.pkg.github.com
       - name: Test
-        run: cd e2e; ./e2e.sh
+        run: |
+          cd e2e
+          ./e2e.sh
+          cd ../frontend
+          yarn
+          yarn test

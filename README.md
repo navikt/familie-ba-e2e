@@ -1,40 +1,32 @@
 # familie-ba-e2e
 
-## WIP
-
-Alle docker-images det refereres til i stegX.yml må bygges lokalt. På sikt skal det hentes docker-images fra eksternt repository. Tanken er å oppdatere referansene til eksterne repoer etterhvert som de pushes til master.
-
-Testriggen skal kunne kjøre på ekstern server og lokalt. Lokalt kan man erstatte et docker-image manuelt, slik at man kan teste applikasjonen i sammenheng med de andre applikasjonene. På sikt bør man kunne kjøre applikasjonen under test som en lokal prosess (f.eks. via IntelliJ), da det er vanskeligere å debugge et docker-image.
+Testriggen kan kjøre på ekstern server og lokalt. Lokalt kan man erstatte ét eller flere docker-images manuelt, slik at man kan teste applikasjonen i sammenheng med de andre applikasjonene. På sikt bør man kunne kjøre applikasjonen under test som en lokal prosess (f.eks. via IntelliJ), da det er vanskeligere å debugge et docker-image.
 
 e2e.sh kjører alle applikasjonene, og inneholder enkel logikk for å vente på applikasjoner som er avhengig av andre kjørende applikasjoner.
 
-## Run headless tests
-
-[e2e/docker-compose.yml](e2e/docker-compose.yml) has all settings to start the web application and run Cypress end-to-end tests from [e2e/cypress/integration](e2e/cypress/integration)
+## Kjør headless tester
 
 ```shell
 docker login docker.pkg.github.com -u USERNAME -p TOKEN
 cd e2e
-docker-compose up --exit-code-from cypress
+docker-compose up
+cd ../frontend
+yarn
+yarn test
 ```
 
-## Run Test Runner
+## Kjør cypress og lag tester
 
-To start Cypress Test Runner (just like `cypress open` does), you need to:
-
-- set up X11 server on the host machine, for example using [XQuartz](https://www.xquartz.org) following the [Running GUI applications using Docker for Mac](https://sourabhbajaj.com/blog/2017/02/07/gui-applications-docker-mac/)
-- set the `IP` variable and allow X11 server to accept incoming connections from that network address, see [e2e/cy-open.yml](e2e/cy-open.yml) for commands
-- set the `DISPLAY` variable and pass it to the `docker-compose` when running with both configuration files
+For å kjøre opp cypress:
 
 ```shell
-cd e2e
-docker-compose -f docker-compose.yml -f cy-open.yml up --exit-code-from cypress
+cd frontend
+yarn open
 ```
 
-You should see Cypress open and be able to run tests, change files, see tests rerun.
+Cypress åpnes i eget vindu og man kan klikke inn på testene. Dersom man gjør endringer i testene (/frontend/integration) kjøres testen(e) på nytt automatisk.
 
-
-## More information
+## Mer informasjon
 
 - [https://docs.cypress.io](https://docs.cypress.io)
 - [https://on.cypress.io/docker](https://on.cypress.io/docker)
