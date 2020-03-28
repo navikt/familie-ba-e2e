@@ -17,6 +17,7 @@ jobs:
       - name: Test
         if: "!contains(github.event.head_commit.message, 'e2e skip')"
         run: |
+          echo "127.0.0.1 host.docker.internal" >> /etc/hosts
           cd e2e
           ./e2e.sh
           cd ../frontend
