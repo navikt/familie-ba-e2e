@@ -158,7 +158,7 @@ services:
       - mock-oauth2-server
       - familie-ba-sak
       - familie-redis
-    image: d693a9ddcf63
+    image: navikt/familie-ba-sak-frontend:0.0.1-0ff6f0091e0eedac84ffd84e4c2b1ceefa01b79f
     ports:
       - 8000:8000
     environment:
