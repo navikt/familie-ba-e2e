@@ -155,7 +155,7 @@ services:
       - familie-ba-sak
       - familie-redis
     extra_hosts:
-      - "host.docker.internal:127.0.0.1"
+      - "host.docker.internal:localhost"
     # Endres til latest når bygget kjører på GA
     image: docker.pkg.github.com/navikt/familie-ba-sak-frontend/familie-ba-sak-frontend:e04cf94fc9b44494f5bcc686827a5581da6ee89f
     ports:
