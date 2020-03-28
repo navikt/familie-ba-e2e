@@ -1,4 +1,4 @@
-name: E2E tester for kontantstotte
+name: E2E tester for barnetrygd
 
 on: [push]
 
