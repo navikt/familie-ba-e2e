@@ -5,7 +5,8 @@
   "author": "NAV",
   "license": "MIT",
   "scripts": {
-    "open": "set NODE_OPTIONS=--max-http-header-size=120000 && cypress open"
+    "open": "cypress open",
+    "test": "cypress run"
   },
   "dependencies": {
     "cypress": "^4.2.0"

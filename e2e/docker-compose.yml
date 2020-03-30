@@ -81,15 +81,6 @@ services:
       - "SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL=SASL_PLAINTEXT"
       - "SCHEMA_REGISTRY_HOST_NAME=schema-registry"
       - "SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081"
-  vtp:
-    image: docker.pkg.github.com/navikt/vtp/vtp:latest
-    environment:
-      ISSO_OAUTH2_ISSUER: azuread
-    volumes:
-      - ./modig:/root/.modig
-    ports:
-      - 8060:8060
-      - 8063:8063
   familie-mock-server:
     image: docker.pkg.github.com/navikt/familie-mock-server
     ports:
@@ -136,6 +127,7 @@ services:
     restart: always
     image: docker.pkg.github.com/navikt/familie-ba-sak/familie-ba-sak:latest
     depends_on:
+      - mock-oauth2-server
       - familie-integrasjoner
     environment:
       SPRING_PROFILES_ACTIVE: e2e
@@ -155,10 +147,11 @@ services:
   familie-ba-sak-frontend:
     restart: always
     depends_on:
+      - mock-oauth2-server
       - familie-ba-sak
       - familie-redis
-      - mock-oauth2-server
-    image: 74801b3fc5b9
+    # Endres til latest når bygget kjører på GA
+    image: docker.pkg.github.com/navikt/familie-ba-sak-frontend/familie-ba-sak-frontend:e04cf94fc9b44494f5bcc686827a5581da6ee89f
     ports:
       - 8000:8000
     environment:
@@ -179,6 +172,7 @@ services:
     image: docker.pkg.github.com/navikt/familie-integrasjoner/familie-integrasjoner:latest
     depends_on:
       - familie-mock-server
+      - mock-oauth2-server
     volumes:
       - ./modig:/root/.modig
     environment:

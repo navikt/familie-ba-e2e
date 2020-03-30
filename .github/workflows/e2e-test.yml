@@ -1,4 +1,4 @@
-name: E2E tester for kontantstotte
+name: E2E tester for barnetrygd
 
 on: [push]
 
@@ -16,4 +16,26 @@ jobs:
           echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin docker.pkg.github.com
       - name: Test
         if: "!contains(github.event.head_commit.message, 'e2e skip')"
-        run: cd e2e; ./e2e.sh
+        env:
+          MOTTAK_CLIENT_ID: ${{ secrets.MOTTAK_CLIENT_ID }}
+          MOTTAK_FRONTEND_CLIENT_ID: ${{ secrets.MOTTAK_FRONTEND_CLIENT_ID }}
+          MOTTAK_CLIENT_SECRET: ${{ secrets.MOTTAK_CLIENT_SECRET }}
+          INTEGRASJONER_CLIENT_ID: ${{ secrets.INTEGRASJONER_CLIENT_ID }}
+          INTEGRASJONER_CLIENT_SECRET: ${{ secrets.INTEGRASJONER_CLIENT_SECRET }}
+          INTEGRASJONER_INFOTRYGD_KS_SCOPE: ${{ secrets.INTEGRASJONER_INFOTRYGD_KS_SCOPE }}
+          INTEGRASJONER_AAD_GRAPH_SCOPE: ${{ secrets.INTEGRASJONER_AAD_GRAPH_SCOPE }}
+          SAK_CLIENT_ID: ${{ secrets.SAK_CLIENT_ID }}
+          SAK_CLIENT_SECRET: ${{ secrets.SAK_CLIENT_SECRET }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          SAK_FRONTEND_CLIENT_ID: ${{ secrets.SAK_FRONTEND_CLIENT_ID }}
+          SAK_FRONTEND_CLIENT_SECRET: ${{ secrets.SAK_FRONTEND_CLIENT_SECRET }}
+          INTEGRASJONER_SCOPE: ${{ secrets.INTEGRASJONER_SCOPE }}
+          OPPDRAG_SCOPE: ${{ secrets.OPPDRAG_SCOPE }}
+          BA_SAK_SCOPE: ${{ secrets.BA_SAK_SCOPE }}
+        run: |
+          sudo echo "127.0.0.1 host.docker.internal" | sudo tee -a /etc/hosts
+          cd e2e
+          #./e2e.sh
+          #cd ../frontend
+          #yarn
+          #yarn test
