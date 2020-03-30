@@ -9,7 +9,9 @@ e2e.sh kjører alle applikasjonene, og inneholder enkel logikk for å vente på 
 ```shell
 docker login docker.pkg.github.com -u USERNAME -p TOKEN
 cd e2e
-docker-compose up
+./e2e.sh
+
+# Vent til miljøet er oppe
 cd ../frontend
 yarn
 yarn test
@@ -20,7 +22,11 @@ yarn test
 For å kjøre opp cypress:
 
 ```shell
-cd frontend
+cd e2e
+./e2e.sh
+
+# Vent til miljøet er oppe
+cd ../frontend
 yarn open
 ```
 
