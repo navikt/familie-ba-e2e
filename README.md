@@ -4,7 +4,7 @@
 
 Alle docker-images det refereres til i stegX.yml må bygges lokalt. På sikt skal det hentes docker-images fra eksternt repository. Tanken er å oppdatere referansene til eksterne repoer etterhvert som de pushes til master.
 
-Testriggen skal kunne kjøre på ekstern server og lokalt. Lokalt kan man erstatte et docker-image manuelt, slik at man kan teste applikasjonen i sammenheng med de andre applikasjonene. På sikt bør man kunne kjøre applikasjonen under test som en lokal prosess (f.eks. via IntelliJ), da det er vanskeligere å debugge et docker-image.
+Testriggen skal kunne kjøre på ekstern server og lokalt. For lokal kjøring via IntelliJ ligger det mer info i .idea/[README](.idea/README.md). Husk at run-konfigurasjonene må oppdateres hvis en app eller miljøvariabel legges til/endres.
 
 e2e.sh kjører alle applikasjonene, og inneholder enkel logikk for å vente på applikasjoner som er avhengig av andre kjørende applikasjoner.
 
