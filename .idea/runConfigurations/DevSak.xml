@@ -1,0 +1,21 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="DevSak" type="JetRunConfigurationType" singleton="false">
+    <module name="familie-ba-sak" />
+    <option name="VM_PARAMETERS" value="" />
+    <option name="PROGRAM_PARAMETERS" value="" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <option name="PASS_PARENT_ENVS" value="true" />
+    <option name="MAIN_CLASS_NAME" value="DevLauncher" />
+    <option name="WORKING_DIRECTORY" value="" />
+    <envs>
+      <env name="BA_SAK_CLIENT_ID" value="Hentes fra Vault" />
+      <env name="BA_SAK_FRONTEND_CLIENT_ID" value="Hentes fra Vault" />
+      <env name="CLIENT_SECRET" value="Hentes fra Vault" />
+      <env name="INTEGRASJONER_SCOPE" value="Hentes fra Vault" />
+    </envs>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

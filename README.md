@@ -4,6 +4,8 @@ Testriggen kan kjøre på ekstern server og lokalt. Lokalt kan man erstatte ét 
 
 e2e.sh kjører alle applikasjonene, og inneholder enkel logikk for å vente på applikasjoner som er avhengig av andre kjørende applikasjoner.
 
+For lokal kjøring via IntelliJ ligger det mer info i .idea/[README](.idea/README.md). Husk at run-konfigurasjonene må oppdateres hvis en app eller miljøvariabel legges til/endres.
+
 ## Kjør headless tester
 
 ```shell
