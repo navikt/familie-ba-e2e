@@ -5,9 +5,9 @@ import org.springframework.boot.runApplication
 
 
 @SpringBootApplication
-class AutotestApplication
+class Application
 
 
 fun main(args: Array<String>) {
-	runApplication<AutotestApplication>(*args)
+	runApplication<Application>(*args)
 }
