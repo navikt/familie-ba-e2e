@@ -135,7 +135,7 @@ services:
       MOTTAK_CLIENT_ID: ${MOTTAK_CLIENT_ID}
       MOTTAK_FRONTEND_CLIENT_ID: ${MOTTAK_FRONTEND_CLIENT_ID}
       MOTTAK_CLIENT_SECRET: ${MOTTAK_CLIENT_SECRET}
-      MOTTAK_BA_SAK_SCOPE: ${SAK_SCOPE}
+      MOTTAK_BA_SAK_SCOPE: ${BA_SAK_SCOPE}
       MOTTAK_FAMILIE_INTEGRASJONER_SCOPE: ${INTEGRASJONER_SCOPE}
       JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-e2e
   familie-ba-sak:
@@ -204,6 +204,7 @@ services:
     image: docker.pkg.github.com/navikt/familie-oppdrag/familie-oppdrag:latest
     depends_on:
       - mq
+      - mock-oauth2-server
     environment:
       SPRING_PROFILES_ACTIVE: e2e
       OPPDRAG_CLIENT_ID: ${OPPDRAG_CLIENT_ID}
