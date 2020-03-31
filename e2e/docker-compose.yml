@@ -82,12 +82,12 @@ services:
       - "SCHEMA_REGISTRY_HOST_NAME=schema-registry"
       - "SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081"
   mq:
-    image: "ibmcom/mq"
+    image: ibmcom/mq
     ports:
       - "1414:1414"
     environment:
-      - "LICENSE=accept"
-      - "MQ_QMGR_NAME=QM1"
+      - LICENSE=accept
+      - MQ_QMGR_NAME=QM1
   familie-mock-server:
     image: docker.pkg.github.com/navikt/familie-mock-server
     ports:
