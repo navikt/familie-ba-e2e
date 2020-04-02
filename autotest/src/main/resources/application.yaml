@@ -1,4 +1,7 @@
-
+server:
+  servlet:
+    context-path: /
+  port: 8092
 spring:
   kafka:
     jaas:
