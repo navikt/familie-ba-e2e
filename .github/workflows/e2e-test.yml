@@ -38,7 +38,7 @@ jobs:
           cat /etc/hosts
           hostname
           ping -c4 host.docker.internal
-          #./e2e.sh
+          ./e2e.sh
           #cd ../frontend
           #yarn
           #yarn test
