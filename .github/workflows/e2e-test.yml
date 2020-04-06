@@ -35,6 +35,9 @@ jobs:
         run: |
           sudo echo "127.0.0.1 host.docker.internal" | sudo tee -a /etc/hosts
           cd e2e
+          cat /etc/hosts
+          hostname
+          ping -c4 host.docker.internal
           #./e2e.sh
           #cd ../frontend
           #yarn
