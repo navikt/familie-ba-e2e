@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="navkafka" type="docker-deploy" factoryName="docker-compose.yml" singleton="false" server-name="Docker">
+  <configuration default="false" name="navkafkaPlusDokgen" type="docker-deploy" factoryName="docker-compose.yml" singleton="false" server-name="Docker">
     <deployment type="docker-compose.yml">
       <settings>
         <option name="commandLineOptions" value="--build" />
@@ -10,6 +10,7 @@
             <option value="kafka" />
             <option value="kafkadminrest" />
             <option value="schema-registry" />
+            <option value="familie-ba-dokgen" />
           </list>
         </option>
         <option name="sourceFilePath" value="e2e/docker-compose.yml" />
