@@ -3,5 +3,5 @@ FROM docker.pkg.github.com/navikt/familie-ba-sak-frontend/familie-ba-sak-fronten
 RUN echo "Fra dockercontainer"
 RUN hostname
 RUN hostname
-RUN sudo echo "127.0.0.1 host.docker.internal" | sudo tee -a /etc/hosts
+RUN echo "127.0.0.1 host.docker.internal" | tee -a /etc/hosts
 RUN ping -c4 host.docker.internal
