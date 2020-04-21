@@ -191,7 +191,7 @@ services:
   familie-integrasjoner:
     restart: always
     network_mode: host
-    #image: docker.pkg.github.com/navikt/familie-integrasjoner/familie-integrasjoner:latest
+    image: docker.pkg.github.com/navikt/familie-integrasjoner/familie-integrasjoner:latest
     depends_on:
       - familie-mock-server
       - mock-oauth2-server
