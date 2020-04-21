@@ -94,6 +94,7 @@ services:
       - 1337:1337
   mock-oauth2-server:
     image: docker.pkg.github.com/navikt/mock-oauth2-server/mock-oauth2-server:0.1.33
+    network_mode: host
     ports:
       - 1111:1111
     hostname: host.docker.internal
@@ -127,6 +128,7 @@ services:
       - 5433:5432
   familie-ba-mottak:
     restart: always
+    network_mode: host
     depends_on:
       - kafka
     image: docker.pkg.github.com/navikt/familie-ba-mottak/familie-ba-mottak:latest
@@ -140,6 +142,7 @@ services:
       JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-e2e
   familie-ba-sak:
     restart: always
+    network_mode: host
     image: docker.pkg.github.com/navikt/familie-ba-sak/familie-ba-sak:latest
     depends_on:
       - mock-oauth2-server
@@ -163,13 +166,13 @@ services:
       - 6379:6379
   familie-ba-sak-frontend:
     restart: always
+    network_mode: host
     depends_on:
       - mock-oauth2-server
       - familie-ba-sak
       - familie-redis
     # Endres til latest når bygget kjører på GA
-    #image: docker.pkg.github.com/navikt/familie-ba-sak-frontend/familie-ba-sak-frontend:e04cf94fc9b44494f5bcc686827a5581da6ee89f
-    build: .
+    image: docker.pkg.github.com/navikt/familie-ba-sak-frontend/familie-ba-sak-frontend:e04cf94fc9b44494f5bcc686827a5581da6ee89f
     ports:
       - 8000:8000
     environment:
@@ -187,7 +190,8 @@ services:
       SLACK_TOKEN: SLACK_TOKEN
   familie-integrasjoner:
     restart: always
-    image: docker.pkg.github.com/navikt/familie-integrasjoner/familie-integrasjoner:latest
+    network_mode: host
+    #image: docker.pkg.github.com/navikt/familie-integrasjoner/familie-integrasjoner:latest
     depends_on:
       - familie-mock-server
       - mock-oauth2-server
@@ -203,6 +207,7 @@ services:
       - 8085:8085
   familie-oppdrag:
     restart: always
+    network_mode: host
     image: docker.pkg.github.com/navikt/familie-oppdrag/familie-oppdrag:latest
     depends_on:
       - mq
