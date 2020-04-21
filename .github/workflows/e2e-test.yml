@@ -38,7 +38,9 @@ jobs:
           cat /etc/hosts
           hostname
           ping -c4 host.docker.internal
-          ./e2e.sh
+          docker-compose pull
+          docker-compose build
+          docker-compose up
           #cd ../frontend
           #yarn
           #yarn test
