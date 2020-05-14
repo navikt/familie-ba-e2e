@@ -1,3 +1,5 @@
+application:
+  name: familie-ba-e2e
 server:
   servlet:
     context-path: /
