@@ -168,7 +168,7 @@ services:
       - familie-ba-sak
       - familie-redis
     # Endres til latest når bygget kjører på GA
-    image: docker.pkg.github.com/navikt/familie-ba-sak-frontend/familie-ba-sak-frontend:e04cf94fc9b44494f5bcc686827a5581da6ee89f
+    image: docker.pkg.github.com/navikt/familie-ba-sak-frontend/familie-ba-sak-frontend:latest
     ports:
       - 8000:8000
     environment:

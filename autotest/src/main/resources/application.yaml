@@ -20,8 +20,22 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
 
+no.nav.security.jwt:
+  client:
+    registration:
+      familie-ba-sak:
+        resource-url: ${FAMILIE_BA_SAK_API_URL}
+        token-endpoint-url: http://host.docker.internal:1111/v2.0/token
+        grant-type: client_credentials
+        scope: ${FAMILIE_BA_SAK_SCOPE}
+        authentication:
+          client-id: ${BA_SAK_CLIENT_ID}
+          client-secret: ${CLIENT_SECRET}
+          client-auth-method: client_secret_basic
 
 KAFKA_BROKERS: localhost:9092
+FAMILIE_BA_SAK_API_URL: localhost:8080
+FAMILIE_BA_SAK_SCOPE: api://146ccc69-7cd0-4b8e-86a5-144534e53a00/.default
 
 logging:
   level:
