@@ -36,7 +36,7 @@ no.nav.security.jwt:
           client-auth-method: client_secret_basic
 
 KAFKA_BROKERS: localhost:9092
-FAMILIE_BA_SAK_API_URL: localhost:8080
+FAMILIE_BA_SAK_API_URL: http://localhost:8089
 FAMILIE_BA_SAK_SCOPE: api://146ccc69-7cd0-4b8e-86a5-144534e53a00/.default
 
 logging:
