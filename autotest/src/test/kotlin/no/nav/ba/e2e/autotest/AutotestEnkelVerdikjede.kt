@@ -64,6 +64,23 @@ class AutotestEnkelVerdikjede(
         generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.SEND_TIL_BESLUTTER)
+
+        val restFagsakEtterSendTilBeslutter = familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id)
+        generellAssertFagsak(restFagsak = restFagsakEtterSendTilBeslutter,
+                             fagsakStatus = FagsakStatus.OPPRETTET,
+                             behandlingStegType = StegType.BESLUTTE_VEDTAK)
+
+        val restFagsakEtterIverksetting = familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
+                                                                             restBeslutningPåVedtak = RestBeslutningPåVedtak(Beslutning.GODKJENT))
+        generellAssertFagsak(restFagsak = restFagsakEtterIverksetting,
+                             fagsakStatus = FagsakStatus.OPPRETTET,
+                             behandlingStegType = StegType.IVERKSETT_MOT_OPPDRAG)
+
+        Thread.sleep(6000L)
+        val restFagsakEtterBehandlingAvsluttet = familieBaSakKlient.hentFagsak(fagsakId = restFagsakEtterIverksetting.data!!.id)
+        generellAssertFagsak(restFagsak = restFagsakEtterBehandlingAvsluttet,
+                             fagsakStatus = FagsakStatus.LØPENDE,
+                             behandlingStegType = StegType.BEHANDLING_AVSLUTTET)
     }
 
     @Test

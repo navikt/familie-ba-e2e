@@ -59,4 +59,22 @@ class FamilieBaSakKlient(
 
         return putForEntity(uri, restVilkårsvurdering)!!
     }
+
+    fun sendTilBeslutter(fagsakId: Long): Ressurs<RestFagsak> {
+        val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId/send-til-beslutter")
+
+        return postForEntity(uri, "")!!
+    }
+
+    fun iverksettVedtak(fagsakId: Long, restBeslutningPåVedtak: RestBeslutningPåVedtak): Ressurs<RestFagsak> {
+        val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId/iverksett-vedtak")
+
+        return postForEntity(uri, restBeslutningPåVedtak)!!
+    }
+
+    fun hentFagsak(fagsakId: Long): Ressurs<RestFagsak> {
+        val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId")
+
+        return getForEntity(uri)!!
+    }
 }
