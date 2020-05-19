@@ -4,11 +4,12 @@ import no.nav.ba.e2e.commons.*
 import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
 import no.nav.ba.e2e.familie_ba_sak.domene.*
 import no.nav.familie.kontrakter.felles.Ressurs
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.HttpStatus
 import java.time.LocalDate
 
 @SpringBootTest(classes = [ApplicationConfig::class])
@@ -17,11 +18,18 @@ class AutotestEnkelVerdikjede(
         private val familieBaSakKlient: FamilieBaSakKlient
 ) {
 
+    @BeforeEach
+    fun init() {
+        familieBaSakKlient.truncate()
+    }
+
+    @AfterEach
+    fun cleanup() {
+        familieBaSakKlient.truncate()
+    }
+
     @Test
     fun `Skal opprette behandling`() {
-        val melding = familieBaSakKlient.truncate()
-        assertEquals(HttpStatus.OK, melding.statusCode)
-
         val søkersIdent = morPersonident
         val barn1 = barnPersonident
 
@@ -65,19 +73,23 @@ class AutotestEnkelVerdikjede(
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.SEND_TIL_BESLUTTER)
 
-        val restFagsakEtterSendTilBeslutter = familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id)
+        val restFagsakEtterSendTilBeslutter =
+                familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id)
         generellAssertFagsak(restFagsak = restFagsakEtterSendTilBeslutter,
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.BESLUTTE_VEDTAK)
 
         val restFagsakEtterIverksetting = familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
-                                                                             restBeslutningPåVedtak = RestBeslutningPåVedtak(Beslutning.GODKJENT))
+                                                                             restBeslutningPåVedtak = RestBeslutningPåVedtak(
+                                                                                     Beslutning.GODKJENT))
         generellAssertFagsak(restFagsak = restFagsakEtterIverksetting,
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.IVERKSETT_MOT_OPPDRAG)
 
-        Thread.sleep(6000L)
-        val restFagsakEtterBehandlingAvsluttet = familieBaSakKlient.hentFagsak(fagsakId = restFagsakEtterIverksetting.data!!.id)
+        // Her må vi vente til ba-sak har kjørt alle taskene ved iverksetting og ferdigstilt behandlingen
+        Thread.sleep(150000L)
+        val restFagsakEtterBehandlingAvsluttet =
+                familieBaSakKlient.hentFagsak(fagsakId = restFagsakEtterIverksetting.data!!.id)
         generellAssertFagsak(restFagsak = restFagsakEtterBehandlingAvsluttet,
                              fagsakStatus = FagsakStatus.LØPENDE,
                              behandlingStegType = StegType.BEHANDLING_AVSLUTTET)

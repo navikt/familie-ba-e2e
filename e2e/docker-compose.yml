@@ -89,14 +89,13 @@ services:
       - LICENSE=accept
       - MQ_QMGR_NAME=QM1
   familie-mock-server:
-    image: docker.pkg.github.com/navikt/familie-mock-server
+    image: a9b268639dd5 #docker.pkg.github.com/navikt/familie-mock-server
     ports:
       - 1337:1337
   mock-oauth2-server:
     image: docker.pkg.github.com/navikt/mock-oauth2-server/mock-oauth2-server:0.1.33
     ports:
       - 1111:1111
-    hostname: host.docker.internal
   nav-auth-mock:
     image: docker.pkg.github.com/navikt/nav-auth-mock/nav-auth-mock
     ports:
@@ -140,7 +139,7 @@ services:
       JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-e2e
   familie-ba-sak:
     restart: always
-    image: docker.pkg.github.com/navikt/familie-ba-sak/familie-ba-sak:latest
+    image: 331296cbabe1 #docker.pkg.github.com/navikt/familie-ba-sak/familie-ba-sak:latest
     depends_on:
       - mock-oauth2-server
       - familie-integrasjoner
@@ -186,7 +185,7 @@ services:
       SLACK_TOKEN: SLACK_TOKEN
   familie-integrasjoner:
     restart: always
-    image: docker.pkg.github.com/navikt/familie-integrasjoner/familie-integrasjoner:latest
+    image: acb2c22c6515 #docker.pkg.github.com/navikt/familie-integrasjoner/familie-integrasjoner:latest
     depends_on:
       - familie-mock-server
       - mock-oauth2-server
@@ -202,7 +201,7 @@ services:
       - 8085:8085
   familie-oppdrag:
     restart: always
-    image: docker.pkg.github.com/navikt/familie-oppdrag/familie-oppdrag:latest
+    image: 0a5ea9f4b58d #docker.pkg.github.com/navikt/familie-oppdrag/familie-oppdrag:latest
     depends_on:
       - mq
       - mock-oauth2-server
