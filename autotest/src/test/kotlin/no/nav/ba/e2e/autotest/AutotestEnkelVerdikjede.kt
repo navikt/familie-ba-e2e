@@ -4,6 +4,7 @@ import no.nav.ba.e2e.commons.*
 import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
 import no.nav.ba.e2e.familie_ba_sak.domene.*
 import no.nav.familie.kontrakter.felles.Ressurs
+import org.awaitility.kotlin.await
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
+import java.util.concurrent.TimeUnit
 
 @SpringBootTest(classes = [ApplicationConfig::class])
 class AutotestEnkelVerdikjede(
@@ -86,8 +88,10 @@ class AutotestEnkelVerdikjede(
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.IVERKSETT_MOT_OPPDRAG)
 
-        // Her må vi vente til ba-sak har kjørt alle taskene ved iverksetting og ferdigstilt behandlingen
-        Thread.sleep(30000L)
+        await.atMost(60, TimeUnit.SECONDS).until {
+            familieBaSakKlient.hentFagsak(fagsakId = restFagsakEtterIverksetting.data!!.id).data?.status == FagsakStatus.LØPENDE
+        }
+
         val restFagsakEtterBehandlingAvsluttet =
                 familieBaSakKlient.hentFagsak(fagsakId = restFagsakEtterIverksetting.data!!.id)
         generellAssertFagsak(restFagsak = restFagsakEtterBehandlingAvsluttet,

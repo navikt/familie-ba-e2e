@@ -96,7 +96,14 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Felles -->
+		<dependency>
+			<groupId>org.awaitility</groupId>
+			<artifactId>awaitility-kotlin</artifactId>
+			<version>4.0.2</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- NAV-interne avhengigheter -->
 		<dependency>
 			<groupId>no.nav.familie.felles</groupId>
 			<artifactId>sikkerhet</artifactId>
@@ -117,8 +124,6 @@
 			<artifactId>http-client</artifactId>
 			<version>${felles.version}</version>
 		</dependency>
-
-		<!-- NAV-interne avhengigheter -->
 		<dependency>
 			<groupId>no.nav.security</groupId>
 			<artifactId>token-client-spring</artifactId>
