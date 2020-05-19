@@ -87,7 +87,7 @@ class AutotestEnkelVerdikjede(
                              behandlingStegType = StegType.IVERKSETT_MOT_OPPDRAG)
 
         // Her må vi vente til ba-sak har kjørt alle taskene ved iverksetting og ferdigstilt behandlingen
-        Thread.sleep(150000L)
+        Thread.sleep(30000L)
         val restFagsakEtterBehandlingAvsluttet =
                 familieBaSakKlient.hentFagsak(fagsakId = restFagsakEtterIverksetting.data!!.id)
         generellAssertFagsak(restFagsak = restFagsakEtterBehandlingAvsluttet,

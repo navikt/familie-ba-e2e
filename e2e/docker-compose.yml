@@ -139,7 +139,7 @@ services:
       JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-e2e
   familie-ba-sak:
     restart: always
-    image: 331296cbabe1 #docker.pkg.github.com/navikt/familie-ba-sak/familie-ba-sak:latest
+    image: ff93e77b7a18 #docker.pkg.github.com/navikt/familie-ba-sak/familie-ba-sak:latest
     depends_on:
       - mock-oauth2-server
       - familie-integrasjoner
