@@ -95,11 +95,6 @@ class AutotestEnkelVerdikjede(
                              behandlingStegType = StegType.BEHANDLING_AVSLUTTET)
     }
 
-    @Test
-    fun `Skal manuelt journalføre og sjekke at behandlingen blir opprettet automatisk`() {
-
-    }
-
     private fun generellAssertFagsak(restFagsak: Ressurs<RestFagsak>,
                                      fagsakStatus: FagsakStatus,
                                      behandlingStegType: StegType? = null) {
