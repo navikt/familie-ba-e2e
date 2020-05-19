@@ -1,6 +1,6 @@
 package no.nav.ba.e2e.familie_ba_sak.domene
 
-enum class StegType() {
+enum class StegType {
     REGISTRERE_SØKNAD,
     REGISTRERE_PERSONGRUNNLAG,
     VILKÅRSVURDERING,

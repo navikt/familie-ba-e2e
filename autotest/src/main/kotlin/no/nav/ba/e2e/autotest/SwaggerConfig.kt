@@ -14,15 +14,13 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableSwagger2
 class SwaggerDocumentationConfig {
 
-    private val basePackage = "no.nav.ba.e2e"
-
     @Bean
     fun customImplementation(): Docket {
 
         return Docket(DocumentationType.SWAGGER_2)
             .apiInfo(apiInfo())
             .select()
-            .apis(RequestHandlerSelectors.basePackage(basePackage))
+            .apis(RequestHandlerSelectors.basePackage(ApplicationConfig.pakkenavn))
             .paths(PathSelectors.any())
             .build()
     }

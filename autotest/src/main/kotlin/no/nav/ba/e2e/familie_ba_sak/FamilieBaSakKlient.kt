@@ -3,7 +3,6 @@ package no.nav.ba.e2e.familie_ba_sak
 import no.nav.ba.e2e.familie_ba_sak.domene.*
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.Ressurs
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -14,7 +13,7 @@ import java.net.URI
 @Service
 class FamilieBaSakKlient(
         @Value("\${FAMILIE_BA_SAK_API_URL}") private val baSakUrl: String,
-        @Qualifier("jwtBearer") private val restOperations: RestOperations
+        private val restOperations: RestOperations
 ) : AbstractRestClient(restOperations, "familie-ba-sak") {
 
     fun truncate(): ResponseEntity<Ressurs<String>> {
