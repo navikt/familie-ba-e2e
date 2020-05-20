@@ -4,12 +4,14 @@ import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import no.nav.person.pdl.leesah.foedsel.Foedsel
 import org.apache.avro.generic.GenericRecordBuilder
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.Instant
 
 @SpringBootTest
+@Disabled
 class AutotestLeesahTests {
 
     @Autowired

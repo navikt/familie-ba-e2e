@@ -74,6 +74,6 @@ class FamilieBaSakKlient(
     fun hentFagsak(fagsakId: Long): Ressurs<RestFagsak> {
         val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId")
 
-        return getForEntity(uri)!!
+        return getForEntity(uri)
     }
 }
