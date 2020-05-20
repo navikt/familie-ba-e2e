@@ -204,6 +204,7 @@ services:
     depends_on:
       - mq
       - mock-oauth2-server
+      - postgres-oppdrag
     environment:
       SPRING_PROFILES_ACTIVE: e2e
       OPPDRAG_CLIENT_ID: ${OPPDRAG_CLIENT_ID}
