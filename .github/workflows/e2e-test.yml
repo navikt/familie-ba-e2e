@@ -29,11 +29,15 @@ jobs:
           SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
           SAK_FRONTEND_CLIENT_ID: ${{ secrets.SAK_FRONTEND_CLIENT_ID }}
           SAK_FRONTEND_CLIENT_SECRET: ${{ secrets.SAK_FRONTEND_CLIENT_SECRET }}
+          OPPDRAG_CLIENT_ID: ${{ secrets.OPPDRAG_CLIENT_ID }}
           INTEGRASJONER_SCOPE: ${{ secrets.INTEGRASJONER_SCOPE }}
           OPPDRAG_SCOPE: ${{ secrets.OPPDRAG_SCOPE }}
           BA_SAK_SCOPE: ${{ secrets.BA_SAK_SCOPE }}
         run: |
-          cd ba-e2e/e2e; ./e2e.sh
-          #cd ../frontend
-          #yarn
-          #yarn test
+          cd e2e; ./e2e.sh
+      - name: Kjør tester (e2e)
+        env:
+          GITHUB_USERNAME: x-access-token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: "!contains(github.event.head_commit.message, 'e2e skip')"
+        run: cd autotest; mvn -Dtest="**" test
