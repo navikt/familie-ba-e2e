@@ -60,7 +60,7 @@ class FamilieBaSakKlient(
     }
 
     fun sendTilBeslutter(fagsakId: Long): Ressurs<RestFagsak> {
-        val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId/send-til-beslutter")
+        val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId/send-til-beslutter?behandlendeEnhet=9999")
 
         return postForEntity(uri, "")!!
     }
