@@ -14,7 +14,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.GITHUB_ACCESS_TOKEN }}
         run: |
           echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin docker.pkg.github.com
-      - name: Test
+      - name: Start apper
         if: "!contains(github.event.head_commit.message, 'e2e skip')"
         env:
           MOTTAK_CLIENT_ID: ${{ secrets.MOTTAK_CLIENT_ID }}
