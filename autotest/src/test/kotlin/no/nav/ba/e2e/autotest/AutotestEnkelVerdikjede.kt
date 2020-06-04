@@ -1,6 +1,9 @@
 package no.nav.ba.e2e.autotest
 
-import no.nav.ba.e2e.commons.*
+import no.nav.ba.e2e.commons.Utils
+import no.nav.ba.e2e.commons.barnPersonident
+import no.nav.ba.e2e.commons.lagSøknadDTO
+import no.nav.ba.e2e.commons.morPersonident
 import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
 import no.nav.ba.e2e.familie_ba_sak.domene.*
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -60,16 +63,25 @@ class AutotestEnkelVerdikjede(
         val søknad = familieBaSakKlient.hentSøknad(behandlingId = aktivBehandling.behandlingId)
         assertEquals(søkersIdent, søknad.data?.søkerMedOpplysninger?.ident)
 
+
+        val aktivBehandlingEtterRegistrertSøknad = Utils.hentAktivBehandling(restFagsakEtterRegistrertSøknad.data!!)!!
+        aktivBehandlingEtterRegistrertSøknad.personResultater.forEach { restPersonResultat ->
+            restPersonResultat.vilkårResultater?.forEach {
+                familieBaSakKlient.putVilkår(
+                        behandlingId = aktivBehandlingEtterRegistrertSøknad.behandlingId,
+                        vilkårId = it.id,
+                        restPersonResultat =
+                        RestPersonResultat(personIdent = restPersonResultat.personIdent,
+                                           vilkårResultater = listOf(it.copy(
+                                                   resultat = Resultat.JA,
+                                                   periodeFom = LocalDate.of(2019, 5, 8)
+                                           ))))
+            }
+        }
+
         val restFagsakEtterVilkårsvurdering =
-                familieBaSakKlient.registrererVilkårsvurdering(
-                        fagsakId = restFagsak.data!!.id,
-                        restVilkårsvurdering = RestVilkårsvurdering(
-                                personResultater = vilkårsvurderingInnvilget(søkerIdent = søkersIdent,
-                                                                             barnIdent = barn1,
-                                                                             barnFødselsdato = LocalDate.of(
-                                                                                     2019,
-                                                                                     1,
-                                                                                     1)))
+                familieBaSakKlient.validerVilkårsvurdering(
+                        behandlingId = aktivBehandlingEtterRegistrertSøknad.behandlingId
                 )
         generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
                              fagsakStatus = FagsakStatus.OPPRETTET,

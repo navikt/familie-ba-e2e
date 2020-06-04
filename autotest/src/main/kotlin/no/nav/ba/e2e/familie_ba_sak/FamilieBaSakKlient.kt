@@ -1,5 +1,6 @@
 package no.nav.ba.e2e.familie_ba_sak
 
+import com.fasterxml.jackson.databind.JsonSerializer
 import no.nav.ba.e2e.familie_ba_sak.domene.*
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -53,10 +54,16 @@ class FamilieBaSakKlient(
         return getForEntity(uri)
     }
 
-    fun registrererVilkårsvurdering(fagsakId: Long, restVilkårsvurdering: RestVilkårsvurdering): Ressurs<RestFagsak> {
-        val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId/vedtak")
+    fun putVilkår(behandlingId: Long, vilkårId: Long, restPersonResultat: RestPersonResultat): Ressurs<List<RestPersonResultat>> {
+        val uri = URI.create("$baSakUrl/api/vilkaarsvurdering/$behandlingId/$vilkårId")
 
-        return putForEntity(uri, restVilkårsvurdering)!!
+        return putForEntity(uri, restPersonResultat)!!
+    }
+
+    fun validerVilkårsvurdering(behandlingId: Long): Ressurs<RestFagsak> {
+        val uri = URI.create("$baSakUrl/api/vilkaarsvurdering/$behandlingId/valider")
+
+        return postForEntity(uri, "")!!
     }
 
     fun sendTilBeslutter(fagsakId: Long): Ressurs<RestFagsak> {
