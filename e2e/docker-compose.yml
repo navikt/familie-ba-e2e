@@ -58,7 +58,7 @@ services:
   #    JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-e2e
   familie-ba-sak:
     restart: always
-    image: af93f7368489 #docker.pkg.github.com/navikt/familie-ba-sak/familie-ba-sak:latest
+    image: docker.pkg.github.com/navikt/familie-ba-sak/familie-ba-sak:latest
     depends_on:
       - postgres-sak
       - mock-oauth2-server
