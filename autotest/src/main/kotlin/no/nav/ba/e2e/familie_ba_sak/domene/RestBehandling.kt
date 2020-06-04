@@ -61,6 +61,7 @@ data class RestPersonResultat(
 )
 
 data class RestVilkårResultat(
+        val id: Long,
         val vilkårType: Any,
         val resultat: Resultat,
         val periodeFom: LocalDate?,
