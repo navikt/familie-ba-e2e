@@ -29,9 +29,9 @@ class FamilieBaMottakKlient(
     }
 
     fun postJournalhendelse(journalpostId: String): ResponseEntity<String> {
-        val uri = URI.create("$baMottakUrl/internal/e2e/journal/$journalpostId")
+        val uri = URI.create("$baMottakUrl/internal/e2e/journal")
 
-        return restOperations.postForEntity(uri, null)
+        return restOperations.postForEntity(uri, Journalpost(journalpostId.toLong()))
     }
 
     fun erHendelseMottatt(hendelseId: String, consumer: String): ResponseEntity<Boolean> {
@@ -47,4 +47,6 @@ class FamilieBaMottakKlient(
 
         return restOperations.getForEntity(uri)
     }
+
+    data class Journalpost(val journalpostId: Long)
 }
