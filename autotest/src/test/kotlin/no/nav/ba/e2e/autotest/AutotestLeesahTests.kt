@@ -2,28 +2,14 @@ package no.nav.ba.e2e.autotest
 
 import no.nav.ba.e2e.familie_ba_mottak.FamilieBaMottakKlient
 import org.assertj.core.api.Assertions.assertThat
-import org.awaitility.kotlin.await
-import org.awaitility.kotlin.withPollInterval
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import java.time.Duration
 import java.util.*
-import java.util.concurrent.TimeUnit
-
-@SpringBootTest(classes = [ApplicationConfig::class])
-
-class AutotestLeesahTests(@Autowired
-                          private val mottakKlient: FamilieBaMottakKlient
-) {
 
 
-    @BeforeEach
-    fun init() {
-        mottakKlient.truncate()
-    }
+class AutotestLeesahTests(@Autowired mottakKlient: FamilieBaMottakKlient
+) : AbstractMottakTest(mottakKlient) {
 
     @Test
     fun `skal sende dødsfallhendelse`() {
@@ -51,25 +37,9 @@ class AutotestLeesahTests(@Autowired
         assertThat(erHendelseMottatt.statusCode.is2xxSuccessful).isTrue()
         assertThat(erHendelseMottatt.body).isTrue()
 
-        sjekkOmTaskEksisterer("mottaFødselshendelse", callId)
-
-        await.atMost(120, TimeUnit.SECONDS)
-                .withPollInterval(Duration.ofSeconds(1))
-                .until {
-                    sjekkOmTaskEksisterer("sendTilSak", callId)
-                }
+        erTaskOpprettet("mottaFødselshendelse", callId)
+        erTaskOpprettet("sendTilSak", callId)
     }
 
-    private fun sjekkOmTaskEksisterer(taskStepType: String, callId: String): Boolean {
-        val tasker = mottakKlient.hentTasker("callId", callId)
-        try {
-            assertThat(tasker.body)
-                    .hasSizeGreaterThan(0)
-                    .extracting("taskStepType").contains(taskStepType)
-        } catch (e: AssertionError) {
-            return false
-        }
-        return true
-    }
 
 }
