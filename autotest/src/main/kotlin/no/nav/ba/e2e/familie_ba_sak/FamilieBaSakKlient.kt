@@ -1,6 +1,6 @@
 package no.nav.ba.e2e.familie_ba_sak
 
-import com.fasterxml.jackson.databind.JsonSerializer
+import no.nav.ba.e2e.familie_ba_mottak.Task
 import no.nav.ba.e2e.familie_ba_sak.domene.*
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -83,4 +83,22 @@ class FamilieBaSakKlient(
 
         return getForEntity(uri)
     }
+
+    fun hentTasker(key: String, value: String): ResponseEntity<List<Task>> {
+        return restOperations.getForEntity("$baSakUrl/api/e2e/task/$key/$value")
+    }
+
+    fun hentMetric(): ResponseEntity<Metric> {
+        return restOperations.getForEntity("$baSakUrl/internal/metrics/behandling.opprettet.automatisk?tag=type:FØRSTEGANGSBEHANDLING")
+    }
 }
+
+data class Metric (
+        val measurements : List<Measurement>
+)
+
+data class Measurement (
+        val statistic : String,
+        val value : Long
+)
+        //{"name":"behandling.opprettet.automatisk","description":null,"baseUnit":null,"measurements":[{"statistic":"COUNT","value":1.0}],"availableTags":[{"tag":"beskrivelse","values":["Førstegangsbehandling"]}]}

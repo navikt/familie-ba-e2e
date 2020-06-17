@@ -1,12 +1,14 @@
 package no.nav.ba.e2e.autotest
 
 import no.nav.ba.e2e.familie_ba_mottak.FamilieBaMottakKlient
+import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class AutotestJournaføringHendlserTests(@Autowired mottakKlient: FamilieBaMottakKlient
-) : AbstractMottakTest(mottakKlient) {
+class AutotestJournaføringHendlserTests(
+        @Autowired mottakKlient: FamilieBaMottakKlient,
+        @Autowired baSakKlient: FamilieBaSakKlient) : AbstractMottakTest(mottakKlient, baSakKlient) {
 
     @Test
     fun `skal sende journalhendelse som fører til opprettJournalføringsoppgave`() {
@@ -19,7 +21,7 @@ class AutotestJournaføringHendlserTests(@Autowired mottakKlient: FamilieBaMotta
         assertThat(erHendelseMottatt.statusCode.is2xxSuccessful).isTrue()
         assertThat((erHendelseMottatt.body)).isTrue()
 
-        erTaskOpprettet("opprettJournalføringsoppgave", "e2e-" + response.body)
+        erTaskOpprettetIMottak("opprettJournalføringsoppgave", "e2e-" + response.body)
     }
 
 
@@ -34,8 +36,8 @@ class AutotestJournaføringHendlserTests(@Autowired mottakKlient: FamilieBaMotta
         assertThat(erHendelseMottatt.statusCode.is2xxSuccessful).isTrue()
         assertThat((erHendelseMottatt.body)).isTrue()
 
-        erTaskOpprettet("oppdaterOgFerdigstillJournalpost", "e2e-" + response.body)
-        erTaskOpprettet("opprettBehandleSakoppgave", "e2e-" + response.body)
+        erTaskOpprettetIMottak("oppdaterOgFerdigstillJournalpost", "e2e-" + response.body)
+        erTaskOpprettetIMottak("opprettBehandleSakoppgave", "e2e-" + response.body)
     }
 
     companion object {

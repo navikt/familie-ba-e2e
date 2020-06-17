@@ -60,7 +60,7 @@ services:
       - 8090:8090
   familie-ba-sak:
     restart: always
-    image: docker.pkg.github.com/navikt/familie-ba-sak/familie-ba-sak:latest
+    image: docker.pkg.github.com/navikt/familie-ba-sak/familie-ba-sak:6c69323fc7c1d32ff9754274176e5aa102a19bb1
     depends_on:
       - postgres-sak
       - mock-oauth2-server
