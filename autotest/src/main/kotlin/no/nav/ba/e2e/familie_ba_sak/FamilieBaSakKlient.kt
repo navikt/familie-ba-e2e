@@ -84,21 +84,33 @@ class FamilieBaSakKlient(
         return getForEntity(uri)
     }
 
+    fun hentFagsakDeltager(personIdent: String): RestFagsakDeltager ? {
+        val uri = URI.create("$baSakUrl/api/fagsaker/sok")
+        val ressurs = hentListeFagsakDeltager(RestSøkParam(personIdent))
+        return ressurs?.data?.firstOrNull()
+    }
+
+    private fun hentListeFagsakDeltager(restSøkParam: RestSøkParam): Ressurs<List<RestFagsakDeltager>>? {
+        val uri = URI.create("$baSakUrl/api/fagsaker/sok")
+        return postForEntity(uri, restSøkParam)
+    }
+
     fun hentTasker(key: String, value: String): ResponseEntity<List<Task>> {
         return restOperations.getForEntity("$baSakUrl/api/e2e/task/$key/$value")
     }
 
-    fun hentMetric(): ResponseEntity<Metric> {
-        return restOperations.getForEntity("$baSakUrl/internal/metrics/behandling.opprettet.automatisk?tag=type:FØRSTEGANGSBEHANDLING")
+    fun tellMetrikk(metrikkNavn: String, tag: Pair<String, String>): Long {
+        val metric = restOperations.getForObject("$baSakUrl/internal/metrics/$metrikkNavn?tag=${tag.first}:${tag.second}",
+                                                 Metrikk::class.java)
+        return metric?.measurements?.first { it.statistic == "COUNT" }?.value ?: 0
     }
 }
 
-data class Metric (
-        val measurements : List<Measurement>
+data class Metrikk(
+        val measurements: List<Measurement>
 )
 
-data class Measurement (
-        val statistic : String,
-        val value : Long
+data class Measurement(
+        val statistic: String,
+        val value: Long
 )
-        //{"name":"behandling.opprettet.automatisk","description":null,"baseUnit":null,"measurements":[{"statistic":"COUNT","value":1.0}],"availableTags":[{"tag":"beskrivelse","values":["Førstegangsbehandling"]}]}

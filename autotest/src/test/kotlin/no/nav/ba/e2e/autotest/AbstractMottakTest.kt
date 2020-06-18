@@ -19,6 +19,7 @@ abstract class AbstractMottakTest(val mottakKlient: FamilieBaMottakKlient,
     @BeforeEach
     fun init() {
         mottakKlient.truncate()
+        baSakKlient.truncate()
     }
 
     protected fun erTaskOpprettetIMottak(taskStepType: String, callId: String) {
