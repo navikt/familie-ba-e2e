@@ -1,6 +1,6 @@
 package no.nav.ba.e2e.familie_ba_sak
 
-import com.fasterxml.jackson.databind.JsonSerializer
+import no.nav.ba.e2e.familie_ba_mottak.Task
 import no.nav.ba.e2e.familie_ba_sak.domene.*
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -83,4 +83,26 @@ class FamilieBaSakKlient(
 
         return getForEntity(uri)
     }
+
+    fun hentFagsakDeltager(personIdent: String): RestFagsakDeltager? {
+        val uri = URI.create("$baSakUrl/api/fagsaker/sok")
+        val ressurs = hentListeFagsakDeltager(RestSøkParam(personIdent))
+        return ressurs?.data?.firstOrNull()
+    }
+
+    private fun hentListeFagsakDeltager(restSøkParam: RestSøkParam): Ressurs<List<RestFagsakDeltager>>? {
+        val uri = URI.create("$baSakUrl/api/fagsaker/sok")
+        return postForEntity(uri, restSøkParam)
+    }
+
+    fun hentTasker(key: String, value: String): ResponseEntity<List<Task>> {
+        return restOperations.getForEntity("$baSakUrl/api/e2e/task/$key/$value")
+    }
+
+    fun tellMetrikk(metrikkNavn: String, tag: Pair<String, String>): Long {
+        val metric = restOperations.getForObject("$baSakUrl/internal/metrics/$metrikkNavn?tag=${tag.first}:${tag.second}",
+                                                 Metrikk::class.java)
+        return metric?.measurements?.first { it.statistic == "COUNT" }?.value ?: 0
+    }
 }
+
