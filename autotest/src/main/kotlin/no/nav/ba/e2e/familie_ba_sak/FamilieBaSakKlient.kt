@@ -84,7 +84,7 @@ class FamilieBaSakKlient(
         return getForEntity(uri)
     }
 
-    fun hentFagsakDeltager(personIdent: String): RestFagsakDeltager ? {
+    fun hentFagsakDeltager(personIdent: String): RestFagsakDeltager? {
         val uri = URI.create("$baSakUrl/api/fagsaker/sok")
         val ressurs = hentListeFagsakDeltager(RestSøkParam(personIdent))
         return ressurs?.data?.firstOrNull()
@@ -106,11 +106,3 @@ class FamilieBaSakKlient(
     }
 }
 
-data class Metrikk(
-        val measurements: List<Measurement>
-)
-
-data class Measurement(
-        val statistic: String,
-        val value: Long
-)
