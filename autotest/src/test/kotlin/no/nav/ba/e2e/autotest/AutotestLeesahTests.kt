@@ -89,8 +89,8 @@ class AutotestLeesahTests(
 
 
     companion object {
-        const val PERSONIDENT_MOR = "12345678901"
-        const val PERSONIDENT_BARN = "01101800033"
+        const val PERSONIDENT_MOR = "01129400001"
+        const val PERSONIDENT_BARN = "01062000001"
     }
 
 }
