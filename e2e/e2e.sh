@@ -2,7 +2,7 @@
 
 export COMPOSE_IGNORE_ORPHANS=true
 
-docker-compose pull
+docker-compose pull --quiet
 docker-compose build
 docker-compose up -d --force-recreate
 
