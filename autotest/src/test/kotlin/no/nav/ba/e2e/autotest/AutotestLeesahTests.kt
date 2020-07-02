@@ -14,7 +14,6 @@ import java.time.Duration
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-
 class AutotestLeesahTests(
         @Autowired mottakKlient: FamilieBaMottakKlient,
         @Autowired baSakKlient: FamilieBaSakKlient) : AbstractMottakTest(mottakKlient, baSakKlient) {
@@ -30,7 +29,6 @@ class AutotestLeesahTests(
         assertThat(erHendelseMottatt.statusCode.is2xxSuccessful).isTrue()
         assertThat(erHendelseMottatt.body).isTrue()
     }
-
 
     @Test
     fun `skal sende fødselshendelse`() {
@@ -87,10 +85,8 @@ class AutotestLeesahTests(
                 }
     }
 
-
     companion object {
         const val PERSONIDENT_MOR = "01129400001"
         const val PERSONIDENT_BARN = "01062000001"
     }
-
 }
