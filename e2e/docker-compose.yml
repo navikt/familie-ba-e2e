@@ -60,7 +60,7 @@ services:
       - 8090:8090
   familie-ba-sak:
     restart: always
-    image: docker.pkg.github.com/navikt/familie-ba-sak/familie-ba-sak:latest
+    image: familie-ba-sak:local
     depends_on:
       - postgres-sak
       - mock-oauth2-server
@@ -75,6 +75,7 @@ services:
       CLIENT_SECRET: ${SAK_CLIENT_SECRET}
       FAMILIE_INTEGRASJONER_SCOPE: ${INTEGRASJONER_SCOPE}
       FAMILIE_OPPDRAG_SCOPE: ${OPPDRAG_SCOPE}
+      SRVUSER_BA_SAK_SECRET: ${SRVUSER_BA_SAK_SECRET}
     ports:
       - 8089:8089
   familie-redis:
