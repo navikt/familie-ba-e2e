@@ -48,13 +48,14 @@ class AutotestEnkelVerdikjede(
         assertEquals(1, restFagsakMedBehandling.data?.behandlinger?.size)
 
         val aktivBehandling = Utils.hentAktivBehandling(restFagsak = restFagsakMedBehandling.data!!)
+        val restRegistrerSøknad = RestRegistrerSøknad(søknad = lagSøknadDTO(søkerIdent = søkersIdent,
+                                                                            annenPartIdent = "",
+                                                                            typeSøker = TypeSøker.TREDJELANDSBORGER,
+                                                                            barnasIdenter = listOf(barn1)), bekreftEndringerViaFrontend = false)
         val restFagsakEtterRegistrertSøknad =
                 familieBaSakKlient.registrererSøknad(
                         behandlingId = aktivBehandling!!.behandlingId,
-                        søknad = lagSøknadDTO(søkerIdent = søkersIdent,
-                                              annenPartIdent = "",
-                                              typeSøker = TypeSøker.TREDJELANDSBORGER,
-                                              barnasIdenter = listOf(barn1))
+                        restRegistrerSøknad = restRegistrerSøknad
                 )
         generellAssertFagsak(restFagsak = restFagsakEtterRegistrertSøknad,
                              fagsakStatus = FagsakStatus.OPPRETTET,
