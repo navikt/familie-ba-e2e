@@ -42,10 +42,10 @@ class FamilieBaSakKlient(
         ))!!
     }
 
-    fun registrererSøknad(behandlingId: Long, søknad: SøknadDTO): Ressurs<RestFagsak> {
-        val uri = URI.create("$baSakUrl/api/behandlinger/$behandlingId/registrere-søknad-og-hent-persongrunnlag")
+    fun registrererSøknad(behandlingId: Long, restRegistrerSøknad: RestRegistrerSøknad): Ressurs<RestFagsak> {
+        val uri = URI.create("$baSakUrl/api/behandlinger/$behandlingId/registrere-søknad-og-hent-persongrunnlag/v2")
 
-        return postForEntity(uri, søknad)!!
+        return postForEntity(uri, restRegistrerSøknad)!!
     }
 
     fun hentSøknad(behandlingId: Long): Ressurs<SøknadDTO> {

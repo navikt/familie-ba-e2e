@@ -3,6 +3,11 @@ package no.nav.ba.e2e.familie_ba_sak.domene
 import no.nav.familie.kontrakter.felles.objectMapper
 import java.time.LocalDate
 
+data class RestRegistrerSøknad(
+        val søknad: SøknadDTO,
+        val bekreftEndringerViaFrontend: Boolean
+)
+
 data class SøknadDTO(
         val versjon: String = "1",
         val kategori: BehandlingKategori,
