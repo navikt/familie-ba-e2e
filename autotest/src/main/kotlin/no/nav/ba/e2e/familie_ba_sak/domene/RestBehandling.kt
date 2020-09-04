@@ -66,7 +66,10 @@ data class RestVilkårResultat(
         val resultat: Resultat,
         val periodeFom: LocalDate?,
         val periodeTom: LocalDate?,
-        val begrunnelse: String
+        val begrunnelse: String,
+        val endretAv: String = "VL",
+        val endretTidspunkt: LocalDateTime = LocalDateTime.now(),
+        val behandlingId: Long
 )
 
 
