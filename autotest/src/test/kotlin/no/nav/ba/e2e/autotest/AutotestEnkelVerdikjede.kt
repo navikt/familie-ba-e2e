@@ -49,8 +49,6 @@ class AutotestEnkelVerdikjede(
 
         val aktivBehandling = Utils.hentAktivBehandling(restFagsak = restFagsakMedBehandling.data!!)
         val restRegistrerSøknad = RestRegistrerSøknad(søknad = lagSøknadDTO(søkerIdent = søkersIdent,
-                                                                            annenPartIdent = "",
-                                                                            typeSøker = TypeSøker.TREDJELANDSBORGER,
                                                                             barnasIdenter = listOf(barn1)), bekreftEndringerViaFrontend = false)
         val restFagsakEtterRegistrertSøknad =
                 familieBaSakKlient.registrererSøknad(
