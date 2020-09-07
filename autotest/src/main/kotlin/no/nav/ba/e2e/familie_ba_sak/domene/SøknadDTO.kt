@@ -22,11 +22,7 @@ data class SøkerMedOpplysninger(
 
 data class BarnMedOpplysninger(
         val ident: String,
-        val borMedSøker: Boolean = true,
-        val oppholderSegINorge: Boolean = true,
-        val harOppholdtSegINorgeSiste12Måneder: Boolean = true,
         val navn: String = "",
         val inkludertISøknaden: Boolean = true,
         val fødselsdato: LocalDate? = null,
-        val tilleggsopplysninger: String? = null
 )
