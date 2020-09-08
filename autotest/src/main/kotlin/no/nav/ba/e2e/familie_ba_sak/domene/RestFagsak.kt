@@ -3,7 +3,7 @@ package no.nav.ba.e2e.familie_ba_sak.domene
 import java.time.LocalDateTime
 
 enum class FagsakStatus {
-    OPPRETTET, LØPENDE, STANSET
+    OPPRETTET, LØPENDE, AVSLUTTET
 }
 
 data class RestFagsak(

@@ -38,12 +38,10 @@ enum class BehandlingUnderkategori {
 
 enum class BehandlingStatus {
     OPPRETTET,
-    UNDERKJENT_AV_BESLUTTER,
-    SENDT_TIL_BESLUTTER,
-    GODKJENT,
-    SENDT_TIL_IVERKSETTING,
-    IVERKSATT,
-    FERDIGSTILT
+    UTREDES,
+    FATTER_VEDTAK,
+    IVERKSETTER_VEDTAK,
+    AVSLUTTET,
 }
 
 enum class BehandlingResultatType(val brevMal: String, val displayName: String) {
