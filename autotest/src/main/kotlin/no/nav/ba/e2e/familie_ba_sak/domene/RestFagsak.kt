@@ -11,4 +11,5 @@ data class RestFagsak(
         val id: Long,
         val søkerFødselsnummer: String,
         val status: FagsakStatus,
+        val underBehandling: Boolean,
         val behandlinger: List<RestBehandling>)

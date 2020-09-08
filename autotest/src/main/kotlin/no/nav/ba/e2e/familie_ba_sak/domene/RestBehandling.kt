@@ -13,6 +13,7 @@ data class RestBehandling(val aktiv: Boolean,
                           val opprettetTidspunkt: LocalDateTime,
                           val underkategori: BehandlingUnderkategori,
                           val personResultater: List<RestPersonResultat>,
+                          val gjeldendeForUtbetaling: Boolean,
                           val samletResultat: BehandlingResultatType,
                           val vedtakForBehandling: List<Any?>,
                           val endretAv: String)
