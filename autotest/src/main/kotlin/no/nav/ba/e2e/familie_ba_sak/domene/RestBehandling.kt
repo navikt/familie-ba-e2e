@@ -42,6 +42,14 @@ enum class BehandlingStatus {
     FATTER_VEDTAK,
     IVERKSETTER_VEDTAK,
     AVSLUTTET,
+
+    // Slettes etter at status PR er merget
+    UNDERKJENT_AV_BESLUTTER,
+    SENDT_TIL_BESLUTTER,
+    GODKJENT,
+    SENDT_TIL_IVERKSETTING,
+    IVERKSATT,
+    FERDIGSTILT
 }
 
 enum class BehandlingResultatType(val brevMal: String, val displayName: String) {
