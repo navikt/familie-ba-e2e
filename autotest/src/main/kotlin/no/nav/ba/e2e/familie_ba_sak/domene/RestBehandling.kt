@@ -13,6 +13,7 @@ data class RestBehandling(val aktiv: Boolean,
                           val opprettetTidspunkt: LocalDateTime,
                           val underkategori: BehandlingUnderkategori,
                           val personResultater: List<RestPersonResultat>,
+                          val gjeldendeForUtbetaling: Boolean,
                           val samletResultat: BehandlingResultatType,
                           val vedtakForBehandling: List<Any?>,
                           val endretAv: String)
@@ -38,6 +39,12 @@ enum class BehandlingUnderkategori {
 
 enum class BehandlingStatus {
     OPPRETTET,
+    UTREDES,
+    FATTER_VEDTAK,
+    IVERKSETTER_VEDTAK,
+    AVSLUTTET,
+
+    // Slettes etter at status PR er merget
     UNDERKJENT_AV_BESLUTTER,
     SENDT_TIL_BESLUTTER,
     GODKJENT,
