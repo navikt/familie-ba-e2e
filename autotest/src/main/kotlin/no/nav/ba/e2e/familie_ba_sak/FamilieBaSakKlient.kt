@@ -49,7 +49,7 @@ class FamilieBaSakKlient(
     }
 
     fun hentSøknad(behandlingId: Long): Ressurs<SøknadDTO> {
-        val uri = URI.create("$baSakUrl/api/behandlinger/$behandlingId/søknad/v3")
+        val uri = URI.create("$baSakUrl/api/behandlinger/$behandlingId/søknad")
 
         return getForEntity(uri)
     }
