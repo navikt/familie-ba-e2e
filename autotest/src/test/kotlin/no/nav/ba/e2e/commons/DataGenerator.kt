@@ -21,6 +21,7 @@ fun lagSøknadDTO(søkerIdent: String,
                 BarnMedOpplysninger(
                         ident = it
                 )
-            }
+            },
+            endringAvOpplysningerBegrunnelse = ""
     )
 }
