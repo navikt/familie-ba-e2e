@@ -10,16 +10,24 @@ data class RestRegistrerSøknad(
 data class SøknadDTO(
         val underkategori: BehandlingUnderkategori,
         val søkerMedOpplysninger: SøkerMedOpplysninger,
-        val barnaMedOpplysninger: List<BarnMedOpplysninger>
+        val barnaMedOpplysninger: List<BarnMedOpplysninger>,
+        val endringAvOpplysningerBegrunnelse: String
+
 )
 
 data class SøkerMedOpplysninger(
-        val ident: String
+        val ident: String,
+        val målform: Målform = Målform.NB
 )
 
 data class BarnMedOpplysninger(
         val ident: String,
         val navn: String = "",
+        val fødselsdato: LocalDate? = null,
         val inkludertISøknaden: Boolean = true,
-        val fødselsdato: LocalDate? = null
+        val manueltRegistrert: Boolean = false
 )
+
+enum class Målform {
+    NB, NN
+}
