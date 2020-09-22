@@ -99,7 +99,7 @@ class AutotestEnkelVerdikjede(
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.IVERKSETT_MOT_OPPDRAG)
 
-        await.atMost(60, TimeUnit.SECONDS).until {
+        await.atMost(80, TimeUnit.SECONDS).until {
             familieBaSakKlient.hentFagsak(fagsakId = restFagsakEtterIverksetting.data!!.id).data?.status == FagsakStatus.LØPENDE
         }
 
