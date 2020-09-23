@@ -49,7 +49,8 @@ class AutotestEnkelVerdikjede(
 
         val aktivBehandling = Utils.hentAktivBehandling(restFagsak = restFagsakMedBehandling.data!!)
         val restRegistrerSøknad = RestRegistrerSøknad(søknad = lagSøknadDTO(søkerIdent = søkersIdent,
-                                                                            barnasIdenter = listOf(barn1)), bekreftEndringerViaFrontend = false)
+                                                                            barnasIdenter = listOf(barn1)),
+                                                      bekreftEndringerViaFrontend = false)
         val restFagsakEtterRegistrertSøknad =
                 familieBaSakKlient.registrererSøknad(
                         behandlingId = aktivBehandling!!.behandlingId,
@@ -65,7 +66,7 @@ class AutotestEnkelVerdikjede(
 
         val aktivBehandlingEtterRegistrertSøknad = Utils.hentAktivBehandling(restFagsakEtterRegistrertSøknad.data!!)!!
         aktivBehandlingEtterRegistrertSøknad.personResultater.forEach { restPersonResultat ->
-            restPersonResultat.vilkårResultater?.forEach {
+            restPersonResultat.vilkårResultater?.filter { it.resultat != Resultat.JA }?.forEach {
                 familieBaSakKlient.putVilkår(
                         behandlingId = aktivBehandlingEtterRegistrertSøknad.behandlingId,
                         vilkårId = it.id,
@@ -73,7 +74,7 @@ class AutotestEnkelVerdikjede(
                         RestPersonResultat(personIdent = restPersonResultat.personIdent,
                                            vilkårResultater = listOf(it.copy(
                                                    resultat = Resultat.JA,
-                                                   periodeFom = LocalDate.of(2019, 5, 8)
+                                                   periodeFom = LocalDate.now()
                                            ))))
             }
         }
