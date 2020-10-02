@@ -8,6 +8,7 @@ import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
 import no.nav.ba.e2e.familie_ba_sak.domene.*
 import no.nav.familie.kontrakter.felles.Ressurs
 import org.awaitility.kotlin.await
+import org.awaitility.kotlin.withPollInterval
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
+import java.time.Duration
 
 @SpringBootTest(classes = [ApplicationConfig::class])
 class AutotestEnkelVerdikjede(
@@ -100,7 +102,7 @@ class AutotestEnkelVerdikjede(
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.IVERKSETT_MOT_OPPDRAG)
 
-        await.atMost(80, TimeUnit.SECONDS).until {
+        await.atMost(80, TimeUnit.SECONDS).withPollInterval(Duration.ofSeconds(1)).until {
             familieBaSakKlient.hentFagsak(fagsakId = restFagsakEtterIverksetting.data!!.id).data?.status == FagsakStatus.LØPENDE
         }
 
