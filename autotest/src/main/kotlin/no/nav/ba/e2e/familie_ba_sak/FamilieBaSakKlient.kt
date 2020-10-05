@@ -54,7 +54,7 @@ class FamilieBaSakKlient(
         return getForEntity(uri)
     }
 
-    fun putVilkår(behandlingId: Long, vilkårId: Long, restPersonResultat: RestPersonResultat): Ressurs<List<RestPersonResultat>> {
+    fun putVilkår(behandlingId: Long, vilkårId: Long, restPersonResultat: RestPersonResultat): Ressurs<RestFagsak> {
         val uri = URI.create("$baSakUrl/api/vilkaarsvurdering/$behandlingId/$vilkårId")
 
         return putForEntity(uri, restPersonResultat)!!
