@@ -103,7 +103,10 @@ class AutotestEnkelVerdikjede(
                              behandlingStegType = StegType.IVERKSETT_MOT_OPPDRAG)
 
         await.atMost(80, TimeUnit.SECONDS).withPollInterval(Duration.ofSeconds(1)).until {
-            familieBaSakKlient.hentFagsak(fagsakId = restFagsakEtterIverksetting.data!!.id).data?.status == FagsakStatus.LØPENDE
+            
+            val fagsak = familieBaSakKlient.hentFagsak(fagsakId = restFagsakEtterIverksetting.data!!.id).data
+            println("FAGSAK: ${fagsak}")
+            fagsak?.status == FagsakStatus.LØPENDE
         }
 
         val restFagsakEtterBehandlingAvsluttet =
