@@ -1,5 +1,6 @@
 package no.nav.ba.e2e.autotest
 
+import no.nav.ba.e2e.commons.morPersonident
 import no.nav.ba.e2e.familie_ba_mottak.FamilieBaMottakKlient
 import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
 import org.assertj.core.api.Assertions.assertThat
@@ -27,6 +28,10 @@ class AutotestJournaføringHendlserTests(
 
     @Test
     fun `skal sende journalhendelse som fører til oppdaterOgFerdigstillJournalpost`() {
+        // Trenger først en løpende fagsak eller en pågående behandling i ba-sak på samme bruker som journalhendelsen gjelder...
+        baSakKlient.opprettFagsak(søkersIdent = morPersonident)
+        baSakKlient.opprettBehandling(søkersIdent = morPersonident)
+
         val response = mottakKlient.postJournalhendelse(MIDLERTIDIG_JOURNALPOST_DIGITAL)
         assertThat(response.statusCode.is2xxSuccessful).isTrue()
         assertThat(response.body).isNotNull()
@@ -38,6 +43,8 @@ class AutotestJournaføringHendlserTests(
 
         erTaskOpprettetIMottak("oppdaterOgFerdigstillJournalpost", "e2e-" + response.body)
         erTaskOpprettetIMottak("opprettBehandleSakoppgave", "e2e-" + response.body)
+
+        baSakKlient.truncate()
     }
 
     companion object {
