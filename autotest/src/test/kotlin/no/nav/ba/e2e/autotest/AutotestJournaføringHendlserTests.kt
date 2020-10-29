@@ -43,8 +43,6 @@ class AutotestJournaføringHendlserTests(
 
         erTaskOpprettetIMottak("oppdaterOgFerdigstillJournalpost", "e2e-" + response.body)
         erTaskOpprettetIMottak("opprettBehandleSakoppgave", "e2e-" + response.body)
-
-        baSakKlient.truncate()
     }
 
     companion object {
