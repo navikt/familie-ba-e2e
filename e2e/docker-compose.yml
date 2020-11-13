@@ -76,28 +76,28 @@ services:
     image: redis
     ports:
       - 6379:6379
-  familie-ba-sak-frontend:
-    restart: always
-    depends_on:
-      - mock-oauth2-server
-      - familie-ba-sak
-      - familie-redis
-    image: docker.pkg.github.com/navikt/familie-ba-sak-frontend/familie-ba-sak-frontend:latest
-    ports:
-      - 8000:8000
-    environment:
-      ENV: e2e
-      SESSION_SECRET: ${SESSION_SECRET}
-      CLIENT_ID: ${SAK_FRONTEND_CLIENT_ID}
-      CLIENT_SECRET: ${SAK_FRONTEND_CLIENT_SECRET}
-      BA_SAK_SCOPE: ${BA_SAK_SCOPE}
-      PASSPORTCOOKIE_KEY1: KEY1
-      PASSPORTCOOKIE_KEY2: KEY2
-      PASSPORTCOOKIE_KEY3: KEY3
-      PASSPORTCOOKIE_KEY4: KEY4
-      COOKIE_KEY1: COOKIE_KEY1
-      COOKIE_KEY2: COOKIE_KEY1
-      SLACK_TOKEN: SLACK_TOKEN
+#  familie-ba-sak-frontend:
+#    restart: always
+#    depends_on:
+#      - mock-oauth2-server
+#      - familie-ba-sak
+#      - familie-redis
+#    image: docker.pkg.github.com/navikt/familie-ba-sak-frontend/familie-ba-sak-frontend:latest
+#    ports:
+#      - 8000:8000
+#    environment:
+#      ENV: e2e
+#      SESSION_SECRET: ${SESSION_SECRET}
+#      CLIENT_ID: ${SAK_FRONTEND_CLIENT_ID}
+#      CLIENT_SECRET: ${SAK_FRONTEND_CLIENT_SECRET}
+#      BA_SAK_SCOPE: ${BA_SAK_SCOPE}
+#      PASSPORTCOOKIE_KEY1: KEY1
+#      PASSPORTCOOKIE_KEY2: KEY2
+#      PASSPORTCOOKIE_KEY3: KEY3
+#      PASSPORTCOOKIE_KEY4: KEY4
+#      COOKIE_KEY1: COOKIE_KEY1
+#      COOKIE_KEY2: COOKIE_KEY1
+#      SLACK_TOKEN: SLACK_TOKEN
   familie-integrasjoner:
     restart: always
     image: docker.pkg.github.com/navikt/familie-integrasjoner/familie-integrasjoner:latest

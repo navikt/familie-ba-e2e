@@ -31,14 +31,17 @@ class FamilieBaSakKlient(
         ))!!
     }
 
-    fun opprettBehandling(søkersIdent: String): Ressurs<RestFagsak> {
+    fun opprettBehandling(søkersIdent: String,
+                          behandlingType: BehandlingType = BehandlingType.FØRSTEGANGSBEHANDLING,
+                          behandlingÅrsak: BehandlingÅrsak = BehandlingÅrsak.SØKNAD): Ressurs<RestFagsak> {
         val uri = URI.create("$baSakUrl/api/behandlinger")
 
         return postForEntity(uri, NyBehandling(
                 kategori = BehandlingKategori.NASJONAL,
                 underkategori = BehandlingUnderkategori.ORDINÆR,
                 søkersIdent = søkersIdent,
-                behandlingType = BehandlingType.FØRSTEGANGSBEHANDLING
+                behandlingType = behandlingType,
+                behandlingÅrsak = behandlingÅrsak
         ))!!
     }
 
