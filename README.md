@@ -56,7 +56,7 @@ yarn open
 
 Cypress åpnes i eget vindu og man kan klikke inn på testene. Dersom man gjør endringer i testene (/frontend/integration) kjøres testen(e) på nytt automatisk.
 
-## er informasjon
+### Mer informasjon
 
 - [https://docs.cypress.io](https://docs.cypress.io)
 - [https://on.cypress.io/docker](https://on.cypress.io/docker)
