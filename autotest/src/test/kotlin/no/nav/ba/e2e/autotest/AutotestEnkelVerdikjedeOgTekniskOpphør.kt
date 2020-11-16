@@ -69,14 +69,14 @@ class AutotestEnkelVerdikjedeOgTekniskOpphør(
         // Godkjenner alle vilkår på førstegangsbehandling
         val aktivBehandlingEtterRegistrertSøknad = Utils.hentAktivBehandling(restFagsakEtterRegistrertSøknad.data!!)!!
         aktivBehandlingEtterRegistrertSøknad.personResultater.forEach { restPersonResultat ->
-            restPersonResultat.vilkårResultater?.filter { it.resultat != Resultat.JA }?.forEach {
+            restPersonResultat.vilkårResultater?.filter { it.resultat.tilResultat() != Resultat.OPPFYLT }?.forEach {
                 familieBaSakKlient.putVilkår(
                         behandlingId = aktivBehandlingEtterRegistrertSøknad.behandlingId,
                         vilkårId = it.id,
                         restPersonResultat =
                         RestPersonResultat(personIdent = restPersonResultat.personIdent,
                                            vilkårResultater = listOf(it.copy(
-                                                   resultat = Resultat.JA,
+                                                   resultat = Resultat.OPPFYLT.tilRestResultat(),
                                                    periodeFom = LocalDate.now()
                                            ))))
             }
@@ -141,7 +141,7 @@ class AutotestEnkelVerdikjedeOgTekniskOpphør(
                         restPersonResultat =
                         RestPersonResultat(personIdent = restPersonResultat.personIdent,
                                            vilkårResultater = listOf(it.copy(
-                                                   resultat = Resultat.NEI
+                                                   resultat = Resultat.IKKE_OPPFYLT.tilRestResultat()
                                            ))))
             }
         }
