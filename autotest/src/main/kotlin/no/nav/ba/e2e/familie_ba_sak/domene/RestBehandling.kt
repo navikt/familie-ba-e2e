@@ -72,7 +72,7 @@ data class RestPersonResultat(
 data class RestVilkårResultat(
         val id: Long,
         val vilkårType: Any,
-        val resultat: RestResultat,
+        val resultat: Resultat,
         val periodeFom: LocalDate?,
         val periodeTom: LocalDate?,
         val begrunnelse: String,
@@ -84,29 +84,4 @@ data class RestVilkårResultat(
 
 enum class Resultat {
     OPPFYLT, IKKE_OPPFYLT, IKKE_VURDERT
-}
-
-enum class RestResultat {
-    OPPFYLT,
-    IKKE_OPPFYLT,
-    IKKE_VURDERT,
-    JA,
-    NEI,
-    KANSKJE
-}
-
-fun Resultat.tilRestResultat(): RestResultat {
-    return when(this) {
-        Resultat.OPPFYLT -> RestResultat.OPPFYLT
-        Resultat.IKKE_OPPFYLT -> RestResultat.IKKE_OPPFYLT
-        Resultat.IKKE_VURDERT -> RestResultat.IKKE_VURDERT
-    }
-}
-
-fun RestResultat.tilResultat(): Resultat {
-    return when(this) {
-        RestResultat.OPPFYLT, RestResultat.JA -> Resultat.OPPFYLT
-        RestResultat.IKKE_OPPFYLT, RestResultat.NEI -> Resultat.IKKE_OPPFYLT
-        RestResultat.KANSKJE, RestResultat.IKKE_VURDERT -> Resultat.IKKE_VURDERT
-    }
 }
