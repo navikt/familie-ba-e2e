@@ -60,7 +60,8 @@ enum class BehandlingResultatType(val brevMal: String, val displayName: String) 
     DELVIS_INNVILGET(brevMal = "ukjent", displayName = "Delvis innvilget"),
     AVSLÅTT(brevMal = "avslag", displayName = "Avslått"),
     OPPHØRT(brevMal = "opphor", displayName = "Opphørt"),
-    HENLAGT(brevMal = "ukjent", displayName = "Henlagt"),
+    HENLAGT_FEILAKTIG_OPPRETTET(brevMal = "ukjent", displayName = "Henlagt feilaktig opprettet"),
+    HENLAGT_SØKNAD_TRUKKET(brevMal = "ukjent", displayName = "Henlagt søknad trukket"),
     IKKE_VURDERT(brevMal = "ukjent", displayName = "Ikke vurdert")
 }
 

@@ -6,6 +6,17 @@ data class RestSøkParam(
         var personIdent: String
 )
 
+data class RestHenleggDocGen(
+        var mottakerIdent: String,
+        var multiselectVerdier: Array<String> ?= emptyArray(),
+        var brevmal: String
+)
+
+data class RestHenleggelse(
+        var årsak: String,
+        var begrunnelse: String
+)
+
 enum class FagsakDeltagerRolle {
     BARN, FORELDER, UKJENT
 }
