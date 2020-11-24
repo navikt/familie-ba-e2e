@@ -112,6 +112,11 @@ class FamilieBaSakKlient(
         return putForEntity(uri, restHenleggelse)
     }
 
+    fun hentLogg(behandlingId: Long): Ressurs<List<Logg>>? {
+        val uri = URI.create("$baSakUrl/api/logg/${behandlingId}")
+        return getForEntity(uri)
+    }
+
     fun tellMetrikk(metrikkNavn: String, tag: Pair<String, String>): Long {
         val metric = restOperations.getForObject("$baSakUrl/internal/metrics/$metrikkNavn?tag=${tag.first}:${tag.second}",
                                                  Metrikk::class.java)

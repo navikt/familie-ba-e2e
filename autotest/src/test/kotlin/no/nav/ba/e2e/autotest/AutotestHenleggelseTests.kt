@@ -21,19 +21,13 @@ class AutotestHenleggelseTests(
         @Autowired baSakKlient: FamilieBaSakKlient) : AbstractMottakTest(mottakKlient, baSakKlient) {
 
     @Test
-    fun `Henlegg en behandling, hent forhåndsvising av brev, henlegg og opprett ny behandling`() {
+    fun `Opprett behandling, henlegg behandling feilaktig opprettet og opprett behandling på nytt`() {
         val søkersIdent = morPersonident
-        val førsteBehandling = opprettBhandlingOgRegistrerSøknad(søkersIdent)
+        val førsteBehandling = opprettBehandlingOgRegistrerSøknad(søkersIdent)
 
-        val responseForhandsvis = baSakKlient.forhaandsvisHenleggelseBrev(førsteBehandling!!.behandlingId,
-                                                                          RestHenleggDocGen(mottakerIdent = morPersonident,
-                                                                                            brevmal = "HENLEGGE_TRUKKET_SØKNAD"))
-        assertThat(responseForhandsvis?.status == Ressurs.Status.SUKSESS)
-
-        // foerstesidegenerator er kke tilgjengelig derfor kan man ikke prøve med SØKNED_TRUKKET.
-        val responseHenlagdSøknad = baSakKlient.henleggSøknad(førsteBehandling.behandlingId,
+        val responseHenlagdSøknad = baSakKlient.henleggSøknad(førsteBehandling!!.behandlingId,
                                                               RestHenleggelse(årsak = "FEILAKTIG_OPPRETTET",
-                                                                              begrunnelse = "Søknad trukket"))
+                                                                              begrunnelse = "feilaktig opprettet"))
 
         await.atMost(80, TimeUnit.SECONDS).withPollInterval(Duration.ofSeconds(1)).until {
             val fagsak = baSakKlient.hentFagsak(responseHenlagdSøknad!!.data!!.id).data
@@ -43,11 +37,46 @@ class AutotestHenleggelseTests(
         assertThat(responseHenlagdSøknad?.data?.behandlinger?.first()?.aktiv == false)
         assertThat(responseHenlagdSøknad?.data?.behandlinger?.first()?.samletResultat == BehandlingResultatType.HENLAGT_FEILAKTIG_OPPRETTET)
 
-        val andreBehandling = opprettBhandlingOgRegistrerSøknad(søkersIdent)
+        val logger = baSakKlient.hentLogg(responseHenlagdSøknad!!.data!!.id)
+        if (logger?.status == Ressurs.Status.SUKSESS) {
+            assertThat(logger.data?.filter { it.type == LoggType.HENLEGG_BEHANDLING }?.size == 1)
+            assertThat(logger.data?.filter { it.type == LoggType.DISTRIBUERE_BREV }?.size == 0)
+        }
+
+        val andreBehandling = opprettBehandlingOgRegistrerSøknad(søkersIdent)
         assertThat(andreBehandling?.aktiv == true)
     }
 
-    private fun opprettBhandlingOgRegistrerSøknad(søkersIdent: String): RestBehandling? {
+    @Test
+    fun `Opprett behandling, hent forhåndsvising av brev, henlegg behandling søknad trukket`() {
+        val søkersIdent = morPersonident
+        val førsteBehandling = opprettBehandlingOgRegistrerSøknad(søkersIdent)
+
+        val responseForhandsvis = baSakKlient.forhaandsvisHenleggelseBrev(førsteBehandling!!.behandlingId,
+                                                                          RestHenleggDocGen(mottakerIdent = morPersonident,
+                                                                                            brevmal = "HENLEGGE_TRUKKET_SØKNAD"))
+        assertThat(responseForhandsvis?.status == Ressurs.Status.SUKSESS)
+
+        val responseHenlagdSøknad = baSakKlient.henleggSøknad(førsteBehandling.behandlingId,
+                                                              RestHenleggelse(årsak = "SØKNAD_TRUKKET",
+                                                                              begrunnelse = "Søknad trukket"))
+
+        await.atMost(80, TimeUnit.SECONDS).withPollInterval(Duration.ofSeconds(1)).until {
+            val fagsak = baSakKlient.hentFagsak(responseHenlagdSøknad!!.data!!.id).data
+            fagsak?.status == FagsakStatus.AVSLUTTET
+        }
+
+        assertThat(responseHenlagdSøknad?.data?.behandlinger?.first()?.aktiv == false)
+        assertThat(responseHenlagdSøknad?.data?.behandlinger?.first()?.samletResultat == BehandlingResultatType.HENLAGT_SØKNAD_TRUKKET)
+
+        val logger = baSakKlient.hentLogg(responseHenlagdSøknad!!.data!!.id)
+        if (logger?.status == Ressurs.Status.SUKSESS) {
+            assertThat(logger.data?.filter { it.type == LoggType.HENLEGG_BEHANDLING }?.size == 1)
+            assertThat(logger.data?.filter { it.type == LoggType.DISTRIBUERE_BREV }?.size == 1)
+        }
+    }
+
+    private fun opprettBehandlingOgRegistrerSøknad(søkersIdent: String): RestBehandling? {
         val barn1 = barnPersonident
 
         baSakKlient.opprettFagsak(søkersIdent = søkersIdent)
