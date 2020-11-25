@@ -102,6 +102,21 @@ class FamilieBaSakKlient(
         return restOperations.getForEntity("$baSakUrl/api/e2e/task/$key/$value")
     }
 
+    fun forhaandsvisHenleggelseBrev(behandlingId: Long, restHenleggDocGen: RestHenleggDocGen): Ressurs<ByteArray>? {
+        val uri = URI.create("$baSakUrl/api/dokument/forhaandsvis-brev/${behandlingId}")
+        return postForEntity(uri, restHenleggDocGen)
+    }
+
+    fun henleggSøknad(behandlingId: Long, restHenleggelse: RestHenleggelse): Ressurs<RestFagsak>? {
+        val uri = URI.create("$baSakUrl/api/behandlinger/${behandlingId}/henlegg")
+        return putForEntity(uri, restHenleggelse)
+    }
+
+    fun hentLogg(behandlingId: Long): Ressurs<List<Logg>>? {
+        val uri = URI.create("$baSakUrl/api/logg/${behandlingId}")
+        return getForEntity(uri)
+    }
+
     fun tellMetrikk(metrikkNavn: String, tag: Pair<String, String>): Long {
         val metric = restOperations.getForObject("$baSakUrl/internal/metrics/$metrikkNavn?tag=${tag.first}:${tag.second}",
                                                  Metrikk::class.java)
