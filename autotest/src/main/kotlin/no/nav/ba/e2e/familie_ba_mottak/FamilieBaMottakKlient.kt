@@ -2,6 +2,7 @@ package no.nav.ba.e2e.familie_ba_mottak
 
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.objectMapper
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -38,8 +39,9 @@ class FamilieBaMottakKlient(
         return restOperations.getForEntity("$baMottakUrl/internal/e2e/hendelselogg/$hendelseId/$consumer")
     }
 
-    fun hentTasker(key: String, value: String): ResponseEntity<List<Task>> {
-        return restOperations.getForEntity("$baMottakUrl/internal/e2e/task/$key/$value")
+    fun hentTasker(key: String, value: String): List<Task>? {
+        val response = restOperations.getForEntity("$baMottakUrl/internal/e2e/task/$key/$value", List::class.java)
+        return response.body?.mapNotNull { objectMapper.convertValue(it, Task::class.java) }
     }
 
     fun truncate(): ResponseEntity<Ressurs<String>> {
