@@ -4,6 +4,7 @@ import no.nav.ba.e2e.commons.Utils
 import no.nav.ba.e2e.familie_ba_mottak.FamilieBaMottakKlient
 import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
 import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingResultatType
+import no.nav.familie.prosessering.domene.Status
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
@@ -50,8 +51,8 @@ class AutotestLeesahTests(
         assertThat(erHendelseMottatt.statusCode.is2xxSuccessful).isTrue()
         assertThat(erHendelseMottatt.body).isTrue()
 
-        erTaskOpprettetIMottak("mottaFødselshendelse", callId)
-        erTaskOpprettetIMottak("sendTilSak", callId)
+        harTaskStatus("mottaFødselshendelse", callId, Status.FERDIG)
+        harTaskStatus("sendTilSak", callId, Status.FERDIG)
 
         erTaskOpprettetISak("behandleFødselshendelseTask", callId)
 
