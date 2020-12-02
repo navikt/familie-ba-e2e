@@ -34,8 +34,15 @@ class AutotestLeesahTests(
     @Test
     fun `skal sende fødselshendelse`() {
 
-        val startVerdiMetrikkBehandlingOpprettetAutomatisk =
-                baSakKlient.tellMetrikk("behandling.opprettet.automatisk", Pair("type", "FØRSTEGANGSBEHANDLING"))
+        val metrikkBehandlingOpprettet =
+                if (baSakKlient.harMetrikk("behandling.opprettet.automatisk")) {
+                    "behandling.opprettet.automatisk"
+                } else {
+                    "behandling.opprettet"
+                }
+
+        val startVerdiMetrikkBehandlingOpprettetAutomatisk = baSakKlient.tellMetrikk(metrikkBehandlingOpprettet, Pair("type", "FØRSTEGANGSBEHANDLING"))
+
         val startVerdiMetrikkFødselshendelse =
                 baSakKlient.tellMetrikk("behandling.logg", Pair("type", "FØDSELSHENDELSE"))
         val callId = UUID.randomUUID().toString()
@@ -57,7 +64,7 @@ class AutotestLeesahTests(
         erTaskOpprettetISak("behandleFødselshendelseTask", callId)
 
 
-        metrikkSkalØkes("behandling.opprettet.automatisk",
+        metrikkSkalØkes(metrikkBehandlingOpprettet,
                         Pair("type", "FØRSTEGANGSBEHANDLING"),
                         startVerdiMetrikkBehandlingOpprettetAutomatisk)
 
