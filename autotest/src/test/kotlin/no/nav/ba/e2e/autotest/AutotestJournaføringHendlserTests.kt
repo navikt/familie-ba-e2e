@@ -50,8 +50,9 @@ class AutotestJournaføringHendlserTests(
 
         harTaskStatus("opprettJournalføringsoppgave", "e2e-" + response.body, status = Status.FERDIG)
         assertThat(mockserverKlient?.hentOppgaveOpprettetMedCallid("e2e-" + response.body))
-                .contains("Bruker har sak i BA-sak")
                 .contains("JFR")
+                //.contains("Bruker har sak i BA-sak")
+                
     }
 
 
