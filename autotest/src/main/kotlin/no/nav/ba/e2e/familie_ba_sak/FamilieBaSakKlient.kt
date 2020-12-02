@@ -122,15 +122,5 @@ class FamilieBaSakKlient(
                                                  Metrikk::class.java)
         return metric?.measurements?.first { it.statistic == "COUNT" }?.value ?: 0
     }
-
-    fun harMetrikk(metrikkNavn: String): Boolean {
-        try {
-            restOperations.getForObject("$baSakUrl/internal/metrics/$metrikkNavn", Metrikk::class.java)
-        }
-        catch (e: Exception) {
-            return false
-        }
-        return true
-    }
 }
 
