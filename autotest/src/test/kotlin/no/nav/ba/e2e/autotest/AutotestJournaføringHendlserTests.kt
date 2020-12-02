@@ -36,10 +36,8 @@ class AutotestJournaføringHendlserTests(
 
 
     @Test
-    fun `skal sende journalhendelse som fører til opprettJournalføringsoppgaves`() {
-        // Trenger først en løpende fagsak eller en pågående behandling i ba-sak på samme bruker som journalhendelsen gjelder...
+    fun `skal sende journalhendelse som fører til opprettJournalføringsoppgave med info om sak i oppgavebeskrivelsen`() {
         baSakKlient.opprettFagsak(søkersIdent = morPersonident)
-        baSakKlient.opprettBehandling(søkersIdent = morPersonident)
 
         val response = mottakKlient.postJournalhendelse(MIDLERTIDIG_JOURNALPOST_SKANNING)
         assertThat(response.statusCode.is2xxSuccessful).isTrue()
@@ -52,16 +50,15 @@ class AutotestJournaføringHendlserTests(
 
         harTaskStatus("opprettJournalføringsoppgave", "e2e-" + response.body, status = Status.FERDIG)
         assertThat(mockserverKlient?.hentOppgaveOpprettetMedCallid("e2e-" + response.body))
-                .contains("Bruker har en pågående sak i BA-sak")
+                .contains("Bruker har sak i BA-sak")
                 .contains("JFR")
     }
 
 
     @Test
     fun `skal sende journalhendelse som fører til oppdaterOgFerdigstillJournalpost`() {
-        // Trenger først en løpende fagsak eller en pågående behandling i ba-sak på samme bruker som journalhendelsen gjelder...
+        // Trenger først en fagsak på samme bruker som journalhendelsen gjelder i ba-sak
         baSakKlient.opprettFagsak(søkersIdent = morPersonident)
-        baSakKlient.opprettBehandling(søkersIdent = morPersonident)
 
         val response = mottakKlient.postJournalhendelse(MIDLERTIDIG_JOURNALPOST_DIGITAL)
         assertThat(response.statusCode.is2xxSuccessful).isTrue()
