@@ -74,7 +74,7 @@ class AutotestJournaføringHendlserTests(
         harTaskStatus("oppdaterOgFerdigstillJournalpost", "e2e-" + response.body, Status.FERDIG)
         harTaskStatus("opprettBehandleSakoppgave", "e2e-" + response.body, Status.FERDIG)
         assertThat(mockserverKlient?.hentOppgaveOpprettetMedCallid("e2e-" + response.body))
-                .contains("beskrivelse\":\"Ordinær barnetrygd")
+                .contains("Ordinær barnetrygd")
                 .contains("BEH_SAK")
     }
 
