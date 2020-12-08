@@ -35,7 +35,7 @@ class AutotestHenleggelseTests(
         }
 
         assertThat(responseHenlagdSøknad?.data?.behandlinger?.first()?.aktiv == false)
-        assertThat(responseHenlagdSøknad?.data?.behandlinger?.first()?.samletResultat == BehandlingResultatType.HENLAGT_FEILAKTIG_OPPRETTET)
+        assertThat(responseHenlagdSøknad?.data?.behandlinger?.first()?.resultat == BehandlingResultat.HENLAGT_FEILAKTIG_OPPRETTET)
 
         val logger = baSakKlient.hentLogg(responseHenlagdSøknad!!.data!!.id)
         if (logger?.status == Ressurs.Status.SUKSESS) {
@@ -67,7 +67,7 @@ class AutotestHenleggelseTests(
         }
 
         assertThat(responseHenlagdSøknad?.data?.behandlinger?.first()?.aktiv == false)
-        assertThat(responseHenlagdSøknad?.data?.behandlinger?.first()?.samletResultat == BehandlingResultatType.HENLAGT_SØKNAD_TRUKKET)
+        assertThat(responseHenlagdSøknad?.data?.behandlinger?.first()?.resultat == BehandlingResultat.HENLAGT_SØKNAD_TRUKKET)
 
         val logger = baSakKlient.hentLogg(responseHenlagdSøknad!!.data!!.id)
         if (logger?.status == Ressurs.Status.SUKSESS) {

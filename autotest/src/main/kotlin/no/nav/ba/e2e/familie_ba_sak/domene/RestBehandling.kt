@@ -14,7 +14,7 @@ data class RestBehandling(val aktiv: Boolean,
                           val underkategori: BehandlingUnderkategori,
                           val personResultater: List<RestPersonResultat>,
                           val gjeldendeForUtbetaling: Boolean,
-                          val samletResultat: BehandlingResultatType,
+                          val resultat: BehandlingResultat,
                           val vedtakForBehandling: List<Any?>,
                           val endretAv: String)
 
@@ -55,14 +55,17 @@ enum class BehandlingStatus {
     AVSLUTTET,
 }
 
-enum class BehandlingResultatType(val brevMal: String, val displayName: String) {
+enum class BehandlingResultat(val brevMal: String, val displayName: String) {
     INNVILGET(brevMal = "innvilget", displayName = "Innvilget"),
-    DELVIS_INNVILGET(brevMal = "ukjent", displayName = "Delvis innvilget"),
-    AVSLÅTT(brevMal = "avslag", displayName = "Avslått"),
+    ENDRING_OG_LØPENDE(brevMal = "endring_og_lopende", displayName = "Endring og løpende"),
+    ENDRING_OG_OPPHØRT(brevMal = "endring_og_opphort", displayName = "Endring og opphør"),
     OPPHØRT(brevMal = "opphor", displayName = "Opphørt"),
+    AVSLÅTT(brevMal = "avslag", displayName = "Avslått"),
+    FORTSATT_INNVILGET(brevMal = "ukjent", displayName = "Fortsatt innvilget"),
+    DELVIS_INNVILGET(brevMal = "ukjent", displayName = "Delvis innvilget"),
     HENLAGT_FEILAKTIG_OPPRETTET(brevMal = "ukjent", displayName = "Henlagt feilaktig opprettet"),
     HENLAGT_SØKNAD_TRUKKET(brevMal = "ukjent", displayName = "Henlagt søknad trukket"),
-    IKKE_VURDERT(brevMal = "ukjent", displayName = "Ikke vurdert")
+    IKKE_VURDERT(brevMal = "ukjent", displayName = "Ikke vurdert"),
 }
 
 data class RestPersonResultat(
