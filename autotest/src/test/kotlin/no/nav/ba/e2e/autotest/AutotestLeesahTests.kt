@@ -3,7 +3,7 @@ package no.nav.ba.e2e.autotest
 import no.nav.ba.e2e.commons.Utils
 import no.nav.ba.e2e.familie_ba_mottak.FamilieBaMottakKlient
 import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
-import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingResultatType
+import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingResultat
 import no.nav.familie.prosessering.domene.Status
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.kotlin.await
@@ -67,15 +67,15 @@ class AutotestLeesahTests(
         await.atMost(60, TimeUnit.SECONDS)
                 .withPollInterval(Duration.ofSeconds(1))
                 .until {
-                    harMorBehandlingMedResultat(BehandlingResultatType.INNVILGET)
+                    harMorBehandlingMedResultat(BehandlingResultat.INNVILGET)
                 }
     }
 
-    private fun harMorBehandlingMedResultat(resultatType: BehandlingResultatType): Boolean {
+    private fun harMorBehandlingMedResultat(resultat: BehandlingResultat): Boolean {
         val fagsakId = baSakKlient.hentFagsakDeltager(PERSONIDENT_MOR)?.fagsakId ?: return false
 
         val aktivBehandlingEtterHendelse = Utils.hentAktivBehandling(baSakKlient.hentFagsak(fagsakId).data!!)!!
-        return aktivBehandlingEtterHendelse.samletResultat == resultatType
+        return aktivBehandlingEtterHendelse.resultat == resultat
     }
 
     private fun metrikkSkalØkes(metrikkNavn: String, tagFilter: Pair<String, String>, startVerdiMetrikkFødselshendelse: Long) {
