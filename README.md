@@ -28,7 +28,7 @@ Forutsetter at man gjør noen endringer rundt docker-fila til applikasjonen(e) u
 Åpne familie-ba-sak i IntelliJ:
 1. Legg til i `init.sh`:
     ```shell
-    export JAVA_OPTS='-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=0.0.0.0:8089 -Djava.security.egd=file:/dev/./urandom'
+    export JAVA_OPTS='-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=0.0.0.0:8089'
     ```
 2. Opprett ny fil, `run-java.sh`, med innehold:
     ```shell
@@ -54,12 +54,12 @@ og vent på meldingen
 ```shell
 venter på oppstart av mottak / sak / integrasjoner
 ```
-Da er det på tide å starte debug-konfigurasjonen opprettet i punkt 5 over.
+Start debug-konfigurasjonen opprettet i punkt 5 over. Vent til
 
 ```shell
 Miljøet er satt opp.
 ```
-Deretter man sette breakpoints og f.eks kjøre en av testene i `/autotest`
+Deretter kan man sette breakpoints og f.eks kjøre en av testene i `/autotest`
 
 ## For frontend (ikke støttet enda)
 
