@@ -1,10 +1,8 @@
 # familie-ba-e2e
 
-Testriggen kan kjøre på ekstern server og lokalt. Lokalt kan man erstatte ett eller flere docker-images manuelt, slik at man kan teste applikasjonen i sammenheng med de andre applikasjonene. På sikt bør man kunne kjøre applikasjonen under test som en lokal prosess (f.eks. via IntelliJ), da det er vanskeligere å debugge et docker-image.
+Testriggen kan kjøre på ekstern server og lokalt. Lokalt kan man erstatte ett eller flere docker-images manuelt, slik at man kan teste applikasjonen i sammenheng med de andre applikasjonene. Man kan også koble seg til en eller flere applikasjoner via IntelliJ, for å kjøre debugging med breakpoints (se Tips nedenfor).
 
 e2e.sh kjører alle applikasjonene, og inneholder enkel logikk for å vente på applikasjoner som er avhengig av andre kjørende applikasjoner. 
-
-For lokal kjøring via IntelliJ ligger det mer info i .idea/[README](.idea/README.md). Husk at run-konfigurasjonene må oppdateres hvis en app eller miljøvariabel legges til/endres.
 
 ## Kjøre tester
 1. Legg inn secrets i `e2e/.env`. Hentes fra vault `prod-fss/familie/default/familie-ba-e2e.env`.
@@ -23,6 +21,46 @@ For effektiv utvikling kan disse kommandoene være nyttige:
 - Docker er forhåndskonfigurert med mindre tilgjengelig minne enn hva e2e-oppsettet trenger. Dette må økes i innstillingene til Docker. Det kan være lurt å sette av 6 GB.Kan gjøres ved å gå inn i preferences -> resources via Docker desktop UI.
 - Ønsker du mer verbos kjøring kan du fjerne detach-flagg `-d` fra `e2e.sh`-script
 
+### Debugging via IntelliJ
+Forutsetter at man gjør noen endringer rundt docker-fila til applikasjonen(e) under test i forkant av `docker build`.
+
+#### Eksempel med ba-sak
+
+Åpne familie-ba-sak i IntelliJ:
+1. Legg til i `init.sh`:
+    ```shell
+    export JAVA_OPTS='-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=0.0.0.0:8089 -Djava.security.egd=file:/dev/./urandom'
+    ```
+2. Opprett ny fil, `run-java.sh`, med innehold:
+    ```shell
+    exec java ${DEFAULT_JVM_OPTS} ${JAVA_OPTS} -jar app.jar ${RUNTIME_OPTS}
+   ```
+3. Legg til følgende linje i `Dockerfile`:
+    ```shell
+    COPY run-java.sh run-java.sh
+    ```
+4. Kjør `docker build -t ba-sak:local .` fra rotmappen til prosjektet.
+
+5. Opprett en Remote debug-konfigurasjon ( -> `Edit Configurations...` -> `+` -> `Remote` )
+    og velg: `Host:` localhost, `Port:` 8089, `Use module classpath:` familie-ba-sak. Gi konfigurasjonen et navn og trykk OK.
+
+Åpne `docker-compose.yml` i familie-ba-e2e, og sett `familie-ba-sak:` `image: ba-sak:local` 
+
+Kjør
+```shell
+cd e2e
+./e2e.sh
+```
+og vent på meldingen
+```shell
+venter på oppstart av mottak / sak / integrasjoner
+```
+Da er det på tide å starte debug-konfigurasjonen opprettet i punkt 5 over.
+
+```shell
+Miljøet er satt opp.
+```
+Deretter man sette breakpoints og f.eks kjøre en av testene i `/autotest`
 
 ## For frontend (ikke støttet enda)
 
