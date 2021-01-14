@@ -1,9 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="ba-e2e" type="CompoundRunConfigurationType">
-    <toRun name="DevSak" type="JetRunConfigurationType" />
-    <toRun name="HendelseTrigger" type="SpringBootApplicationConfigurationType" />
-    <toRun name="DevIntegrasjoner" type="SpringBootApplicationConfigurationType" />
-    <toRun name="DevMottak" type="JetRunConfigurationType" />
-    <method v="2" />
-  </configuration>
-</component>
