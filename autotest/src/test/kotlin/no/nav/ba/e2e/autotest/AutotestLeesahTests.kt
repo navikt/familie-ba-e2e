@@ -4,6 +4,9 @@ import no.nav.ba.e2e.commons.Utils
 import no.nav.ba.e2e.familie_ba_mottak.FamilieBaMottakKlient
 import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
 import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingResultat
+import no.nav.ba.e2e.mockserver.MockserverKlient
+import no.nav.ba.e2e.mockserver.domene.RestScenario
+import no.nav.ba.e2e.mockserver.domene.RestScenarioPerson
 import no.nav.familie.prosessering.domene.Status
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.kotlin.await
@@ -17,7 +20,8 @@ import java.util.concurrent.TimeUnit
 
 class AutotestLeesahTests(
         @Autowired mottakKlient: FamilieBaMottakKlient,
-        @Autowired baSakKlient: FamilieBaSakKlient) : AbstractMottakTest(mottakKlient, baSakKlient) {
+        @Autowired baSakKlient: FamilieBaSakKlient,
+        @Autowired mockserverKlient: MockserverKlient) : AbstractMottakTest(mottakKlient, baSakKlient, mockserverKlient) {
 
     @Test
     fun `skal sende dødsfallhendelse`() {
@@ -41,7 +45,13 @@ class AutotestLeesahTests(
         val callId = UUID.randomUUID().toString()
         MDC.put("callId", callId)
 
-        val fødselsHendelseResponse = mottakKlient.fødsel(listOf(PERSONIDENT_BARN, "1234567890123"))
+        val scenario = mockserverKlient!!.lagScenario(
+                RestScenario(
+                        søker = RestScenarioPerson(fødselsdato = "1990-04-20", fornavn = "Mor", etternavn = "Søker"),
+                        barna = listOf(RestScenarioPerson(fødselsdato = "2021-01-03", fornavn = "Barn", etternavn = "Barnesen"))))
+
+        val fødselsHendelseResponse = mottakKlient.fødsel(listOf(scenario?.barna?.first()?.ident!!, "1234567890123"))
+        //val fødselsHendelseResponse = mottakKlient.fødsel(listOf(PERSONIDENT_BARN, "1234567890123"))
 
         assertThat(fødselsHendelseResponse.statusCode.is2xxSuccessful).isTrue()
         assertThat(fødselsHendelseResponse.body).isNotNull()
