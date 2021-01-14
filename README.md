@@ -7,7 +7,7 @@ e2e.sh kjører alle applikasjonene, og inneholder enkel logikk for å vente på 
 For lokal kjøring via IntelliJ ligger det mer info i .idea/[README](.idea/README.md). Husk at run-konfigurasjonene må oppdateres hvis en app eller miljøvariabel legges til/endres.
 
 ## Kjøre tester
-1. Legg inn secrets i `e2e/.env`. Hentes fra vault `prod-fss/default/familie`.
+1. Legg inn secrets i `e2e/.env`. Hentes fra vault `prod-fss/familie/default/familie-ba-e2e.env`.
 2. I `/e2e`: Spinn opp e2e-miljø: `./e2e.sh`
 3. I `/autotest`: Kjør ønskede tester
 
