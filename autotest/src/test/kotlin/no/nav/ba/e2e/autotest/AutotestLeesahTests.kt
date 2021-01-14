@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test
 import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
+import java.time.LocalDate
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -48,10 +49,9 @@ class AutotestLeesahTests(
         val scenario = mockserverKlient!!.lagScenario(
                 RestScenario(
                         søker = RestScenarioPerson(fødselsdato = "1990-04-20", fornavn = "Mor", etternavn = "Søker"),
-                        barna = listOf(RestScenarioPerson(fødselsdato = "2021-01-03", fornavn = "Barn", etternavn = "Barnesen"))))
+                        barna = listOf(RestScenarioPerson(fødselsdato = LocalDate.now().withDayOfMonth(1).toString(), fornavn = "Barn", etternavn = "Barnesen"))))
 
-        val fødselsHendelseResponse = mottakKlient.fødsel(listOf(scenario?.barna?.first()?.ident!!, "1234567890123"))
-        //val fødselsHendelseResponse = mottakKlient.fødsel(listOf(PERSONIDENT_BARN, "1234567890123"))
+        val fødselsHendelseResponse = mottakKlient.fødsel(listOf(scenario?.barna?.first()?.ident!!, scenario.søker.aktørId!!))
 
         assertThat(fødselsHendelseResponse.statusCode.is2xxSuccessful).isTrue()
         assertThat(fødselsHendelseResponse.body).isNotNull()
@@ -77,12 +77,12 @@ class AutotestLeesahTests(
         await.atMost(60, TimeUnit.SECONDS)
                 .withPollInterval(Duration.ofSeconds(1))
                 .until {
-                    harMorBehandlingMedResultat(BehandlingResultat.INNVILGET)
+                    harMorBehandlingMedResultat(BehandlingResultat.INNVILGET, scenario.søker.ident!!)
                 }
     }
 
-    private fun harMorBehandlingMedResultat(resultat: BehandlingResultat): Boolean {
-        val fagsakId = baSakKlient.hentFagsakDeltager(PERSONIDENT_MOR)?.fagsakId ?: return false
+    private fun harMorBehandlingMedResultat(resultat: BehandlingResultat, søkersIdent: String): Boolean {
+        val fagsakId = baSakKlient.hentFagsakDeltager(søkersIdent)?.fagsakId ?: return false
 
         val aktivBehandlingEtterHendelse = Utils.hentAktivBehandling(baSakKlient.hentFagsak(fagsakId).data!!)!!
         return aktivBehandlingEtterHendelse.resultat == resultat
@@ -97,7 +97,6 @@ class AutotestLeesahTests(
     }
 
     companion object {
-        const val PERSONIDENT_MOR = "01129400001"
         const val PERSONIDENT_BARN = "01062000001"
     }
 }
