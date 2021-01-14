@@ -21,10 +21,10 @@ For effektiv utvikling kan disse kommandoene være nyttige:
 - Docker er forhåndskonfigurert med mindre tilgjengelig minne enn hva e2e-oppsettet trenger. Dette må økes i innstillingene til Docker. Det kan være lurt å sette av 6 GB.Kan gjøres ved å gå inn i preferences -> resources via Docker desktop UI.
 - Ønsker du mer verbos kjøring kan du fjerne detach-flagg `-d` fra `e2e.sh`-script
 
-###Debugging via IntelliJ
+### Debugging via IntelliJ
 Forutsetter at man gjør noen endringer rundt docker-fila til applikasjonen(e) under test i forkant av `docker build`.
 
-####Eksempel med ba-sak
+#### Eksempel med ba-sak
 
 Åpne familie-ba-sak i IntelliJ:
 1. Legg til i `init.sh`:
