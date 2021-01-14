@@ -1,15 +1,18 @@
 # familie-ba-e2e
 
-Testriggen kan kjøre på ekstern server og lokalt. Lokalt kan man erstatte ett eller flere docker-images manuelt, slik at man kan teste applikasjonen i sammenheng med de andre applikasjonene. Man kan også koble seg til en eller flere applikasjoner via IntelliJ, for å kjøre debugging med breakpoints (se Tips nedenfor).
+Her finner man ende-til-endetester (`/autotest`) og mijøet man kjører de med (`/e2e`). 
 
-e2e.sh kjører alle applikasjonene, og inneholder enkel logikk for å vente på applikasjoner som er avhengig av andre kjørende applikasjoner. 
+Testriggen kan kjøre på ekstern server og lokalt. Lokalt kan man erstatte ett eller flere docker-images manuelt (`/e2e/docker-compose.yml`), slik at man kan teste applikasjonen i sammenheng med de andre applikasjonene. Man kan også koble seg til en eller flere applikasjoner via IntelliJ, for å kjøre debugging med breakpoints (se egen seksjon nedenfor).
+
+I `/e2e` ligger `e2e.sh` som kjører alle applikasjonene og inneholder enkel logikk for å vente på applikasjoner som er avhengig av andre kjørende applikasjoner. 
 
 ## Kjøre tester
 1. Legg inn secrets i `e2e/.env`. Hentes fra vault `prod-fss/familie/default/familie-ba-e2e.env`.
-2. I `/e2e`: Spinn opp e2e-miljø: `./e2e.sh`
-3. I `/autotest`: Kjør ønskede tester
+2. Docker er forhåndskonfigurert med mindre tilgjengelig minne enn hva e2e-oppsettet trenger. Dette må økes i innstillingene til Docker. Det kan være lurt å sette av 6 GB. Kan gjøres ved å gå inn i preferences -> resources via Docker Dashboard.
+3. I `/e2e`: Spinn opp e2e-miljø: `./e2e.sh`. (Ønsker du mer verbos kjøring kan du fjerne detach-flagg `-d` fra `e2e.sh`-script)
+4. I `/autotest`: Kjør ønskede tester
 
-## Tips
+### Tips
 
 For effektiv utvikling kan disse kommandoene være nyttige:
 
@@ -17,11 +20,7 @@ For effektiv utvikling kan disse kommandoene være nyttige:
 - For å hente informasjon om docker containerne som kjører: `docker ps`
 - For logger fra de ulike appene: `docker logs <docker-id> -f`
 
-#### E2E-miljø
-- Docker er forhåndskonfigurert med mindre tilgjengelig minne enn hva e2e-oppsettet trenger. Dette må økes i innstillingene til Docker. Det kan være lurt å sette av 6 GB.Kan gjøres ved å gå inn i preferences -> resources via Docker desktop UI.
-- Ønsker du mer verbos kjøring kan du fjerne detach-flagg `-d` fra `e2e.sh`-script
-
-### Debugging via IntelliJ
+## Debugging via IntelliJ
 Forutsetter at man gjør noen endringer rundt docker-fila til applikasjonen(e) under test i forkant av `docker build`.
 
 #### Eksempel med ba-sak
