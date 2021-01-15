@@ -26,7 +26,15 @@ class AutotestLeesahTests(
 
     @Test
     fun `skal sende dødsfallhendelse`() {
-        val dødsfallResponse = mottakKlient.dødsfall(listOf(PERSONIDENT_BARN, "1234567890123"))
+
+        val scenario = mockserverKlient!!.lagScenario(
+                RestScenario(
+                        søker = RestScenarioPerson(fødselsdato = "1990-04-20", fornavn = "Mor", etternavn = "Søker"),
+                        barna = listOf(RestScenarioPerson(fødselsdato = LocalDate.now().minusDays(10).toString(),
+                                                          fornavn = "Barn",
+                                                          etternavn = "Barnesen"))))
+
+        val dødsfallResponse = mottakKlient.dødsfall(listOf(scenario?.barna?.first()?.ident!!, "1234567890132"))
         assertThat(dødsfallResponse.statusCode.is2xxSuccessful).isTrue()
         assertThat(dødsfallResponse.body).isNotNull()
 
@@ -49,7 +57,9 @@ class AutotestLeesahTests(
         val scenario = mockserverKlient!!.lagScenario(
                 RestScenario(
                         søker = RestScenarioPerson(fødselsdato = "1990-04-20", fornavn = "Mor", etternavn = "Søker"),
-                        barna = listOf(RestScenarioPerson(fødselsdato = LocalDate.now().withDayOfMonth(1).toString(), fornavn = "Barn", etternavn = "Barnesen"))))
+                        barna = listOf(RestScenarioPerson(fødselsdato = LocalDate.now().withDayOfMonth(1).toString(),
+                                                          fornavn = "Barn",
+                                                          etternavn = "Barnesen"))))
 
         val fødselsHendelseResponse = mottakKlient.fødsel(listOf(scenario?.barna?.first()?.ident!!, scenario.søker.aktørId!!))
 
@@ -94,9 +104,5 @@ class AutotestLeesahTests(
                 .until {
                     baSakKlient.tellMetrikk(metrikkNavn, tagFilter) > startVerdiMetrikkFødselshendelse
                 }
-    }
-
-    companion object {
-        const val PERSONIDENT_BARN = "01062000001"
     }
 }
