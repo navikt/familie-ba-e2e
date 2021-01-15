@@ -43,6 +43,7 @@ services:
     image: docker.pkg.github.com/navikt/familie-ba-mottak/familie-ba-mottak:latest
     environment:
       SPRING_PROFILES_ACTIVE: e2e
+      APPD_ENABLED: 0
       MOTTAK_CLIENT_ID: ${MOTTAK_CLIENT_ID}
       MOTTAK_FRONTEND_CLIENT_ID: ${MOTTAK_FRONTEND_CLIENT_ID}
       MOTTAK_CLIENT_SECRET: ${MOTTAK_CLIENT_SECRET}
@@ -62,6 +63,7 @@ services:
       - familie-ba-dokgen
     environment:
       SPRING_PROFILES_ACTIVE: e2e
+      APPD_ENABLED: 0
       BA_SAK_CLIENT_ID: ${SAK_CLIENT_ID}
       BA_MOTTAK_CLIENT_ID: ${MOTTAK_CLIENT_ID}
       BA_SAK_FRONTEND_CLIENT_ID: ${SAK_FRONTEND_CLIENT_ID}
@@ -108,6 +110,7 @@ services:
       - ./modig:/root/.modig
     environment:
       SPRING_PROFILES_ACTIVE: e2e
+      APPD_ENABLED: 0
       INTEGRASJONER_CLIENT_ID: ${INTEGRASJONER_CLIENT_ID}
       INTEGRASJONER_CLIENT_SECRET: ${INTEGRASJONER_CLIENT_SECRET}
       INFOTRYGD_KS_SCOPE: ${INTEGRASJONER_INFOTRYGD_KS_SCOPE}
@@ -122,6 +125,7 @@ services:
       - postgres-oppdrag
     environment:
       SPRING_PROFILES_ACTIVE: e2e
+      APPD_ENABLED: 0
       OPPDRAG_CLIENT_ID: ${OPPDRAG_CLIENT_ID}
       OPPDRAG_BA_SAK_CLIENT_ID: ${SAK_CLIENT_ID}
     ports:
