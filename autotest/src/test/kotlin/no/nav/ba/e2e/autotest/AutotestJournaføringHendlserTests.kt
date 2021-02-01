@@ -57,7 +57,7 @@ class AutotestJournaføringHendlserTests(
     }
 
 
-    @Test
+    //@Test
     fun `skal sende journalhendelse som fører til oppdaterOgFerdigstillJournalpost`() {
         // Trenger først en fagsak på samme bruker som journalhendelsen gjelder i ba-sak
         baSakKlient.opprettFagsak(søkersIdent = morPersonident)
