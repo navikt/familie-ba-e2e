@@ -57,9 +57,8 @@ class AutotestJournaføringHendlserTests(
     }
 
 
-    //@Test
-    fun `skal sende journalhendelse som fører til oppdaterOgFerdigstillJournalpost`() {
-        // Trenger først en fagsak på samme bruker som journalhendelsen gjelder i ba-sak
+    @Test
+    fun `mottak av digital søknad skal føre til opprettJournalføringsoppgave når bruker har sak i ba-sak`() {
         baSakKlient.opprettFagsak(søkersIdent = morPersonident)
 
         val response = mottakKlient.postJournalhendelse(MIDLERTIDIG_JOURNALPOST_DIGITAL)
@@ -71,11 +70,10 @@ class AutotestJournaføringHendlserTests(
         assertThat(erHendelseMottatt.statusCode.is2xxSuccessful).isTrue()
         assertThat((erHendelseMottatt.body)).isTrue()
 
-        harTaskStatus("oppdaterOgFerdigstillJournalpost", "e2e-" + response.body, Status.FERDIG)
-        harTaskStatus("opprettBehandleSakoppgave", "e2e-" + response.body, Status.FERDIG)
+        harTaskStatus("opprettJournalføringsoppgave", "e2e-" + response.body, Status.FERDIG)
         assertThat(mockserverKlient?.hentOppgaveOpprettetMedCallid("e2e-" + response.body))
-                .contains("Ordinær barnetrygd")
-                .contains("BEH_SAK")
+                .contains("Bruker har sak i BA-sak")
+                .contains("JFR")
     }
 
     companion object {
