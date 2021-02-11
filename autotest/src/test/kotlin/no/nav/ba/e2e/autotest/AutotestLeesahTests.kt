@@ -4,6 +4,9 @@ import no.nav.ba.e2e.commons.Utils
 import no.nav.ba.e2e.familie_ba_mottak.FamilieBaMottakKlient
 import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
 import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingResultat
+import no.nav.ba.e2e.mockserver.MockserverKlient
+import no.nav.ba.e2e.mockserver.domene.RestScenario
+import no.nav.ba.e2e.mockserver.domene.RestScenarioPerson
 import no.nav.familie.prosessering.domene.Status
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.kotlin.await
@@ -12,16 +15,26 @@ import org.junit.jupiter.api.Test
 import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
+import java.time.LocalDate
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class AutotestLeesahTests(
         @Autowired mottakKlient: FamilieBaMottakKlient,
-        @Autowired baSakKlient: FamilieBaSakKlient) : AbstractMottakTest(mottakKlient, baSakKlient) {
+        @Autowired baSakKlient: FamilieBaSakKlient,
+        @Autowired mockserverKlient: MockserverKlient) : AbstractMottakTest(mottakKlient, baSakKlient, mockserverKlient) {
 
     @Test
     fun `skal sende dødsfallhendelse`() {
-        val dødsfallResponse = mottakKlient.dødsfall(listOf(PERSONIDENT_BARN, "1234567890123"))
+
+        val scenario = mockserverKlient!!.lagScenario(
+                RestScenario(
+                        søker = RestScenarioPerson(fødselsdato = "1990-04-20", fornavn = "Mor", etternavn = "Søker"),
+                        barna = listOf(RestScenarioPerson(fødselsdato = LocalDate.now().minusDays(10).toString(),
+                                                          fornavn = "Barn",
+                                                          etternavn = "Barnesen"))))
+
+        val dødsfallResponse = mottakKlient.dødsfall(listOf(scenario?.barna?.first()?.ident!!, "1234567890132"))
         assertThat(dødsfallResponse.statusCode.is2xxSuccessful).isTrue()
         assertThat(dødsfallResponse.body).isNotNull()
 
@@ -41,7 +54,14 @@ class AutotestLeesahTests(
         val callId = UUID.randomUUID().toString()
         MDC.put("callId", callId)
 
-        val fødselsHendelseResponse = mottakKlient.fødsel(listOf(PERSONIDENT_BARN, "1234567890123"))
+        val scenario = mockserverKlient!!.lagScenario(
+                RestScenario(
+                        søker = RestScenarioPerson(fødselsdato = "1990-04-20", fornavn = "Mor", etternavn = "Søker"),
+                        barna = listOf(RestScenarioPerson(fødselsdato = LocalDate.now().withDayOfMonth(1).toString(),
+                                                          fornavn = "Barn",
+                                                          etternavn = "Barnesen"))))
+
+        val fødselsHendelseResponse = mottakKlient.fødsel(listOf(scenario?.barna?.first()?.ident!!, scenario.søker.aktørId!!))
 
         assertThat(fødselsHendelseResponse.statusCode.is2xxSuccessful).isTrue()
         assertThat(fødselsHendelseResponse.body).isNotNull()
@@ -67,12 +87,12 @@ class AutotestLeesahTests(
         await.atMost(60, TimeUnit.SECONDS)
                 .withPollInterval(Duration.ofSeconds(1))
                 .until {
-                    harMorBehandlingMedResultat(BehandlingResultat.INNVILGET)
+                    harMorBehandlingMedResultat(BehandlingResultat.INNVILGET, scenario.søker.ident!!)
                 }
     }
 
-    private fun harMorBehandlingMedResultat(resultat: BehandlingResultat): Boolean {
-        val fagsakId = baSakKlient.hentFagsakDeltager(PERSONIDENT_MOR)?.fagsakId ?: return false
+    private fun harMorBehandlingMedResultat(resultat: BehandlingResultat, søkersIdent: String): Boolean {
+        val fagsakId = baSakKlient.hentFagsakDeltager(søkersIdent)?.fagsakId ?: return false
 
         val aktivBehandlingEtterHendelse = Utils.hentAktivBehandling(baSakKlient.hentFagsak(fagsakId).data!!)!!
         return aktivBehandlingEtterHendelse.resultat == resultat
@@ -84,10 +104,5 @@ class AutotestLeesahTests(
                 .until {
                     baSakKlient.tellMetrikk(metrikkNavn, tagFilter) > startVerdiMetrikkFødselshendelse
                 }
-    }
-
-    companion object {
-        const val PERSONIDENT_MOR = "01129400001"
-        const val PERSONIDENT_BARN = "01062000001"
     }
 }

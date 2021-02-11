@@ -57,8 +57,8 @@ enum class BehandlingStatus {
 
 enum class BehandlingResultat(val brevMal: String, val displayName: String) {
     INNVILGET(brevMal = "innvilget", displayName = "Innvilget"),
-    ENDRING_OG_LØPENDE(brevMal = "endring_og_lopende", displayName = "Endring og løpende"),
-    ENDRING_OG_OPPHØRT(brevMal = "endring_og_opphort", displayName = "Endring og opphør"),
+    ENDRET_OG_FORTSATT_INNVILGET(brevMal = "innvilget", displayName = "Endret og fortsatt innvilget"),
+    ENDRET_OG_OPPHØRT(brevMal = "endring_og_opphort", displayName = "Endret og opphørt"),
     OPPHØRT(brevMal = "opphor", displayName = "Opphørt"),
     AVSLÅTT(brevMal = "avslag", displayName = "Avslått"),
     FORTSATT_INNVILGET(brevMal = "ukjent", displayName = "Fortsatt innvilget"),
