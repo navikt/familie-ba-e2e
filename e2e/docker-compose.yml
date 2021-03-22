@@ -60,7 +60,6 @@ services:
       - mock-oauth2-server
       - familie-integrasjoner
       - familie-oppdrag
-      - familie-ba-dokgen
       - familie-brev
     environment:
       SPRING_PROFILES_ACTIVE: e2e
@@ -131,11 +130,6 @@ services:
       OPPDRAG_BA_SAK_CLIENT_ID: ${SAK_CLIENT_ID}
     ports:
       - 8087:8087
-  familie-ba-dokgen:
-    restart: always
-    image: docker.pkg.github.com/navikt/familie-ba-dokgen/familie-ba-dokgen:latest
-    ports:
-      - 8091:8080
   familie-brev:
     restart: always
     image: docker.pkg.github.com/navikt/familie-brev/familie-brev:latest
