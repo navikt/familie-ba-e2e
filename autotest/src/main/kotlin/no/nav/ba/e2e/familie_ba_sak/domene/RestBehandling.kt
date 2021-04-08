@@ -4,18 +4,21 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class RestBehandling(val aktiv: Boolean,
+                          val arbeidsfordelingPåBehandling: RestArbeidsfordelingPåBehandling,
+                          val årsak: BehandlingÅrsak,
+                          val skalBehandlesAutomatisk: Boolean,
                           val behandlingId: Long,
                           val type: BehandlingType,
                           val status: BehandlingStatus,
                           val steg: StegType,
+                          val stegTilstand: List<RestBehandlingStegTilstand>,
+                          val søknadsgrunnlag: SøknadDTO?,
                           val kategori: BehandlingKategori,
                           val personer: List<RestPerson>,
                           val opprettetTidspunkt: LocalDateTime,
                           val underkategori: BehandlingUnderkategori,
                           val personResultater: List<RestPersonResultat>,
-                          val gjeldendeForUtbetaling: Boolean,
                           val resultat: BehandlingResultat,
-                          val vedtakForBehandling: List<Any?>,
                           val endretAv: String)
 
 enum class BehandlingType(val visningsnavn: String) {
@@ -87,5 +90,7 @@ data class RestVilkårResultat(
 
 
 enum class Resultat {
-    OPPFYLT, IKKE_OPPFYLT, IKKE_VURDERT
+    OPPFYLT,
+    IKKE_OPPFYLT,
+    IKKE_VURDERT
 }
