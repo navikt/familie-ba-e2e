@@ -11,6 +11,7 @@ import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
@@ -63,8 +64,9 @@ class AutotestEnkelVerdikjedeOgTekniskOpphør(
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.VILKÅRSVURDERING)
 
-        val søknad = familieBaSakKlient.hentSøknad(behandlingId = aktivBehandling.behandlingId)
-        assertEquals(søkersIdent, søknad.data?.søkerMedOpplysninger?.ident)
+        val søknad = Utils.hentAktivBehandling(restFagsak = restFagsakEtterRegistrertSøknad.data!!)?.søknadsgrunnlag
+        assertNotNull(søknad)
+        assertEquals(søkersIdent, søknad?.søkerMedOpplysninger?.ident)
 
         // Godkjenner alle vilkår på førstegangsbehandling
         val aktivBehandlingEtterRegistrertSøknad = Utils.hentAktivBehandling(restFagsakEtterRegistrertSøknad.data!!)!!
