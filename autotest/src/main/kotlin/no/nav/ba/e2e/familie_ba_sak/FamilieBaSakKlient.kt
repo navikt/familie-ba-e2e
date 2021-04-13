@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestOperations
 import org.springframework.web.client.getForEntity
 import java.net.URI
+import java.time.LocalDate
 
 @Service
 class FamilieBaSakKlient(
@@ -121,6 +122,11 @@ class FamilieBaSakKlient(
         val metric = restOperations.getForObject("$baSakUrl/internal/metrics/$metrikkNavn?tag=${tag.first}:${tag.second}",
                                                  Metrikk::class.java)
         return metric?.measurements?.first { it.statistic == "COUNT" }?.value ?: 0
+    }
+
+    fun leggTilVedtakBegrunnelse(fagsakId: Long, vedtakBegrunnelse: RestPostVedtakBegrunnelse): Ressurs<RestFagsak> {
+        val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId/vedtak/begrunnelser")
+        return postForEntity(uri, vedtakBegrunnelse)!!
     }
 }
 

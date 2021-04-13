@@ -88,9 +88,18 @@ class AutotestEnkelVerdikjedeOgTekniskOpphør(
                 familieBaSakKlient.validerVilkårsvurdering(
                         behandlingId = aktivBehandlingEtterRegistrertSøknad.behandlingId
                 )
+
         generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.SEND_TIL_BESLUTTER)
+
+        val restFagsakEtterVedtaksbegrunnelse = familieBaSakKlient.leggTilVedtakBegrunnelse(
+                fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
+                vedtakBegrunnelse = RestPostVedtakBegrunnelse(
+                        fom = LocalDate.now().plusMonths(1).withDayOfMonth(1),
+                        tom = null,
+                        vedtakBegrunnelse = VedtakBegrunnelseSpesifikasjon.INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER)
+        )
 
         val restFagsakEtterSendTilBeslutter =
                 familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id)

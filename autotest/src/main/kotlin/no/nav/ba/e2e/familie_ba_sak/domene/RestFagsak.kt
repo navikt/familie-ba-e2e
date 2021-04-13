@@ -1,5 +1,6 @@
 package no.nav.ba.e2e.familie_ba_sak.domene
 
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 enum class FagsakStatus {
@@ -48,3 +49,16 @@ data class Logg(
         val tittel: String,
         val rolle: BehandlerRolle,
         val tekst: String)
+
+enum class VedtakBegrunnelseSpesifikasjon {
+    INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER,
+    REDUKSJON_UNDER_6_ÅR,
+}
+
+data class RestPostVedtakBegrunnelse(
+        val fom: LocalDate,
+        val tom: LocalDate?,
+        val vedtakBegrunnelse: VedtakBegrunnelseSpesifikasjon
+)
+
+

@@ -54,7 +54,8 @@ services:
       - 8090:8090
   familie-ba-sak:
     restart: always
-    image: docker.pkg.github.com/navikt/familie-ba-sak/familie-ba-sak:latest
+    #image: docker.pkg.github.com/navikt/familie-ba-sak/familie-ba-sak:latest
+    image: familie-ba-sak:lokal
     depends_on:
       - postgres-sak
       - mock-oauth2-server
@@ -132,6 +133,21 @@ services:
       - 8087:8087
   familie-brev:
     restart: always
-    image: docker.pkg.github.com/navikt/familie-brev/familie-brev:latest
+    #image: docker.pkg.github.com/navikt/familie-brev/familie-brev:latest
+    image: familie-brev:lokal
+    environment:
+      ENV: e2e
     ports:
       - 8001:8001
+  familie-dokument:
+    restart: always
+    #image: docker.pkg.github.com/navikt/familie-dokument/familie-dokument:latest
+    image : familie-dokument:lokal
+    environment:
+      SPRING_PROFILES_ACTIVE: e2e
+      GCP_STORAGE_BUCKETNAME: dummy
+      ACCEPTEDAUDIENCE: dummy
+      FAMILIE_DOKUMENT_STORAGE_ENCRYPTION_PASSWORD: dummy
+      FAMILIE_DOKUMENT_FNR_SECRET_SALT: dummy
+    ports:
+      - 8082:8082
