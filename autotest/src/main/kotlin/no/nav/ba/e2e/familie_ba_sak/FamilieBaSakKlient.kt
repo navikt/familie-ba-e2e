@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestOperations
 import org.springframework.web.client.getForEntity
 import java.net.URI
-import java.time.LocalDate
 
 @Service
 class FamilieBaSakKlient(
