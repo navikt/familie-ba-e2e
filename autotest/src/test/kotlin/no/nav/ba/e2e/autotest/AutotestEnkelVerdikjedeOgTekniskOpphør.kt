@@ -14,9 +14,9 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import java.time.Duration
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
-import java.time.Duration
 
 @SpringBootTest(classes = [ApplicationConfig::class])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -38,7 +38,7 @@ class AutotestEnkelVerdikjedeOgTekniskOpphør(
 
     @Order(1)
     @Test
-    fun `Skal opprette behandling`() {
+    fun `Skal opprette og innvilge førstegangsbehandling`() {
         val søkersIdent = morPersonident
         val barn1 = barnPersonident
 
@@ -88,9 +88,19 @@ class AutotestEnkelVerdikjedeOgTekniskOpphør(
                 familieBaSakKlient.validerVilkårsvurdering(
                         behandlingId = aktivBehandlingEtterRegistrertSøknad.behandlingId
                 )
+
         generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.SEND_TIL_BESLUTTER)
+
+        val vedtaksperiode = restFagsakEtterVilkårsvurdering.data!!.behandlinger.first().vedtaksperioder.first()
+        familieBaSakKlient.leggTilVedtakBegrunnelse(
+                fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
+                vedtakBegrunnelse = RestPostVedtakBegrunnelse(
+                        fom = vedtaksperiode.periodeFom!!,
+                        tom = vedtaksperiode.periodeTom,
+                        vedtakBegrunnelse = VedtakBegrunnelseSpesifikasjon.INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER)
+        )
 
         val restFagsakEtterSendTilBeslutter =
                 familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id)

@@ -122,5 +122,10 @@ class FamilieBaSakKlient(
                                                  Metrikk::class.java)
         return metric?.measurements?.first { it.statistic == "COUNT" }?.value ?: 0
     }
+
+    fun leggTilVedtakBegrunnelse(fagsakId: Long, vedtakBegrunnelse: RestPostVedtakBegrunnelse): Ressurs<RestFagsak> {
+        val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId/vedtak/begrunnelser")
+        return postForEntity(uri, vedtakBegrunnelse)!!
+    }
 }
 
