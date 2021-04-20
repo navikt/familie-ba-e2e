@@ -19,7 +19,7 @@ import java.time.LocalDate
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class AutotestLeesahTests(
+class LeesahTests(
         @Autowired mottakKlient: FamilieBaMottakKlient,
         @Autowired baSakKlient: FamilieBaSakKlient,
         @Autowired mockserverKlient: MockserverKlient) : AbstractMottakTest(mottakKlient, baSakKlient, mockserverKlient) {

@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit
 @SpringBootTest(classes = [ApplicationConfig::class])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-class AutotestEnkelVerdikjedeOgTekniskOpphør(
+class ManuellBehandlingAvSøknadOgTekniskOpphør(
         @Autowired
         private val familieBaSakKlient: FamilieBaSakKlient,
 
