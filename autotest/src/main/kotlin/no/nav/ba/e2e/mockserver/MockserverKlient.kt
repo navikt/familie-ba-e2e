@@ -25,7 +25,8 @@ class MockserverKlient {
         restOperations.delete("http://localhost:1337/rest/api/dokarkiv/internal/ferdigstill/clear")
     }
 
-    fun lagScenario(restScenario: RestScenario): RestScenario? {
+    fun lagScenario(restScenario: RestScenario): RestScenario {
         return restOperations.postForEntity<RestScenario>("http://localhost:1337/rest/scenario", restScenario).body
+               ?: error("Klarte ikke lage scenario med data ${restScenario}")
     }
 }

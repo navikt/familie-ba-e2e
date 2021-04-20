@@ -1,7 +1,7 @@
 package no.nav.ba.e2e.autotest
 
-import no.nav.ba.e2e.commons.Utils
 import no.nav.ba.e2e.commons.barnPersonident
+import no.nav.ba.e2e.commons.hentAktivBehandling
 import no.nav.ba.e2e.commons.lagSøknadDTO
 import no.nav.ba.e2e.commons.morPersonident
 import no.nav.ba.e2e.familie_ba_mottak.FamilieBaMottakKlient
@@ -82,7 +82,7 @@ class AutotestHenleggelseTests(
         baSakKlient.opprettFagsak(søkersIdent = søkersIdent)
         val restFagsakMedBehandling = baSakKlient.opprettBehandling(søkersIdent = søkersIdent)
 
-        val aktivBehandling = Utils.hentAktivBehandling(restFagsak = restFagsakMedBehandling.data!!)
+        val aktivBehandling = hentAktivBehandling(restFagsak = restFagsakMedBehandling.data!!)
         val restRegistrerSøknad = RestRegistrerSøknad(søknad = lagSøknadDTO(søkerIdent = søkersIdent,
                                                                             barnasIdenter = listOf(barn1)),
                                                       bekreftEndringerViaFrontend = false)

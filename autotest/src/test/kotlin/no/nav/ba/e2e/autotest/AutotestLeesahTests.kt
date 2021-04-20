@@ -1,6 +1,6 @@
 package no.nav.ba.e2e.autotest
 
-import no.nav.ba.e2e.commons.Utils
+import no.nav.ba.e2e.commons.hentAktivBehandling
 import no.nav.ba.e2e.familie_ba_mottak.FamilieBaMottakKlient
 import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
 import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingResultat
@@ -34,20 +34,21 @@ class AutotestLeesahTests(
                                                           fornavn = "Barn",
                                                           etternavn = "Barnesen"))))
 
-        val dødsfallResponse = mottakKlient.dødsfall(listOf(scenario?.barna?.first()?.ident!!, "1234567890132"))
-        assertThat(dødsfallResponse.statusCode.is2xxSuccessful).isTrue()
-        assertThat(dødsfallResponse.body).isNotNull()
+        val dødsfallResponse = mottakKlient.dødsfall(listOf(scenario.barna.first().ident!!, "1234567890132"))
+        assertThat(dødsfallResponse.statusCode.is2xxSuccessful).isTrue
+        assertThat(dødsfallResponse.body).isNotNull
 
         //Sjekk om det er et innslag i hendelselogg på meldingen
         val erHendelseMottatt = mottakKlient.erHendelseMottatt(dødsfallResponse.body!!, "PDL")
-        assertThat(erHendelseMottatt.statusCode.is2xxSuccessful).isTrue()
-        assertThat(erHendelseMottatt.body).isTrue()
+        assertThat(erHendelseMottatt.statusCode.is2xxSuccessful).isTrue
+        assertThat(erHendelseMottatt.body).isTrue
     }
 
     @Test
     fun `skal sende fødselshendelse`() {
 
-        val startVerdiMetrikkBehandlingOpprettetAutomatisk = baSakKlient.tellMetrikk("behandling.opprettet", Pair("type", "FØRSTEGANGSBEHANDLING"))
+        val startVerdiMetrikkBehandlingOpprettetAutomatisk =
+                baSakKlient.tellMetrikk("behandling.opprettet", Pair("type", "FØRSTEGANGSBEHANDLING"))
 
         val startVerdiMetrikkFødselshendelse =
                 baSakKlient.tellMetrikk("behandling.logg", Pair("type", "FØDSELSHENDELSE"))
@@ -61,15 +62,15 @@ class AutotestLeesahTests(
                                                           fornavn = "Barn",
                                                           etternavn = "Barnesen"))))
 
-        val fødselsHendelseResponse = mottakKlient.fødsel(listOf(scenario?.barna?.first()?.ident!!, scenario.søker.aktørId!!))
+        val fødselsHendelseResponse = mottakKlient.fødsel(listOf(scenario.barna.first().ident!!, scenario.søker.aktørId!!))
 
-        assertThat(fødselsHendelseResponse.statusCode.is2xxSuccessful).isTrue()
-        assertThat(fødselsHendelseResponse.body).isNotNull()
+        assertThat(fødselsHendelseResponse.statusCode.is2xxSuccessful).isTrue
+        assertThat(fødselsHendelseResponse.body).isNotNull
 
         //Sjekk om det er et innslag i hendelselogg på meldingen
         val erHendelseMottatt = mottakKlient.erHendelseMottatt(fødselsHendelseResponse.body!!, "PDL")
-        assertThat(erHendelseMottatt.statusCode.is2xxSuccessful).isTrue()
-        assertThat(erHendelseMottatt.body).isTrue()
+        assertThat(erHendelseMottatt.statusCode.is2xxSuccessful).isTrue
+        assertThat(erHendelseMottatt.body).isTrue
 
         harTaskStatus("mottaFødselshendelse", callId, Status.FERDIG)
         harTaskStatus("sendTilSak", callId, Status.FERDIG)
@@ -94,7 +95,7 @@ class AutotestLeesahTests(
     private fun harMorBehandlingMedResultat(resultat: BehandlingResultat, søkersIdent: String): Boolean {
         val fagsakId = baSakKlient.hentFagsakDeltager(søkersIdent)?.fagsakId ?: return false
 
-        val aktivBehandlingEtterHendelse = Utils.hentAktivBehandling(baSakKlient.hentFagsak(fagsakId).data!!)!!
+        val aktivBehandlingEtterHendelse = hentAktivBehandling(baSakKlient.hentFagsak(fagsakId).data!!)!!
         return aktivBehandlingEtterHendelse.resultat == resultat
     }
 
