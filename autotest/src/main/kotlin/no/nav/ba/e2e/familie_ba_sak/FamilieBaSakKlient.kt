@@ -1,7 +1,23 @@
 package no.nav.ba.e2e.familie_ba_sak
 
 import no.nav.ba.e2e.familie_ba_mottak.Task
-import no.nav.ba.e2e.familie_ba_sak.domene.*
+import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingKategori
+import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingType
+import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingUnderkategori
+import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingÅrsak
+import no.nav.ba.e2e.familie_ba_sak.domene.FagsakRequest
+import no.nav.ba.e2e.familie_ba_sak.domene.Logg
+import no.nav.ba.e2e.familie_ba_sak.domene.Metrikk
+import no.nav.ba.e2e.familie_ba_sak.domene.NyBehandling
+import no.nav.ba.e2e.familie_ba_sak.domene.RestBeslutningPåVedtak
+import no.nav.ba.e2e.familie_ba_sak.domene.RestFagsak
+import no.nav.ba.e2e.familie_ba_sak.domene.RestFagsakDeltager
+import no.nav.ba.e2e.familie_ba_sak.domene.RestHenleggDocGen
+import no.nav.ba.e2e.familie_ba_sak.domene.RestHenleggelse
+import no.nav.ba.e2e.familie_ba_sak.domene.RestPersonResultat
+import no.nav.ba.e2e.familie_ba_sak.domene.RestPostVedtakBegrunnelse
+import no.nav.ba.e2e.familie_ba_sak.domene.RestRegistrerSøknad
+import no.nav.ba.e2e.familie_ba_sak.domene.RestSøkParam
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.Ressurs
 import org.springframework.beans.factory.annotation.Value
@@ -28,7 +44,7 @@ class FamilieBaSakKlient(
 
         return postForEntity(uri, FagsakRequest(
                 personIdent = søkersIdent
-        ))!!
+        ))
     }
 
     fun opprettBehandling(søkersIdent: String,
@@ -42,43 +58,37 @@ class FamilieBaSakKlient(
                 søkersIdent = søkersIdent,
                 behandlingType = behandlingType,
                 behandlingÅrsak = behandlingÅrsak
-        ))!!
+        ))
     }
 
     fun registrererSøknad(behandlingId: Long, restRegistrerSøknad: RestRegistrerSøknad): Ressurs<RestFagsak> {
         val uri = URI.create("$baSakUrl/api/behandlinger/$behandlingId/registrere-søknad-og-hent-persongrunnlag")
 
-        return postForEntity(uri, restRegistrerSøknad)!!
-    }
-
-    fun hentSøknad(behandlingId: Long): Ressurs<SøknadDTO> {
-        val uri = URI.create("$baSakUrl/api/behandlinger/$behandlingId/søknad")
-
-        return getForEntity(uri)
+        return postForEntity(uri, restRegistrerSøknad)
     }
 
     fun putVilkår(behandlingId: Long, vilkårId: Long, restPersonResultat: RestPersonResultat): Ressurs<RestFagsak> {
         val uri = URI.create("$baSakUrl/api/vilkaarsvurdering/$behandlingId/$vilkårId")
 
-        return putForEntity(uri, restPersonResultat)!!
+        return putForEntity(uri, restPersonResultat)
     }
 
     fun validerVilkårsvurdering(behandlingId: Long): Ressurs<RestFagsak> {
         val uri = URI.create("$baSakUrl/api/vilkaarsvurdering/$behandlingId/valider")
 
-        return postForEntity(uri, "")!!
+        return postForEntity(uri, "")
     }
 
     fun sendTilBeslutter(fagsakId: Long): Ressurs<RestFagsak> {
         val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId/send-til-beslutter?behandlendeEnhet=9999")
 
-        return postForEntity(uri, "")!!
+        return postForEntity(uri, "")
     }
 
     fun iverksettVedtak(fagsakId: Long, restBeslutningPåVedtak: RestBeslutningPåVedtak): Ressurs<RestFagsak> {
         val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId/iverksett-vedtak")
 
-        return postForEntity(uri, restBeslutningPåVedtak)!!
+        return postForEntity(uri, restBeslutningPåVedtak)
     }
 
     fun hentFagsak(fagsakId: Long): Ressurs<RestFagsak> {
@@ -88,7 +98,6 @@ class FamilieBaSakKlient(
     }
 
     fun hentFagsakDeltager(personIdent: String): RestFagsakDeltager? {
-        val uri = URI.create("$baSakUrl/api/fagsaker/sok")
         val ressurs = hentListeFagsakDeltager(RestSøkParam(personIdent))
         return ressurs?.data?.firstOrNull()
     }
@@ -125,7 +134,7 @@ class FamilieBaSakKlient(
 
     fun leggTilVedtakBegrunnelse(fagsakId: Long, vedtakBegrunnelse: RestPostVedtakBegrunnelse): Ressurs<RestFagsak> {
         val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId/vedtak/begrunnelser")
-        return postForEntity(uri, vedtakBegrunnelse)!!
+        return postForEntity(uri, vedtakBegrunnelse)
     }
 
     fun triggerAutobrev18og6år(): Ressurs<String> {
