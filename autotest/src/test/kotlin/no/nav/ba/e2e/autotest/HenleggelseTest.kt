@@ -2,7 +2,6 @@ package no.nav.ba.e2e.autotest
 
 import no.nav.ba.e2e.commons.hentAktivBehandling
 import no.nav.ba.e2e.commons.lagSøknadDTO
-import no.nav.ba.e2e.familie_ba_mottak.FamilieBaMottakKlient
 import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
 import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingResultat
 import no.nav.ba.e2e.familie_ba_sak.domene.FagsakStatus
@@ -26,10 +25,13 @@ import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class HenleggelseTests(
-        @Autowired mottakKlient: FamilieBaMottakKlient,
-        @Autowired baSakKlient: FamilieBaSakKlient,
-        @Autowired mockserverKlient: MockserverKlient) : AbstractMottakTest(mottakKlient, baSakKlient, mockserverKlient) {
+class HenleggelseTest(
+        @Autowired
+        private val baSakKlient: FamilieBaSakKlient,
+
+        @Autowired
+        private val mockserverKlient: MockserverKlient
+) {
 
     val restScenario = RestScenario(
             søker = RestScenarioPerson(fødselsdato = "1990-04-20", fornavn = "Mor", etternavn = "Søker"),
@@ -42,7 +44,7 @@ class HenleggelseTests(
 
     @Test
     fun `Opprett behandling, henlegg behandling feilaktig opprettet og opprett behandling på nytt`() {
-        val scenario = mockserverKlient?.lagScenario(restScenario)!!
+        val scenario = mockserverKlient.lagScenario(restScenario)
 
         val førsteBehandling = opprettBehandlingOgRegistrerSøknad(scenario)
 
@@ -70,7 +72,7 @@ class HenleggelseTests(
 
     @Test
     fun `Opprett behandling, hent forhåndsvising av brev, henlegg behandling søknad trukket`() {
-        val scenario = mockserverKlient?.lagScenario(restScenario)!!
+        val scenario = mockserverKlient.lagScenario(restScenario)
         val førsteBehandling = opprettBehandlingOgRegistrerSøknad(scenario)
 
         val responseForhandsvis = baSakKlient.forhaandsvisHenleggelseBrev(
