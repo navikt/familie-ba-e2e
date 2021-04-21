@@ -127,5 +127,9 @@ class FamilieBaSakKlient(
         val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId/vedtak/begrunnelser")
         return postForEntity(uri, vedtakBegrunnelse)!!
     }
+
+    fun triggerAutobrev18og6år(): Ressurs<String> {
+        return getForEntity(URI.create("$baSakUrl/testverktoy/autobrev"))
+    }
 }
 
