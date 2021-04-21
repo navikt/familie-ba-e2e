@@ -7,6 +7,7 @@ import no.nav.ba.e2e.commons.morPersonident
 import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
 import no.nav.ba.e2e.familie_ba_sak.domene.*
 import no.nav.familie.kontrakter.felles.Ressurs
+import org.assertj.core.api.Assertions
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
 import org.junit.jupiter.api.*
@@ -91,16 +92,21 @@ class AutotestEnkelVerdikjedeOgTekniskOpphør(
 
         generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
                              fagsakStatus = FagsakStatus.OPPRETTET,
-                             behandlingStegType = StegType.SEND_TIL_BESLUTTER)
+                             behandlingStegType = StegType.SEND_TIL_BESLUTTER,
+                             behandlingResultat = BehandlingResultat.INNVILGET)
 
         val vedtaksperiode = restFagsakEtterVilkårsvurdering.data!!.behandlinger.first().vedtaksperioder.first()
-        familieBaSakKlient.leggTilVedtakBegrunnelse(
+        val restFagsakEtterVedtaksbegrunnelser = familieBaSakKlient.leggTilVedtakBegrunnelse(
                 fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
                 vedtakBegrunnelse = RestPostVedtakBegrunnelse(
                         fom = vedtaksperiode.periodeFom!!,
                         tom = vedtaksperiode.periodeTom,
                         vedtakBegrunnelse = VedtakBegrunnelseSpesifikasjon.INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER)
         )
+
+        var vedtaksbrevFørstegangsvedtak = familieBaSakKlient.genererOgHentVedtaksbrev(
+                Utils.hentAktivtVedtak(restFagsak = restFagsakEtterVedtaksbegrunnelser.data!!)!!.id)
+        Assertions.assertThat(vedtaksbrevFørstegangsvedtak?.status == Ressurs.Status.SUKSESS)
 
         val restFagsakEtterSendTilBeslutter =
                 familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id)
@@ -127,9 +133,97 @@ class AutotestEnkelVerdikjedeOgTekniskOpphør(
         generellAssertFagsak(restFagsak = restFagsakEtterBehandlingAvsluttet,
                              fagsakStatus = FagsakStatus.LØPENDE,
                              behandlingStegType = StegType.BEHANDLING_AVSLUTTET)
+
+        vedtaksbrevFørstegangsvedtak = familieBaSakKlient.hentVedtaksbrev(
+                Utils.hentAktivtVedtak(restFagsak = restFagsakEtterIverksetting.data!!)!!.id)
+        Assertions.assertThat(vedtaksbrevFørstegangsvedtak?.status == Ressurs.Status.SUKSESS)
     }
 
     @Order(2)
+    @Test
+    fun `Revurdering`() {
+        val søkersIdent = morPersonident
+
+        val restFagsakMedBehandling = familieBaSakKlient.opprettBehandling(søkersIdent = søkersIdent,
+                                                                           behandlingType = BehandlingType.REVURDERING,
+                                                                           behandlingÅrsak = BehandlingÅrsak.NYE_OPPLYSNINGER)
+        generellAssertFagsak(restFagsak = restFagsakMedBehandling,
+                             fagsakStatus = FagsakStatus.LØPENDE,
+                             behandlingStegType = StegType.VILKÅRSVURDERING)
+        assertEquals(2, restFagsakMedBehandling.data?.behandlinger?.size)
+
+        val aktivBehandling = Utils.hentAktivBehandling(restFagsak = restFagsakMedBehandling.data!!)!!
+
+        // Setter alle vilkår til ikke-oppfylt på løpende førstegangsbehandling
+        aktivBehandling.personResultater.forEach { restPersonResultat ->
+            restPersonResultat.vilkårResultater?.forEach {
+                familieBaSakKlient.putVilkår(
+                        behandlingId = aktivBehandling.behandlingId,
+                        vilkårId = it.id,
+                        restPersonResultat =
+                        RestPersonResultat(personIdent = restPersonResultat.personIdent,
+                                           vilkårResultater = listOf(it.copy(
+                                                   periodeFom = LocalDate.now().minusMonths(6)
+                                           ))))
+            }
+        }
+
+        val restFagsakEtterVilkårsvurdering =
+                familieBaSakKlient.validerVilkårsvurdering(
+                        behandlingId = aktivBehandling.behandlingId
+                )
+        generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
+                             fagsakStatus = FagsakStatus.LØPENDE,
+                             behandlingStegType = StegType.SEND_TIL_BESLUTTER,
+                             behandlingResultat = BehandlingResultat.ENDRET)
+
+
+        val vedtaksperiode = restFagsakEtterVilkårsvurdering.data!!.behandlinger.first().vedtaksperioder.first()
+        val restFagsakEtterVedtaksbegrunnelser = familieBaSakKlient.leggTilVedtakBegrunnelse(
+                fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
+                vedtakBegrunnelse = RestPostVedtakBegrunnelse(
+                        fom = vedtaksperiode.periodeFom!!,
+                        tom = vedtaksperiode.periodeTom,
+                        vedtakBegrunnelse = VedtakBegrunnelseSpesifikasjon.INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER)
+        )
+
+        var vedtaksbrevRevurderingEndret = familieBaSakKlient.genererOgHentVedtaksbrev(
+                Utils.hentAktivtVedtak(restFagsak = restFagsakEtterVedtaksbegrunnelser.data!!)!!.id)
+        Assertions.assertThat(vedtaksbrevRevurderingEndret?.status == Ressurs.Status.SUKSESS)
+
+        val restFagsakEtterSendTilBeslutter =
+                familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id)
+        generellAssertFagsak(restFagsak = restFagsakEtterSendTilBeslutter,
+                             fagsakStatus = FagsakStatus.LØPENDE,
+                             behandlingStegType = StegType.BESLUTTE_VEDTAK)
+
+        val restFagsakEtterIverksetting = familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
+                                                                             restBeslutningPåVedtak = RestBeslutningPåVedtak(
+                                                                                     Beslutning.GODKJENT))
+        generellAssertFagsak(restFagsak = restFagsakEtterIverksetting,
+                             fagsakStatus = FagsakStatus.LØPENDE,
+                             behandlingStegType = StegType.IVERKSETT_MOT_OPPDRAG)
+
+        await.atMost(80, TimeUnit.SECONDS).withPollInterval(Duration.ofSeconds(1)).until {
+
+            val fagsak = familieBaSakKlient.hentFagsak(fagsakId = restFagsakEtterIverksetting.data!!.id).data
+            println("FAGSAK: $fagsak")
+            Utils.hentAktivBehandling(restFagsak = fagsak!!)?.steg == StegType.BEHANDLING_AVSLUTTET
+        }
+
+        val restFagsakEtterBehandlingAvsluttet =
+                familieBaSakKlient.hentFagsak(fagsakId = restFagsakEtterIverksetting.data!!.id)
+        generellAssertFagsak(restFagsak = restFagsakEtterBehandlingAvsluttet,
+                             fagsakStatus = FagsakStatus.LØPENDE,
+                             behandlingStegType = StegType.BEHANDLING_AVSLUTTET)
+
+        vedtaksbrevRevurderingEndret = familieBaSakKlient.hentVedtaksbrev(
+                Utils.hentAktivtVedtak(restFagsak = restFagsakEtterIverksetting.data!!)!!.id)
+        Assertions.assertThat(vedtaksbrevRevurderingEndret?.status == Ressurs.Status.SUKSESS)
+
+    }
+
+    @Order(3)
     @Test
     fun `Skal teknisk opphøre behandling`() {
         val søkersIdent = morPersonident
@@ -140,7 +234,7 @@ class AutotestEnkelVerdikjedeOgTekniskOpphør(
         generellAssertFagsak(restFagsak = restFagsakMedBehandling,
                              fagsakStatus = FagsakStatus.LØPENDE,
                              behandlingStegType = StegType.VILKÅRSVURDERING)
-        assertEquals(2, restFagsakMedBehandling.data?.behandlinger?.size)
+        assertEquals(3, restFagsakMedBehandling.data?.behandlinger?.size)
 
         val aktivBehandling = Utils.hentAktivBehandling(restFagsak = restFagsakMedBehandling.data!!)!!
 
@@ -164,7 +258,8 @@ class AutotestEnkelVerdikjedeOgTekniskOpphør(
                 )
         generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
                              fagsakStatus = FagsakStatus.LØPENDE,
-                             behandlingStegType = StegType.SEND_TIL_BESLUTTER)
+                             behandlingStegType = StegType.SEND_TIL_BESLUTTER,
+                             behandlingResultat = BehandlingResultat.OPPHØRT)
 
         val restFagsakEtterSendTilBeslutter =
                 familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id)
@@ -195,11 +290,16 @@ class AutotestEnkelVerdikjedeOgTekniskOpphør(
 
     private fun generellAssertFagsak(restFagsak: Ressurs<RestFagsak>,
                                      fagsakStatus: FagsakStatus,
-                                     behandlingStegType: StegType? = null) {
+                                     behandlingStegType: StegType? = null,
+                                     behandlingResultat: BehandlingResultat? = null) {
+
         assertEquals(Ressurs.Status.SUKSESS, restFagsak.status)
         assertEquals(fagsakStatus, restFagsak.data?.status)
         if (behandlingStegType != null) {
             assertEquals(behandlingStegType, Utils.hentAktivBehandling(restFagsak = restFagsak.data!!)?.steg)
+        }
+        if (behandlingResultat != null) {
+            assertEquals(behandlingResultat, Utils.hentAktivBehandling(restFagsak = restFagsak.data!!)?.resultat)
         }
     }
 }
