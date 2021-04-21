@@ -9,7 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class AutotestJournaføringHendlserTests(
+class JournaføringHendlserTest(
         @Autowired mockserverKlient: MockserverKlient,
         @Autowired mottakKlient: FamilieBaMottakKlient,
         @Autowired baSakKlient: FamilieBaSakKlient) : AbstractMottakTest(mottakKlient, baSakKlient, mockserverKlient
