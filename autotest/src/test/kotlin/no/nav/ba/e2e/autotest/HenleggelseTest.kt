@@ -20,10 +20,12 @@ import org.awaitility.kotlin.withPollInterval
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import java.time.Duration
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
+@SpringBootTest(classes = [ApplicationConfig::class])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class HenleggelseTest(
         @Autowired
