@@ -1,5 +1,6 @@
 package no.nav.ba.e2e.autotest
 
+import no.nav.ba.e2e.commons.generellAssertFagsak
 import no.nav.ba.e2e.commons.hentAktivBehandling
 import no.nav.ba.e2e.commons.hentNåværendeEllerNesteMånedsUtbetaling
 import no.nav.ba.e2e.commons.lagSøknadDTO
@@ -11,7 +12,6 @@ import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingÅrsak
 import no.nav.ba.e2e.familie_ba_sak.domene.Beslutning
 import no.nav.ba.e2e.familie_ba_sak.domene.FagsakStatus
 import no.nav.ba.e2e.familie_ba_sak.domene.RestBeslutningPåVedtak
-import no.nav.ba.e2e.familie_ba_sak.domene.RestFagsak
 import no.nav.ba.e2e.familie_ba_sak.domene.RestPersonResultat
 import no.nav.ba.e2e.familie_ba_sak.domene.RestPostVedtakBegrunnelse
 import no.nav.ba.e2e.familie_ba_sak.domene.RestRegistrerSøknad
@@ -22,7 +22,6 @@ import no.nav.ba.e2e.familie_ba_sak.domene.Vilkår
 import no.nav.ba.e2e.mockserver.MockserverKlient
 import no.nav.ba.e2e.mockserver.domene.RestScenario
 import no.nav.ba.e2e.mockserver.domene.RestScenarioPerson
-import no.nav.familie.kontrakter.felles.Ressurs
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -263,15 +262,5 @@ class ManuellBehandlingAvSøknadOgTekniskOpphørTest(
         generellAssertFagsak(restFagsak = restFagsakEtterBehandlingAvsluttet,
                              fagsakStatus = FagsakStatus.AVSLUTTET,
                              behandlingStegType = StegType.BEHANDLING_AVSLUTTET)
-    }
-
-    private fun generellAssertFagsak(restFagsak: Ressurs<RestFagsak>,
-                                     fagsakStatus: FagsakStatus,
-                                     behandlingStegType: StegType? = null) {
-        assertEquals(Ressurs.Status.SUKSESS, restFagsak.status)
-        assertEquals(fagsakStatus, restFagsak.data?.status)
-        if (behandlingStegType != null) {
-            assertEquals(behandlingStegType, hentAktivBehandling(restFagsak = restFagsak.data!!)?.steg)
-        }
     }
 }
