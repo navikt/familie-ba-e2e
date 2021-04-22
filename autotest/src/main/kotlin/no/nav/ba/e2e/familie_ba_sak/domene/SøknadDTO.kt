@@ -12,7 +12,6 @@ data class SøknadDTO(
         val søkerMedOpplysninger: SøkerMedOpplysninger,
         val barnaMedOpplysninger: List<BarnMedOpplysninger>,
         val endringAvOpplysningerBegrunnelse: String
-
 )
 
 data class SøkerMedOpplysninger(
@@ -25,7 +24,8 @@ data class BarnMedOpplysninger(
         val navn: String = "",
         val fødselsdato: LocalDate? = null,
         val inkludertISøknaden: Boolean = true,
-        val manueltRegistrert: Boolean = false
+        val manueltRegistrert: Boolean = false,
+        val erFolkeregistrert: Boolean = true,
 )
 
 enum class Målform {
