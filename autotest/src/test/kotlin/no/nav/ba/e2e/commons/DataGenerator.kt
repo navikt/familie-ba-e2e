@@ -1,16 +1,33 @@
 package no.nav.ba.e2e.commons
 
 import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
-import no.nav.ba.e2e.familie_ba_sak.domene.*
+import no.nav.ba.e2e.familie_ba_sak.domene.BarnMedOpplysninger
+import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingType
+import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingUnderkategori
+import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingÅrsak
+import no.nav.ba.e2e.familie_ba_sak.domene.Beslutning
+import no.nav.ba.e2e.familie_ba_sak.domene.FagsakStatus
+import no.nav.ba.e2e.familie_ba_sak.domene.NavnOgIdent
+import no.nav.ba.e2e.familie_ba_sak.domene.RestBeslutningPåVedtak
+import no.nav.ba.e2e.familie_ba_sak.domene.RestFagsak
+import no.nav.ba.e2e.familie_ba_sak.domene.RestJournalføring
+import no.nav.ba.e2e.familie_ba_sak.domene.RestJournalpostDokument
+import no.nav.ba.e2e.familie_ba_sak.domene.RestPersonResultat
+import no.nav.ba.e2e.familie_ba_sak.domene.RestPostVedtakBegrunnelse
+import no.nav.ba.e2e.familie_ba_sak.domene.RestRegistrerSøknad
+import no.nav.ba.e2e.familie_ba_sak.domene.Resultat
+import no.nav.ba.e2e.familie_ba_sak.domene.StegType
+import no.nav.ba.e2e.familie_ba_sak.domene.SøkerMedOpplysninger
+import no.nav.ba.e2e.familie_ba_sak.domene.SøknadDTO
+import no.nav.ba.e2e.familie_ba_sak.domene.VedtakBegrunnelseSpesifikasjon
 import no.nav.ba.e2e.mockserver.domene.RestScenario
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.journalpost.LogiskVedlegg
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
-import org.junit.jupiter.api.Assertions
 import java.time.Duration
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.*
+import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 
 val morPersonident = "12345678901"
@@ -30,6 +47,32 @@ fun lagSøknadDTO(søkerIdent: String,
             endringAvOpplysningerBegrunnelse = ""
     )
 }
+
+fun lagMockRestJournalføring(bruker: NavnOgIdent): RestJournalføring = RestJournalføring(
+        avsender = bruker,
+        bruker = bruker,
+        datoMottatt = LocalDateTime.now().minusDays(10),
+        journalpostTittel = "Søknad om ordinær barnetrygd",
+        knyttTilFagsak = true,
+        opprettOgKnyttTilNyBehandling = true,
+        tilknyttedeBehandlingIder = emptyList(),
+        dokumenter = listOf(
+                RestJournalpostDokument(dokumentTittel = "Søknad om barnetrygd",
+                                        brevkode = "mock",
+                                        dokumentInfoId = "1",
+                                        logiskeVedlegg = listOf(LogiskVedlegg("123", "Oppholdstillatelse")),
+                                        eksisterendeLogiskeVedlegg = emptyList()
+                ),
+                RestJournalpostDokument(dokumentTittel = "Ekstra vedlegg",
+                                        brevkode = "mock",
+                                        dokumentInfoId = "2",
+                                        logiskeVedlegg = listOf(LogiskVedlegg("123", "Pass")),
+                                        eksisterendeLogiskeVedlegg = emptyList())
+        ),
+        navIdent = "09123",
+        nyBehandlingstype = BehandlingType.FØRSTEGANGSBEHANDLING,
+        nyBehandlingsårsak = BehandlingÅrsak.SØKNAD
+)
 
 /**
  * Dette er en funksjon for å få en førstegangsbehandling til en ønsket tilstand ved test.
