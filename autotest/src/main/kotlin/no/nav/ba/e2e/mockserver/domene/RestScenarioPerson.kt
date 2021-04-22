@@ -7,8 +7,9 @@ data class RestScenarioPerson(
         val fødselsdato: String, //yyyy-mm-dd
         val fornavn: String,
         val etternavn: String
-
-)
+) {
+    val navn = "$fornavn $etternavn"
+}
 
 data class Familierelasjon(
         val relatertPersonsIdent: String,

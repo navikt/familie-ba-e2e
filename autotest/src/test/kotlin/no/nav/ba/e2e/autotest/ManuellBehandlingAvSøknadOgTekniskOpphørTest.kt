@@ -10,13 +10,9 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import org.assertj.core.api.Assertions
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.MethodOrderer
-import org.junit.jupiter.api.Order
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.Duration
@@ -349,20 +345,5 @@ class ManuellBehandlingAvSøknadOgTekniskOpphørTest(
         generellAssertFagsak(restFagsak = restFagsakEtterBehandlingAvsluttet,
                              fagsakStatus = FagsakStatus.AVSLUTTET,
                              behandlingStegType = StegType.BEHANDLING_AVSLUTTET)
-    }
-
-    private fun generellAssertFagsak(restFagsak: Ressurs<RestFagsak>,
-                                     fagsakStatus: FagsakStatus,
-                                     behandlingStegType: StegType? = null,
-                                     behandlingResultat: BehandlingResultat? = null) {
-
-        assertEquals(Ressurs.Status.SUKSESS, restFagsak.status)
-        assertEquals(fagsakStatus, restFagsak.data?.status)
-        if (behandlingStegType != null) {
-            assertEquals(behandlingStegType, hentAktivBehandling(restFagsak = restFagsak.data!!)?.steg)
-        }
-        if (behandlingResultat != null) {
-            assertEquals(behandlingResultat, hentAktivBehandling(restFagsak = restFagsak.data!!)?.resultat)
-        }
     }
 }

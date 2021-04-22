@@ -14,6 +14,7 @@ import no.nav.ba.e2e.familie_ba_sak.domene.RestFagsak
 import no.nav.ba.e2e.familie_ba_sak.domene.RestFagsakDeltager
 import no.nav.ba.e2e.familie_ba_sak.domene.RestHenleggDocGen
 import no.nav.ba.e2e.familie_ba_sak.domene.RestHenleggelse
+import no.nav.ba.e2e.familie_ba_sak.domene.RestJournalføring
 import no.nav.ba.e2e.familie_ba_sak.domene.RestPersonResultat
 import no.nav.ba.e2e.familie_ba_sak.domene.RestPostVedtakBegrunnelse
 import no.nav.ba.e2e.familie_ba_sak.domene.RestRegistrerSøknad
@@ -37,6 +38,16 @@ class FamilieBaSakKlient(
         val uri = URI.create("$baSakUrl/api/e2e/truncate")
 
         return restOperations.getForEntity(uri)
+    }
+
+    fun journalfør(journalpostId: String,
+                   oppgaveId: String,
+                   journalførendeEnhet: String,
+                   restJournalføring: RestJournalføring): Ressurs<String> {
+        return postForEntity(
+                uri = URI.create("$baSakUrl/api/journalpost/$journalpostId/journalfør/$oppgaveId?journalfoerendeEnhet=$journalførendeEnhet"),
+                payload = restJournalføring
+        )
     }
 
     fun opprettFagsak(søkersIdent: String): Ressurs<RestFagsak> {
