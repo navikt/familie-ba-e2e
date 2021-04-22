@@ -3,6 +3,7 @@ package no.nav.ba.e2e.familie_ba_sak
 import no.nav.ba.e2e.familie_ba_mottak.Task
 import no.nav.ba.e2e.familie_ba_sak.domene.*
 import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
@@ -126,6 +127,12 @@ class FamilieBaSakKlient(
     fun leggTilVedtakBegrunnelse(fagsakId: Long, vedtakBegrunnelse: RestPostVedtakBegrunnelse): Ressurs<RestFagsak> {
         val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId/vedtak/begrunnelser")
         return postForEntity(uri, vedtakBegrunnelse)!!
+    }
+
+    fun migrering(ident: String): Ressurs<MigreringResponseDto> {
+        val uri = URI.create("$baSakUrl/api/migrering?behandlingAarsak=NYE_OPPLYSNINGER")
+
+        return postForEntity(uri, PersonIdent(ident))!!
     }
 }
 
