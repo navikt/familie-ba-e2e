@@ -127,6 +127,16 @@ class FamilieBaSakKlient(
         return postForEntity(uri, restHenleggDocGen)
     }
 
+    fun genererOgHentVedtaksbrev(vedtakId: Long): Ressurs<ByteArray>? {
+        val uri = URI.create("$baSakUrl/api/dokument/vedtaksbrev/${vedtakId}")
+        return postForEntity(uri, vedtakId)
+    }
+
+    fun hentVedtaksbrev(vedtakId: Long): Ressurs<ByteArray>? {
+        val uri = URI.create("$baSakUrl/api/dokument/vedtaksbrev/${vedtakId}")
+        return getForEntity(uri)
+    }
+
     fun henleggSøknad(behandlingId: Long, restHenleggelse: RestHenleggelse): Ressurs<RestFagsak>? {
         val uri = URI.create("$baSakUrl/api/behandlinger/${behandlingId}/henlegg")
         return putForEntity(uri, restHenleggelse)

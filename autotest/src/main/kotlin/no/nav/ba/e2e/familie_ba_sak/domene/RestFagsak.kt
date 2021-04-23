@@ -53,6 +53,7 @@ data class Logg(
 enum class VedtakBegrunnelseSpesifikasjon {
     INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER,
     REDUKSJON_UNDER_6_ÅR,
+    AVSLAG_BOSATT_I_RIKET,
 }
 
 data class RestPostVedtakBegrunnelse(
