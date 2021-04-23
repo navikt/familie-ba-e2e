@@ -47,11 +47,6 @@ class ManuellBehandlingAvSøknadOgTekniskOpphørTest(
             )
     )
 
-    @BeforeAll
-    fun cleanDb() {
-        familieBaSakKlient.truncate()
-    }
-
     @Order(1)
     @Test
     fun `Skal behandle manuelt opprettet behandling på 2 innvilgede barn`() {
