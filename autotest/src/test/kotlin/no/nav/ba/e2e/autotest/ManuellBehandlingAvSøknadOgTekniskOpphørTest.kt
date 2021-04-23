@@ -231,7 +231,6 @@ class ManuellBehandlingAvSøknadOgTekniskOpphørTest(
                              behandlingStegType = StegType.SEND_TIL_BESLUTTER,
                              behandlingResultat = BehandlingResultat.ENDRET_OG_OPPHØRT)
 
-
         val vedtaksperiode = hentAktivBehandling(restFagsak = restFagsakEtterVilkårsvurdering.data!!)!!.vedtaksperioder.first()
         val restFagsakEtterVedtaksbegrunnelser = familieBaSakKlient.leggTilVedtakBegrunnelse(
                 fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
@@ -275,7 +274,6 @@ class ManuellBehandlingAvSøknadOgTekniskOpphørTest(
         vedtaksbrevRevurderingEndret = familieBaSakKlient.hentVedtaksbrev(
                 hentAktivtVedtak(restFagsak = restFagsakEtterIverksetting.data!!)!!.id)
         Assertions.assertTrue(vedtaksbrevRevurderingEndret?.status == Ressurs.Status.SUKSESS)
-
     }
 
     @Order(3)
@@ -317,7 +315,6 @@ class ManuellBehandlingAvSøknadOgTekniskOpphørTest(
                              behandlingStegType = StegType.SEND_TIL_BESLUTTER,
                              behandlingResultat = BehandlingResultat.ENDRET)
 
-
         val vedtaksperiode = hentAktivBehandling(restFagsak = restFagsakEtterVilkårsvurdering.data!!)!!.vedtaksperioder.first()
         val restFagsakEtterVedtaksbegrunnelser = familieBaSakKlient.leggTilVedtakBegrunnelse(
                 fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
@@ -346,7 +343,6 @@ class ManuellBehandlingAvSøknadOgTekniskOpphørTest(
         kjørStegprosessForFGB(tilSteg = StegType.BEHANDLING_AVSLUTTET,
                               scenario = tekniskOpphørScenario,
                               familieBaSakKlient = familieBaSakKlient)
-
 
         val restFagsakMedBehandling = familieBaSakKlient.opprettBehandling(søkersIdent = tekniskOpphørScenario.søker.ident!!,
                                                                            behandlingType = BehandlingType.TEKNISK_OPPHØR,
@@ -408,7 +404,6 @@ class ManuellBehandlingAvSøknadOgTekniskOpphørTest(
                              behandlingStegType = StegType.BEHANDLING_AVSLUTTET)
     }
 
-
     @Test
     fun `Generering av vedtaksbrev for opphørt behandling`() {
         val opphørScenario = mockserverKlient.lagScenario(RestScenario(
@@ -434,7 +429,6 @@ class ManuellBehandlingAvSøknadOgTekniskOpphørTest(
 
         val aktivBehandling = hentAktivBehandling(restFagsak = restFagsakMedBehandling.data!!)!!
 
-        // Setter alle vilkår til ikke-oppfylt på løpende førstegangsbehandling
         aktivBehandling.personResultater.forEach { restPersonResultat ->
             restPersonResultat.vilkårResultater?.forEach {
                 familieBaSakKlient.putVilkår(
@@ -468,6 +462,78 @@ class ManuellBehandlingAvSøknadOgTekniskOpphørTest(
 
         val vedtaksbrevOpphørt = familieBaSakKlient.genererOgHentVedtaksbrev(
                 hentAktivtVedtak(restFagsak = restFagsakEtterVedtaksbegrunnelser.data!!)!!.id)
+        Assertions.assertTrue(vedtaksbrevOpphørt?.status == Ressurs.Status.SUKSESS)
+        Assertions.assertTrue(vedtaksbrevOpphørt?.data?.size ?: 0 > 0)
+    }
+
+
+    @Test
+    fun `Generere vedtaksbrev for avslag`() {
+        val avslagScenario = mockserverKlient.lagScenario(RestScenario(
+                søker = RestScenarioPerson(fødselsdato = "1994-01-30", fornavn = "Mor", etternavn = "Søker"),
+                barna = listOf(
+                        RestScenarioPerson(fødselsdato = LocalDate.now().minusYears(2).toString(),
+                                           fornavn = "Yngste",
+                                           etternavn = "Barnesen"),
+                )))
+
+        val søkersIdent = avslagScenario.søker.ident!!
+
+        familieBaSakKlient.opprettFagsak(søkersIdent = søkersIdent)
+        val restFagsakMedBehandling = familieBaSakKlient.opprettBehandling(søkersIdent = søkersIdent)
+
+        val aktivBehandling = hentAktivBehandling(restFagsak = restFagsakMedBehandling.data!!)
+        val restRegistrerSøknad = RestRegistrerSøknad(søknad = lagSøknadDTO(søkerIdent = søkersIdent,
+                                                                            barnasIdenter = avslagScenario.barna.map { it.ident!! }),
+                                                      bekreftEndringerViaFrontend = false)
+        val restFagsakEtterRegistrertSøknad =
+                familieBaSakKlient.registrererSøknad(
+                        behandlingId = aktivBehandling!!.behandlingId,
+                        restRegistrerSøknad = restRegistrerSøknad
+                )
+
+        val aktivBehandlingEtterRegistrertSøknad = hentAktivBehandling(restFagsakEtterRegistrertSøknad.data!!)!!
+        aktivBehandlingEtterRegistrertSøknad.personResultater.forEach { restPersonResultat ->
+            restPersonResultat.vilkårResultater?.filter { it.resultat != Resultat.OPPFYLT }?.forEach {
+                if (restPersonResultat.personIdent == søkersIdent && it.vilkårType == Vilkår.BOSATT_I_RIKET) {
+                    familieBaSakKlient.putVilkår(
+                            behandlingId = aktivBehandlingEtterRegistrertSøknad.behandlingId,
+                            vilkårId = it.id,
+                            restPersonResultat =
+                            RestPersonResultat(personIdent = restPersonResultat.personIdent,
+                                               vilkårResultater = listOf(it.copy(
+                                                       resultat = Resultat.IKKE_OPPFYLT,
+                                                       erEksplisittAvslagPåSøknad = true,
+                                                       avslagBegrunnelser = listOf(
+                                                               VedtakBegrunnelseSpesifikasjon.AVSLAG_BOSATT_I_RIKET)
+                                               ))))
+                } else {
+                    familieBaSakKlient.putVilkår(
+                            behandlingId = aktivBehandlingEtterRegistrertSøknad.behandlingId,
+                            vilkårId = it.id,
+                            restPersonResultat =
+                            RestPersonResultat(personIdent = restPersonResultat.personIdent,
+                                               vilkårResultater = listOf(it.copy(
+                                                       resultat = Resultat.OPPFYLT,
+                                                       periodeFom = LocalDate.now().minusMonths(2)
+                                               ))))
+                }
+            }
+        }
+
+        val restFagsakEtterVilkårsvurdering =
+                familieBaSakKlient.validerVilkårsvurdering(
+                        behandlingId = aktivBehandlingEtterRegistrertSøknad.behandlingId
+                )
+
+        generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
+                             fagsakStatus = FagsakStatus.OPPRETTET,
+                             behandlingStegType = StegType.SEND_TIL_BESLUTTER,
+                             behandlingResultat = BehandlingResultat.AVSLÅTT)
+
+
+        val vedtaksbrevOpphørt = familieBaSakKlient.genererOgHentVedtaksbrev(
+                hentAktivtVedtak(restFagsak = restFagsakEtterVilkårsvurdering.data!!)!!.id)
         Assertions.assertTrue(vedtaksbrevOpphørt?.status == Ressurs.Status.SUKSESS)
         Assertions.assertTrue(vedtaksbrevOpphørt?.data?.size ?: 0 > 0)
     }
