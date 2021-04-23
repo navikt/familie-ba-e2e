@@ -74,6 +74,7 @@ enum class BehandlingResultat {
     HENLAGT_FEILAKTIG_OPPRETTET,
     HENLAGT_SØKNAD_TRUKKET,
     IKKE_VURDERT,
+    ENDRET_OG_OPPHØRT,
 }
 
 data class RestPersonResultat(
