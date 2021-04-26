@@ -91,7 +91,9 @@ data class RestVilkårResultat(
         val begrunnelse: String,
         val endretAv: String = "VL",
         val endretTidspunkt: LocalDateTime = LocalDateTime.now(),
-        val behandlingId: Long
+        val behandlingId: Long,
+        val erEksplisittAvslagPåSøknad: Boolean? = null,
+        val avslagBegrunnelser: List<VedtakBegrunnelseSpesifikasjon>? = null,
 )
 
 data class RestVedtak(
