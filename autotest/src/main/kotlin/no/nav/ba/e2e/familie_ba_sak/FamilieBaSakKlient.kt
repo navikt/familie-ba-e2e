@@ -8,6 +8,7 @@ import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingÅrsak
 import no.nav.ba.e2e.familie_ba_sak.domene.FagsakRequest
 import no.nav.ba.e2e.familie_ba_sak.domene.Logg
 import no.nav.ba.e2e.familie_ba_sak.domene.Metrikk
+import no.nav.ba.e2e.familie_ba_sak.domene.MigreringResponseDto
 import no.nav.ba.e2e.familie_ba_sak.domene.NyBehandling
 import no.nav.ba.e2e.familie_ba_sak.domene.RestBeslutningPåVedtak
 import no.nav.ba.e2e.familie_ba_sak.domene.RestFagsak
