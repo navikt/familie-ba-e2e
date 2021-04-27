@@ -20,6 +20,7 @@ data class RestBehandling(
         val underkategori: BehandlingUnderkategori,
         val personResultater: List<RestPersonResultat>,
         val resultat: BehandlingResultat,
+        val vedtakForBehandling: List<RestVedtak>,
         val endretAv: String,
         val vedtaksperioder: List<Vedtaksperiode>,
 )
@@ -39,7 +40,9 @@ enum class BehandlingÅrsak(val visningsnavn: String) {
     ÅRLIG_KONTROLL("Årsak kontroll"),
     DØDSFALL("Dødsfall"),
     NYE_OPPLYSNINGER("Nye opplysninger"),
-    TEKNISK_OPPHØR("Teknisk opphør") // Kan være tilbakeføring til infotrygd, feilutbetaling
+    TEKNISK_OPPHØR("Teknisk opphør"), // Kan være tilbakeføring til infotrygd, feilutbetaling
+    OMREGNING_6ÅR("Omregning 6 år"),
+    OMREGNING_18ÅR("Omregning 18 år")
 }
 
 
@@ -61,17 +64,17 @@ enum class BehandlingStatus {
     AVSLUTTET,
 }
 
-enum class BehandlingResultat(val brevMal: String, val displayName: String) {
-    INNVILGET(brevMal = "innvilget", displayName = "Innvilget"),
-    ENDRET_OG_FORTSATT_INNVILGET(brevMal = "innvilget", displayName = "Endret og fortsatt innvilget"),
-    ENDRET_OG_OPPHØRT(brevMal = "endring_og_opphort", displayName = "Endret og opphørt"),
-    OPPHØRT(brevMal = "opphor", displayName = "Opphørt"),
-    AVSLÅTT(brevMal = "avslag", displayName = "Avslått"),
-    FORTSATT_INNVILGET(brevMal = "ukjent", displayName = "Fortsatt innvilget"),
-    DELVIS_INNVILGET(brevMal = "ukjent", displayName = "Delvis innvilget"),
-    HENLAGT_FEILAKTIG_OPPRETTET(brevMal = "ukjent", displayName = "Henlagt feilaktig opprettet"),
-    HENLAGT_SØKNAD_TRUKKET(brevMal = "ukjent", displayName = "Henlagt søknad trukket"),
-    IKKE_VURDERT(brevMal = "ukjent", displayName = "Ikke vurdert"),
+enum class BehandlingResultat {
+    INNVILGET,
+    ENDRET,
+    OPPHØRT,
+    AVSLÅTT,
+    FORTSATT_INNVILGET,
+    DELVIS_INNVILGET,
+    HENLAGT_FEILAKTIG_OPPRETTET,
+    HENLAGT_SØKNAD_TRUKKET,
+    IKKE_VURDERT,
+    ENDRET_OG_OPPHØRT,
 }
 
 data class RestPersonResultat(
@@ -81,14 +84,22 @@ data class RestPersonResultat(
 
 data class RestVilkårResultat(
         val id: Long,
-        val vilkårType: Any,
+        val vilkårType: Vilkår,
         val resultat: Resultat,
         val periodeFom: LocalDate?,
         val periodeTom: LocalDate?,
         val begrunnelse: String,
         val endretAv: String = "VL",
         val endretTidspunkt: LocalDateTime = LocalDateTime.now(),
-        val behandlingId: Long
+        val behandlingId: Long,
+        val erEksplisittAvslagPåSøknad: Boolean? = null,
+        val avslagBegrunnelser: List<VedtakBegrunnelseSpesifikasjon>? = null,
+)
+
+data class RestVedtak(
+        val aktiv: Boolean,
+        val vedtaksdato: LocalDateTime?,
+        val id: Long
 )
 
 

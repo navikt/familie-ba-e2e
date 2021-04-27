@@ -11,7 +11,9 @@ data class RestScenarioPerson(
         val fornavn: String,
         val etternavn: String,
         val infotrygdSaker: InfotrygdSøkResponse<Sak>? = null,
-)
+) {
+    val navn = "$fornavn $etternavn"
+}
 
 data class Familierelasjon(
         val relatertPersonsIdent: String,
