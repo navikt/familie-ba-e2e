@@ -15,13 +15,13 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.getDataOrThrow
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.awaitility.core.ConditionTimeoutException
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.MethodOrderer
-import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestMethodOrder
@@ -53,11 +53,88 @@ class AutotestMigrering(
         familieBaSakKlient.truncate()
     }
 
-    @Order(1)
+
     @Test
-    fun `Skal migrere en bruker med BA OR OS  man finner i infotrygd barnetrygd tjenesten`() {
+    fun `Skal ikke tillatte migrering av sak som ikke er BA OR OS`() {
         val callId = UUID.randomUUID().toString()
         MDC.put("callId", callId)
+
+        assertThatThrownBy {
+            familieBaSakKlient.migrering(
+                lagTestScenarioForMigrering(
+                    valg = "OR",
+                    undervalg = "EU"
+                )!!.søker.ident!!
+            )
+        }.hasMessageContaining("Kan kun migrere ordinære saker")
+        assertThatThrownBy {
+            familieBaSakKlient.migrering(
+                lagTestScenarioForMigrering(
+                    valg = "OR",
+                    undervalg = "IB"
+                )!!.søker.ident!!
+            )
+        }.hasMessageContaining("Kan kun migrere ordinære saker")
+        assertThatThrownBy {
+            familieBaSakKlient.migrering(
+                lagTestScenarioForMigrering(
+                    valg = "UT",
+                    undervalg = "EF"
+                )!!.søker.ident!!
+            )
+        }.hasMessageContaining("Kan kun migrere ordinære saker")
+        assertThatThrownBy {
+            familieBaSakKlient.migrering(
+                lagTestScenarioForMigrering(
+                    valg = "UT",
+                    undervalg = "EU"
+                )!!.søker.ident!!
+            )
+        }.hasMessageContaining("Kan kun migrere ordinære saker")
+    }
+
+
+    @Test
+    fun `Skal migrere en bruker som har sak BA OR OS i infotrygd barnetrygd tjenesten`() {
+        val callId = UUID.randomUUID().toString()
+        MDC.put("callId", callId)
+
+        val scenarioMorMedBarn = lagTestScenarioForMigrering()
+
+        println("Skal migrerer ${scenarioMorMedBarn?.søker?.ident!!}")
+
+        val migreringRessurs = familieBaSakKlient.migrering(scenarioMorMedBarn.søker.ident!!)
+        println("Kall mot migrering returnerte $migreringRessurs")
+
+        assertThat(migreringRessurs.melding).isEqualTo("Migrering påbegynt")
+
+        erTaskOpprettetISak("iverksettMotOppdrag", callId)
+        erTaskOpprettetISak("statusFraOppdrag", callId)
+        erTaskOpprettetISak("ferdigstillBehandling", callId)
+        erTaskOpprettetISak("publiserVedtakTask", callId)
+
+
+        val saksLogg = familieBaSakKlient.hentLogg(migreringRessurs.data!!.behandlingId)
+        println("Validerer saksLogg etter migrering $saksLogg")
+        assertThat(saksLogg?.status).isEqualTo(Ressurs.Status.SUKSESS)
+        assertThat(
+            saksLogg?.getDataOrThrow()
+                ?.filter { it.type == LoggType.BEHANDLING_OPPRETTET && it.tittel == "Migrering fra infotrygd opprettet" }?.size == 1
+        )
+        assertThat(saksLogg?.getDataOrThrow()?.filter { it.type == LoggType.DISTRIBUERE_BREV }?.size == 0)
+        assertThat(saksLogg?.getDataOrThrow()?.filter { it.type == LoggType.FERDIGSTILLE_BEHANDLING }?.size == 1)
+
+        val fagsak = familieBaSakKlient.hentFagsak(migreringRessurs.data?.fagsakId!!)
+        assertThat(fagsak.status).isEqualTo(Ressurs.Status.SUKSESS)
+        val migreringBehandling = fagsak.getDataOrThrow().behandlinger.find { it.type == BehandlingType.MIGRERING_FRA_INFOTRYGD }
+        println("Validerer at migreringsBehandling vedtaksperiode er satt for $migreringBehandling")
+        assertThat(migreringBehandling).isNotNull
+        assertThat(listOf(LocalDate.now().withDayOfMonth(1), LocalDate.now().withDayOfMonth(1).plusMonths(1))).contains(
+            migreringBehandling?.vedtaksperioder?.first()?.periodeFom
+        )
+    }
+
+    private fun lagTestScenarioForMigrering(valg: String? = "OR", undervalg: String? = "OS"): RestScenario? {
         val barn = mockserverKlient.lagScenario(
             RestScenario(
                 søker = RestScenarioPerson(
@@ -79,6 +156,8 @@ class AutotestMigrering(
                             lagInfotrygdSak(
                                 1354.0,
                                 barn?.søker?.ident!!,
+                                valg,
+                                undervalg
                             )
                         ), barn = emptyList()
                     )
@@ -93,36 +172,11 @@ class AutotestMigrering(
                 )
             )
         )
-        println("Skal migrerer ${scenarioMorMedBarn?.søker?.ident!!}")
-
-        val migreringRessurs = familieBaSakKlient.migrering(scenarioMorMedBarn.søker.ident!!)
-        println("Kall mot migrering returnerte $migreringRessurs")
-
-        assertThat(migreringRessurs.melding).isEqualTo("Migrering påbegynt")
-
-        erTaskOpprettetISak("iverksettMotOppdrag", callId)
-        erTaskOpprettetISak("statusFraOppdrag", callId)
-        erTaskOpprettetISak("ferdigstillBehandling", callId)
-        erTaskOpprettetISak("publiserVedtakTask", callId)
-
-
-        val saksLogg = familieBaSakKlient.hentLogg(migreringRessurs.data!!.behandlingId)
-        println("Validerer saksLogg etter migrering $saksLogg")
-        assertThat(saksLogg?.status).isEqualTo(Ressurs.Status.SUKSESS)
-        assertThat(saksLogg?.getDataOrThrow()?.filter { it.type == LoggType.BEHANDLING_OPPRETTET && it.tittel == "Migrering fra infotrygd opprettet" }?.size == 1)
-        assertThat(saksLogg?.getDataOrThrow()?.filter { it.type == LoggType.DISTRIBUERE_BREV }?.size == 0)
-        assertThat(saksLogg?.getDataOrThrow()?.filter { it.type == LoggType.FERDIGSTILLE_BEHANDLING }?.size == 1)
-
-        val fagsak = familieBaSakKlient.hentFagsak(migreringRessurs?.data?.fagsakId!!)
-        assertThat(fagsak?.status).isEqualTo(Ressurs.Status.SUKSESS)
-        val migreringBehandling = fagsak.getDataOrThrow().behandlinger.find {it.type == BehandlingType.MIGRERING_FRA_INFOTRYGD }
-        println("Validerer at migreringsBehandling vedtaksperiode er satt for $migreringBehandling")
-        assertThat(migreringBehandling).isNotNull()
-        assertThat(listOf(LocalDate.now().withDayOfMonth(1), LocalDate.now().withDayOfMonth(1).plusMonths(1))).contains(migreringBehandling?.vedtaksperioder?.first()?.periodeFom)
+        return scenarioMorMedBarn
     }
 
 
-    private fun lagInfotrygdSak(beløp: Double, identBarn: String): Sak {
+    private fun lagInfotrygdSak(beløp: Double, identBarn: String, valg: String? = "OR", undervalg: String? = "OS"): Sak {
         return Sak(
             stønad = Stønad(
                 barn = listOf(
@@ -140,8 +194,8 @@ class AutotestMigrering(
                 opphørsgrunn = "0"
             ),
             status = "FB",
-            valg = "OR",
-            undervalg = "OS"
+            valg = valg,
+            undervalg = undervalg
         )
     }
 
