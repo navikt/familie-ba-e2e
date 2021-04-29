@@ -76,20 +76,6 @@ class LeesahTest(
         harTaskStatus("sendTilSak", callId, Status.FERDIG)
 
         erTaskOpprettetISak("behandleFødselshendelseTask", callId)
-
-
-        metrikkSkalØkes("behandling.opprettet",
-                        Pair("type", "FØRSTEGANGSBEHANDLING"),
-                        startVerdiMetrikkBehandlingOpprettetAutomatisk)
-
-        metrikkSkalØkes("behandling.logg", Pair("type", "FØDSELSHENDELSE"), startVerdiMetrikkFødselshendelse)
-
-        //Sjekker at fagsak med behandlingResultat INNVILGET har blitt lagd for mor
-        await.atMost(60, TimeUnit.SECONDS)
-                .withPollInterval(Duration.ofSeconds(1))
-                .until {
-                    harMorBehandlingMedResultat(BehandlingResultat.INNVILGET, scenario.søker.ident!!)
-                }
     }
 
     private fun harMorBehandlingMedResultat(resultat: BehandlingResultat, søkersIdent: String): Boolean {
