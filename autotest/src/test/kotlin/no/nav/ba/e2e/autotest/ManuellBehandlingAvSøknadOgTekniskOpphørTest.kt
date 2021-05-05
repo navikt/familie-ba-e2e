@@ -204,7 +204,6 @@ class ManuellBehandlingAvSøknadOgTekniskOpphørTest(
                             restPersonResultat =
                             RestPersonResultat(personIdent = restPersonResultat.personIdent,
                                                vilkårResultater = listOf(it.copy(
-                                                       //resultat = Resultat.OPPFYLT,
                                                        periodeFom = LocalDate.parse(scenario.barna[1].fødselsdato)
                                                                .plusYears((eldsteBarnAlder / 2) + 1),
                                                        periodeTom = LocalDate.now()
@@ -293,14 +292,14 @@ class ManuellBehandlingAvSøknadOgTekniskOpphørTest(
 
         aktivBehandling.personResultater.forEach { restPersonResultat ->
             restPersonResultat.vilkårResultater?.forEach {
-                if (restPersonResultat.personIdent == scenario.barna[1].ident && it.vilkårType == Vilkår.BOR_MED_SØKER) {
+                if (restPersonResultat.personIdent == scenario.barna[1].ident || restPersonResultat.personIdent == scenario.søker.ident) {
                     familieBaSakKlient.putVilkår(
                             behandlingId = aktivBehandling.behandlingId,
                             vilkårId = it.id,
                             restPersonResultat =
                             RestPersonResultat(personIdent = restPersonResultat.personIdent,
                                                vilkårResultater = listOf(it.copy(
-                                                       resultat = Resultat.IKKE_OPPFYLT
+                                                       periodeTom = LocalDate.now().plusMonths(2)
                                                ))))
                 }
             }
