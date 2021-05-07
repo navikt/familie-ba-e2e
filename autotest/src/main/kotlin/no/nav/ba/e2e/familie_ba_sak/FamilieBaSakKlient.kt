@@ -8,6 +8,7 @@ import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingÅrsak
 import no.nav.ba.e2e.familie_ba_sak.domene.FagsakRequest
 import no.nav.ba.e2e.familie_ba_sak.domene.Logg
 import no.nav.ba.e2e.familie_ba_sak.domene.Metrikk
+import no.nav.ba.e2e.familie_ba_sak.domene.MigreringResponseDto
 import no.nav.ba.e2e.familie_ba_sak.domene.NyBehandling
 import no.nav.ba.e2e.familie_ba_sak.domene.RestBeslutningPåVedtak
 import no.nav.ba.e2e.familie_ba_sak.domene.RestFagsak
@@ -20,6 +21,7 @@ import no.nav.ba.e2e.familie_ba_sak.domene.RestPostVedtakBegrunnelse
 import no.nav.ba.e2e.familie_ba_sak.domene.RestRegistrerSøknad
 import no.nav.ba.e2e.familie_ba_sak.domene.RestSøkParam
 import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
@@ -160,6 +162,12 @@ class FamilieBaSakKlient(
 
     fun triggerAutobrev18og6år(): Ressurs<String> {
         return getForEntity(URI.create("$baSakUrl/testverktoy/autobrev"))
+    }
+
+    fun migrering(ident: String): Ressurs<MigreringResponseDto> {
+        val uri = URI.create("$baSakUrl/api/migrering?behandlingAarsak=NYE_OPPLYSNINGER")
+
+        return postForEntity(uri, PersonIdent(ident))!!
     }
 }
 
