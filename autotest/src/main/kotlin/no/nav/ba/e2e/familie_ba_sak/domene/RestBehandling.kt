@@ -42,7 +42,8 @@ enum class BehandlingÅrsak(val visningsnavn: String) {
     NYE_OPPLYSNINGER("Nye opplysninger"),
     TEKNISK_OPPHØR("Teknisk opphør"), // Kan være tilbakeføring til infotrygd, feilutbetaling
     OMREGNING_6ÅR("Omregning 6 år"),
-    OMREGNING_18ÅR("Omregning 18 år")
+    OMREGNING_18ÅR("Omregning 18 år"),
+    MIGRERING("Migrering"),
 }
 
 

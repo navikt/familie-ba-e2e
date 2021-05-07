@@ -165,7 +165,7 @@ class FamilieBaSakKlient(
     }
 
     fun migrering(ident: String): Ressurs<MigreringResponseDto> {
-        val uri = URI.create("$baSakUrl/api/migrering?behandlingAarsak=NYE_OPPLYSNINGER")
+        val uri = URI.create("$baSakUrl/api/migrering")
 
         return postForEntity(uri, PersonIdent(ident))!!
     }
