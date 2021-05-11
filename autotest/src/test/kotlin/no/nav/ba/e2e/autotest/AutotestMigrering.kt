@@ -45,12 +45,12 @@ class AutotestMigrering(
 
     @BeforeAll
     fun init() {
-        familieBaSakKlient.truncate()
+        //familieBaSakKlient.truncate()
     }
 
     @AfterAll
     fun cleanup() {
-        familieBaSakKlient.truncate()
+        //familieBaSakKlient.truncate()
     }
 
 
