@@ -22,8 +22,6 @@ abstract class AbstractMottakTest(val mottakKlient: FamilieBaMottakKlient,
 
     @BeforeEach
     fun init() {
-        //mottakKlient.truncate()
-        //baSakKlient.truncate()
         mockserverKlient?.clearOppaveCache()
         mockserverKlient?.clearFerdigstillJournapostCache()
     }

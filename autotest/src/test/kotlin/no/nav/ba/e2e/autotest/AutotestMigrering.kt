@@ -43,17 +43,6 @@ class AutotestMigrering(
     @Autowired private val mockserverKlient: MockserverKlient
 ) {
 
-    @BeforeAll
-    fun init() {
-        //familieBaSakKlient.truncate()
-    }
-
-    @AfterAll
-    fun cleanup() {
-        //familieBaSakKlient.truncate()
-    }
-
-
     @Test
     fun `Skal ikke tillatte migrering av sak som ikke er BA OR OS`() {
         val callId = UUID.randomUUID().toString()
