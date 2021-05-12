@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit
 @SpringBootTest(classes = [ApplicationConfig::class])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-class ManuellBehandlingAvJournalførtFørstegangssøknad(
+class ManuellBehandlingAvJournalfortForstegangssoknad(
         @Autowired
         private val familieBaSakKlient: FamilieBaSakKlient,
 

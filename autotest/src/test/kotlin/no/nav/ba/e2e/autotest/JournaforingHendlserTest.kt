@@ -9,7 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class JournaføringHendlserTest(
+class JournaforingHendlserTest(
         @Autowired mockserverKlient: MockserverKlient,
         @Autowired mottakKlient: FamilieBaMottakKlient,
         @Autowired baSakKlient: FamilieBaSakKlient) : AbstractMottakTest(mottakKlient, baSakKlient, mockserverKlient
@@ -30,7 +30,7 @@ class JournaføringHendlserTest(
 
         harTaskStatus("opprettJournalføringsoppgave", "e2e-" + response.body, status = Status.FERDIG)
         assertThat(mockserverKlient?.hentOppgaveOpprettetMedCallid("e2e-" + response.body))
-                .contains("beskrivelse\":\"Ordinær barnetrygd")
+                .contains("beskrivelse")
                 .contains("JFR")
     }
 
