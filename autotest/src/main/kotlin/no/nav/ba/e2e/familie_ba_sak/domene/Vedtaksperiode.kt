@@ -8,7 +8,8 @@ import java.time.LocalDate
 @JsonSubTypes(*arrayOf(
         JsonSubTypes.Type(value = Utbetalingsperiode::class, name = "UTBETALING"),
         JsonSubTypes.Type(value = Avslagsperiode::class, name = "AVSLAG"),
-        JsonSubTypes.Type(value = Opphørsperiode::class, name = "OPPHØR")
+        JsonSubTypes.Type(value = Opphørsperiode::class, name = "OPPHØR"),
+        JsonSubTypes.Type(value = FortsattInnvilgetPeriode::class, name = "FORTSATT_INNVILGET")
 ))
 abstract class Vedtaksperiode(
         open val periodeFom: LocalDate?,
@@ -16,8 +17,9 @@ abstract class Vedtaksperiode(
         open val vedtaksperiodetype: Vedtaksperiodetype
 )
 
-enum class Vedtaksperiodetype(val displayName: String) {
-    UTBETALING(displayName = "utbetalingsperiode"),
-    OPPHØR(displayName = "opphørsperiode"),
-    AVSLAG(displayName = "avslagsperiode")
+enum class Vedtaksperiodetype {
+    UTBETALING,
+    OPPHØR,
+    AVSLAG,
+    FORTSATT_INNVILGET
 }
