@@ -19,8 +19,8 @@ import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
 @SpringBootTest(classes = [ApplicationConfig::class])
-class TestBehandlingOmgjøringTests(@Autowired val baSakKlient: FamilieBaSakKlient,
-                                   @Autowired val mockserverKlient: MockserverKlient) {
+class TestBehandlingOmgjoringTest(@Autowired val baSakKlient: FamilieBaSakKlient,
+                                  @Autowired val mockserverKlient: MockserverKlient) {
 
     @Test
     fun `Opprett og innvilg en førstegangsbehandling, trigge autobrev`() {
