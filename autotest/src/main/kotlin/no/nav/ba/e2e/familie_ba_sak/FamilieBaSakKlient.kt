@@ -20,6 +20,7 @@ import no.nav.ba.e2e.familie_ba_sak.domene.RestPersonResultat
 import no.nav.ba.e2e.familie_ba_sak.domene.RestPostVedtakBegrunnelse
 import no.nav.ba.e2e.familie_ba_sak.domene.RestRegistrerSøknad
 import no.nav.ba.e2e.familie_ba_sak.domene.RestSøkParam
+import no.nav.ba.e2e.familie_ba_sak.domene.RestTilbakekreving
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
