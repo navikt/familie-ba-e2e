@@ -20,6 +20,7 @@ import no.nav.ba.e2e.familie_ba_sak.domene.RestPersonResultat
 import no.nav.ba.e2e.familie_ba_sak.domene.RestPostVedtakBegrunnelse
 import no.nav.ba.e2e.familie_ba_sak.domene.RestRegistrerSøknad
 import no.nav.ba.e2e.familie_ba_sak.domene.RestSøkParam
+import no.nav.ba.e2e.familie_ba_sak.domene.RestTilbakekreving
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -90,6 +91,12 @@ class FamilieBaSakKlient(
         val uri = URI.create("$baSakUrl/api/vilkaarsvurdering/$behandlingId/valider")
 
         return postForEntity(uri, "")
+    }
+
+    fun lagreTilbakekrevingOgGåVidereTilNesteSteg(behandlingId: Long,
+                                                  restTilbakekreving: RestTilbakekreving?): Ressurs<RestFagsak> {
+        val uri = URI.create("$baSakUrl/api/behandlinger/$behandlingId/tilbakekreving")
+        return postForEntity(uri, restTilbakekreving ?: "")
     }
 
     fun sendTilBeslutter(fagsakId: Long): Ressurs<RestFagsak> {

@@ -124,10 +124,27 @@ fun kjørStegprosessForFGB(
 
     if (tilSteg == StegType.VILKÅRSVURDERING) return restFagsakEtterVilkårsvurdering
 
+    //Midlertidig løsning for å håndtere med og uten simuleringssteg.
+    // TODO: Fjern når toggelen bruk_simulering er fjernet fra familie-ba-sak.
+    val behandlingEtterVilkårsvurdering = hentAktivBehandling(restFagsak = restFagsakEtterVilkårsvurdering.data!!)!!
+    var restFagsakEtterVurderTilbakekreving = restFagsakEtterVilkårsvurdering
 
-    val vedtaksperiode = restFagsakEtterVilkårsvurdering.data!!.behandlinger.first().vedtaksperioder.first()
+    if (behandlingEtterVilkårsvurdering.steg == StegType.VURDER_TILBAKEKREVING) {
+        generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
+                             fagsakStatus = FagsakStatus.OPPRETTET,
+                             behandlingStegType = StegType.VURDER_TILBAKEKREVING)
+
+
+        restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
+                behandlingEtterVilkårsvurdering.behandlingId,
+                null)
+
+        if (tilSteg == StegType.VURDER_TILBAKEKREVING) return restFagsakEtterVurderTilbakekreving
+    }
+
+    val vedtaksperiode = restFagsakEtterVurderTilbakekreving.data!!.behandlinger.first().vedtaksperioder.first()
     familieBaSakKlient.leggTilVedtakBegrunnelse(
-            fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
+            fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
             vedtakBegrunnelse = RestPostVedtakBegrunnelse(
                     fom = vedtaksperiode.periodeFom!!,
                     tom = vedtaksperiode.periodeTom,
@@ -135,11 +152,11 @@ fun kjørStegprosessForFGB(
     )
 
     val restFagsakEtterSendTilBeslutter =
-            familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id)
+            familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id)
 
     if (tilSteg == StegType.SEND_TIL_BESLUTTER) return restFagsakEtterSendTilBeslutter
 
-    val restFagsakEtterIverksetting = familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
+    val restFagsakEtterIverksetting = familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
                                                                          restBeslutningPåVedtak = RestBeslutningPåVedtak(
                                                                                  Beslutning.GODKJENT))
     if (tilSteg == StegType.BEHANDLING_AVSLUTTET) {

@@ -125,14 +125,30 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
                         behandlingId = aktivBehandlingEtterRegistrertSøknad.behandlingId
                 )
 
+        //Midlertidig løsning for å håndtere med og uten simuleringssteg.
+        // TODO: Fjern når toggelen bruk_simulering er fjernet fra familie-ba-sak.
+        val behandlingEtterVilkårsvurdering = hentAktivBehandling(restFagsak = restFagsakEtterVilkårsvurdering.data!!)!!
+        var restFagsakEtterVurderTilbakekreving = restFagsakEtterVilkårsvurdering
+
+        if (behandlingEtterVilkårsvurdering.steg == StegType.VURDER_TILBAKEKREVING) {
+            generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
+                                 fagsakStatus = FagsakStatus.OPPRETTET,
+                                 behandlingStegType = StegType.VURDER_TILBAKEKREVING,
+                                 behandlingResultat = BehandlingResultat.INNVILGET)
+
+            restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
+                    behandlingEtterVilkårsvurdering.behandlingId,
+                    null)
+        }
+
         generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.SEND_TIL_BESLUTTER,
                              behandlingResultat = BehandlingResultat.INNVILGET)
 
-        val vedtaksperiode = restFagsakEtterVilkårsvurdering.data!!.behandlinger.first().vedtaksperioder.first()
+        val vedtaksperiode = restFagsakEtterVurderTilbakekreving.data!!.behandlinger.first().vedtaksperioder.first()
         val restFagsakEtterVedtaksbegrunnelser = familieBaSakKlient.leggTilVedtakBegrunnelse(
-                fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
+                fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
                 vedtakBegrunnelse = RestPostVedtakBegrunnelse(
                         fom = vedtaksperiode.periodeFom!!,
                         tom = vedtaksperiode.periodeTom,
@@ -141,7 +157,7 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
 
         assertEquals(ordinærSats.beløp + tilleggOrdinærSats.beløp,
                      hentNåværendeEllerNesteMånedsUtbetaling(
-                             behandling = hentAktivBehandling(restFagsakEtterVilkårsvurdering.data!!)
+                             behandling = hentAktivBehandling(restFagsakEtterVurderTilbakekreving.data!!)
                      )
         )
 
@@ -150,12 +166,12 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
         Assertions.assertTrue(vedtaksbrevFørstegangsvedtak?.status == Ressurs.Status.SUKSESS)
 
         val restFagsakEtterSendTilBeslutter =
-                familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id)
+                familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id)
         generellAssertFagsak(restFagsak = restFagsakEtterSendTilBeslutter,
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.BESLUTTE_VEDTAK)
 
-        val restFagsakEtterIverksetting = familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
+        val restFagsakEtterIverksetting = familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
                                                                              restBeslutningPåVedtak = RestBeslutningPåVedtak(
                                                                                      Beslutning.GODKJENT))
         generellAssertFagsak(restFagsak = restFagsakEtterIverksetting,
@@ -225,14 +241,31 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
                 familieBaSakKlient.validerVilkårsvurdering(
                         behandlingId = aktivBehandling.behandlingId
                 )
-        generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
+
+        //Midlertidig løsning for å håndtere med og uten simuleringssteg.
+        // TODO: Fjern når toggelen bruk_simulering er fjernet fra familie-ba-sak.
+        val behandlingEtterVilkårsvurdering = hentAktivBehandling(restFagsak = restFagsakEtterVilkårsvurdering.data!!)!!
+        var restFagsakEtterVurderTilbakekreving = restFagsakEtterVilkårsvurdering
+
+        if (behandlingEtterVilkårsvurdering.steg == StegType.VURDER_TILBAKEKREVING) {
+            generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
+                                 fagsakStatus = FagsakStatus.OPPRETTET,
+                                 behandlingStegType = StegType.VURDER_TILBAKEKREVING,
+                                 behandlingResultat = BehandlingResultat.ENDRET_OG_OPPHØRT)
+
+            restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
+                    behandlingEtterVilkårsvurdering.behandlingId,
+                    null)
+        }
+
+        generellAssertFagsak(restFagsak = restFagsakEtterVurderTilbakekreving,
                              fagsakStatus = FagsakStatus.LØPENDE,
                              behandlingStegType = StegType.SEND_TIL_BESLUTTER,
                              behandlingResultat = BehandlingResultat.ENDRET_OG_OPPHØRT)
 
-        val vedtaksperiode = hentAktivBehandling(restFagsak = restFagsakEtterVilkårsvurdering.data!!)!!.vedtaksperioder.first()
+        val vedtaksperiode = hentAktivBehandling(restFagsak = restFagsakEtterVurderTilbakekreving.data!!)!!.vedtaksperioder.first()
         val restFagsakEtterVedtaksbegrunnelser = familieBaSakKlient.leggTilVedtakBegrunnelse(
-                fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
+                fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
                 vedtakBegrunnelse = RestPostVedtakBegrunnelse(
                         fom = vedtaksperiode.periodeFom!!,
                         tom = vedtaksperiode.periodeTom,
@@ -245,12 +278,12 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
         Assertions.assertTrue(vedtaksbrevRevurderingEndret?.data?.size ?: 0 > 0)
 
         val restFagsakEtterSendTilBeslutter =
-                familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id)
+                familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id)
         generellAssertFagsak(restFagsak = restFagsakEtterSendTilBeslutter,
                              fagsakStatus = FagsakStatus.LØPENDE,
                              behandlingStegType = StegType.BESLUTTE_VEDTAK)
 
-        val restFagsakEtterIverksetting = familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
+        val restFagsakEtterIverksetting = familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
                                                                              restBeslutningPåVedtak = RestBeslutningPåVedtak(
                                                                                      Beslutning.GODKJENT))
         generellAssertFagsak(restFagsak = restFagsakEtterIverksetting,
@@ -309,14 +342,32 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
                 familieBaSakKlient.validerVilkårsvurdering(
                         behandlingId = aktivBehandling.behandlingId
                 )
-        generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
+
+        //Midlertidig løsning for å håndtere med og uten simuleringssteg.
+        // TODO: Fjern når toggelen bruk_simulering er fjernet fra familie-ba-sak.
+        val behandlingEtterVilkårsvurdering = hentAktivBehandling(restFagsak = restFagsakEtterVilkårsvurdering.data!!)!!
+        var restFagsakEtterVurderTilbakekreving = restFagsakEtterVilkårsvurdering
+
+        if (behandlingEtterVilkårsvurdering.steg == StegType.VURDER_TILBAKEKREVING) {
+            generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
+                                 fagsakStatus = FagsakStatus.OPPRETTET,
+                                 behandlingStegType = StegType.VURDER_TILBAKEKREVING,
+                                 behandlingResultat = BehandlingResultat.ENDRET)
+
+            restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
+                    behandlingEtterVilkårsvurdering.behandlingId,
+                    null)
+        }
+
+
+        generellAssertFagsak(restFagsak = restFagsakEtterVurderTilbakekreving,
                              fagsakStatus = FagsakStatus.LØPENDE,
                              behandlingStegType = StegType.SEND_TIL_BESLUTTER,
                              behandlingResultat = BehandlingResultat.ENDRET)
 
-        val vedtaksperiode = hentAktivBehandling(restFagsak = restFagsakEtterVilkårsvurdering.data!!)!!.vedtaksperioder.first()
+        val vedtaksperiode = hentAktivBehandling(restFagsak = restFagsakEtterVurderTilbakekreving.data!!)!!.vedtaksperioder.first()
         val restFagsakEtterVedtaksbegrunnelser = familieBaSakKlient.leggTilVedtakBegrunnelse(
-                fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
+                fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
                 vedtakBegrunnelse = RestPostVedtakBegrunnelse(
                         fom = vedtaksperiode.periodeFom!!,
                         tom = vedtaksperiode.periodeTom,
@@ -371,18 +422,35 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
                 familieBaSakKlient.validerVilkårsvurdering(
                         behandlingId = aktivBehandling.behandlingId
                 )
-        generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
+
+        //Midlertidig løsning for å håndtere med og uten simuleringssteg.
+        // TODO: Fjern når toggelen bruk_simulering er fjernet fra familie-ba-sak.
+        val behandlingEtterVilkårsvurdering = hentAktivBehandling(restFagsak = restFagsakEtterVilkårsvurdering.data!!)!!
+        var restFagsakEtterVurderTilbakekreving = restFagsakEtterVilkårsvurdering
+
+        if (behandlingEtterVilkårsvurdering.steg == StegType.VURDER_TILBAKEKREVING) {
+            generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
+                                 fagsakStatus = FagsakStatus.OPPRETTET,
+                                 behandlingStegType = StegType.VURDER_TILBAKEKREVING,
+                                 behandlingResultat = BehandlingResultat.OPPHØRT)
+
+            restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
+                    behandlingEtterVilkårsvurdering.behandlingId,
+                    null)
+        }
+
+        generellAssertFagsak(restFagsak = restFagsakEtterVurderTilbakekreving,
                              fagsakStatus = FagsakStatus.LØPENDE,
                              behandlingStegType = StegType.SEND_TIL_BESLUTTER,
                              behandlingResultat = BehandlingResultat.OPPHØRT)
 
         val restFagsakEtterSendTilBeslutter =
-                familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id)
+                familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id)
         generellAssertFagsak(restFagsak = restFagsakEtterSendTilBeslutter,
                              fagsakStatus = FagsakStatus.LØPENDE,
                              behandlingStegType = StegType.BESLUTTE_VEDTAK)
 
-        val restFagsakEtterIverksetting = familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
+        val restFagsakEtterIverksetting = familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
                                                                              restBeslutningPåVedtak = RestBeslutningPåVedtak(
                                                                                      Beslutning.GODKJENT))
         generellAssertFagsak(restFagsak = restFagsakEtterIverksetting,
@@ -445,14 +513,31 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
                 familieBaSakKlient.validerVilkårsvurdering(
                         behandlingId = aktivBehandling.behandlingId
                 )
-        generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
+
+        //Midlertidig løsning for å håndtere med og uten simuleringssteg.
+        // TODO: Fjern når toggelen bruk_simulering er fjernet fra familie-ba-sak.
+        val behandlingEtterVilkårsvurdering = hentAktivBehandling(restFagsak = restFagsakEtterVilkårsvurdering.data!!)!!
+        var restFagsakEtterVurderTilbakekreving = restFagsakEtterVilkårsvurdering
+
+        if (behandlingEtterVilkårsvurdering.steg == StegType.VURDER_TILBAKEKREVING) {
+            generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
+                                 fagsakStatus = FagsakStatus.OPPRETTET,
+                                 behandlingStegType = StegType.VURDER_TILBAKEKREVING,
+                                 behandlingResultat = BehandlingResultat.OPPHØRT)
+
+            restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
+                    behandlingEtterVilkårsvurdering.behandlingId,
+                    null)
+        }
+
+        generellAssertFagsak(restFagsak = restFagsakEtterVurderTilbakekreving,
                              fagsakStatus = FagsakStatus.LØPENDE,
                              behandlingStegType = StegType.SEND_TIL_BESLUTTER,
                              behandlingResultat = BehandlingResultat.OPPHØRT)
 
-        val vedtaksperiode = hentAktivBehandling(restFagsak = restFagsakEtterVilkårsvurdering.data!!)!!.vedtaksperioder.first()
+        val vedtaksperiode = hentAktivBehandling(restFagsak = restFagsakEtterVurderTilbakekreving.data!!)!!.vedtaksperioder.first()
         val restFagsakEtterVedtaksbegrunnelser = familieBaSakKlient.leggTilVedtakBegrunnelse(
-                fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
+                fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
                 vedtakBegrunnelse = RestPostVedtakBegrunnelse(
                         fom = vedtaksperiode.periodeFom!!,
                         tom = vedtaksperiode.periodeTom,
@@ -525,14 +610,30 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
                         behandlingId = aktivBehandlingEtterRegistrertSøknad.behandlingId
                 )
 
-        generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
+        //Midlertidig løsning for å håndtere med og uten simuleringssteg.
+        // TODO: Fjern når toggelen bruk_simulering er fjernet fra familie-ba-sak.
+        val behandlingEtterVilkårsvurdering = hentAktivBehandling(restFagsak = restFagsakEtterVilkårsvurdering.data!!)!!
+        var restFagsakEtterVurderTilbakekreving = restFagsakEtterVilkårsvurdering
+
+        if (behandlingEtterVilkårsvurdering.steg == StegType.VURDER_TILBAKEKREVING) {
+            generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
+                                 fagsakStatus = FagsakStatus.OPPRETTET,
+                                 behandlingStegType = StegType.VURDER_TILBAKEKREVING,
+                                 behandlingResultat = BehandlingResultat.AVSLÅTT)
+
+            restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
+                    behandlingEtterVilkårsvurdering.behandlingId,
+                    null)
+        }
+
+        generellAssertFagsak(restFagsak = restFagsakEtterVurderTilbakekreving,
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.SEND_TIL_BESLUTTER,
                              behandlingResultat = BehandlingResultat.AVSLÅTT)
 
 
         val vedtaksbrevOpphørt = familieBaSakKlient.genererOgHentVedtaksbrev(
-                hentAktivtVedtak(restFagsak = restFagsakEtterVilkårsvurdering.data!!)!!.id)
+                hentAktivtVedtak(restFagsak = restFagsakEtterVurderTilbakekreving.data!!)!!.id)
         Assertions.assertTrue(vedtaksbrevOpphørt?.status == Ressurs.Status.SUKSESS)
         Assertions.assertTrue(vedtaksbrevOpphørt?.data?.size ?: 0 > 0)
     }

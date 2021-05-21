@@ -104,6 +104,11 @@
 		</dependency>
 		<dependency>
 			<groupId>no.nav.familie.kontrakter</groupId>
+			<artifactId>felles</artifactId>
+			<version>${felles-kontrakter.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.familie.kontrakter</groupId>
 			<artifactId>barnetrygd</artifactId>
 			<version>${felles-kontrakter.version}</version>
 		</dependency>

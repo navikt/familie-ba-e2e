@@ -5,7 +5,6 @@ import no.nav.ba.e2e.commons.hentAktivBehandling
 import no.nav.ba.e2e.commons.hentNåværendeEllerNesteMånedsUtbetaling
 import no.nav.ba.e2e.commons.lagMockRestJournalføring
 import no.nav.ba.e2e.commons.lagSøknadDTO
-import no.nav.ba.e2e.commons.ordinærSats
 import no.nav.ba.e2e.commons.tilleggOrdinærSats
 import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
 import no.nav.ba.e2e.familie_ba_sak.domene.Beslutning
@@ -25,6 +24,7 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -110,13 +110,28 @@ class ManuellBehandlingAvJournalfortForstegangssoknad(
                         behandlingId = aktivBehandlingEtterRegistrertSøknad.behandlingId
                 )
 
-        generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
+        //Midlertidig løsning for å håndtere med og uten simuleringssteg.
+        // TODO: Fjern når toggelen bruk_simulering er fjernet fra familie-ba-sak.
+        val behandlingEtterVilkårsvurdering = hentAktivBehandling(restFagsak = restFagsakEtterVilkårsvurdering.data!!)!!
+        var restFagsakEtterVurderTilbakekreving = restFagsakEtterVilkårsvurdering
+
+        if (behandlingEtterVilkårsvurdering.steg == StegType.VURDER_TILBAKEKREVING) {
+            generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
+                                 fagsakStatus = FagsakStatus.OPPRETTET,
+                                 behandlingStegType = StegType.VURDER_TILBAKEKREVING)
+
+            restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
+                    behandlingEtterVilkårsvurdering.behandlingId,
+                    null)
+        }
+
+        generellAssertFagsak(restFagsak = restFagsakEtterVurderTilbakekreving,
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.SEND_TIL_BESLUTTER)
 
-        val vedtaksperiode = restFagsakEtterVilkårsvurdering.data!!.behandlinger.first().vedtaksperioder.first()
+        val vedtaksperiode = restFagsakEtterVurderTilbakekreving.data!!.behandlinger.first().vedtaksperioder.first()
         familieBaSakKlient.leggTilVedtakBegrunnelse(
-                fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
+                fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
                 vedtakBegrunnelse = RestPostVedtakBegrunnelse(
                         fom = vedtaksperiode.periodeFom!!,
                         tom = vedtaksperiode.periodeTom,
@@ -125,17 +140,17 @@ class ManuellBehandlingAvJournalfortForstegangssoknad(
 
         Assertions.assertEquals(tilleggOrdinærSats.beløp,
                                 hentNåværendeEllerNesteMånedsUtbetaling(
-                                        behandling = hentAktivBehandling(restFagsakEtterVilkårsvurdering.data!!)
+                                        behandling = hentAktivBehandling(restFagsakEtterVurderTilbakekreving.data!!)
                                 )
         )
 
         val restFagsakEtterSendTilBeslutter =
-                familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id)
+                familieBaSakKlient.sendTilBeslutter(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id)
         generellAssertFagsak(restFagsak = restFagsakEtterSendTilBeslutter,
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.BESLUTTE_VEDTAK)
 
-        val restFagsakEtterIverksetting = familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVilkårsvurdering.data!!.id,
+        val restFagsakEtterIverksetting = familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
                                                                              restBeslutningPåVedtak = RestBeslutningPåVedtak(
                                                                                      Beslutning.GODKJENT))
         generellAssertFagsak(restFagsak = restFagsakEtterIverksetting,
