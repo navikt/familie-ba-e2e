@@ -90,6 +90,12 @@ class FamilieBaSakKlient(
         return postForEntity(uri, "")
     }
 
+    fun lagreTilbakekrevingOgGåVidereTilNesteSteg(behandlingId: Long,
+                                                  restTilbakekreving: RestTilbakekreving?): Ressurs<RestFagsak> {
+        val uri = URI.create("$baSakUrl/api/behandlinger/$behandlingId/tilbakekreving")
+        return postForEntity(uri, restTilbakekreving ?: "")
+    }
+
     fun sendTilBeslutter(fagsakId: Long): Ressurs<RestFagsak> {
         val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId/send-til-beslutter?behandlendeEnhet=9999")
 
