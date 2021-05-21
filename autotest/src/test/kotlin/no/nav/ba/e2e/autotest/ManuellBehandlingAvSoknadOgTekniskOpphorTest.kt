@@ -7,6 +7,7 @@ import no.nav.ba.e2e.mockserver.MockserverKlient
 import no.nav.ba.e2e.mockserver.domene.RestScenario
 import no.nav.ba.e2e.mockserver.domene.RestScenarioPerson
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.tilbakekreving.Tilbakekrevingsvalg
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
 import org.junit.jupiter.api.*
@@ -138,10 +139,10 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
 
             restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
                     behandlingEtterVilkårsvurdering.behandlingId,
-                    null)
+                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING, begrunnelse = "begrunnelse"))
         }
 
-        generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
+        generellAssertFagsak(restFagsak = restFagsakEtterVurderTilbakekreving,
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.SEND_TIL_BESLUTTER,
                              behandlingResultat = BehandlingResultat.INNVILGET)
@@ -255,7 +256,7 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
 
             restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
                     behandlingEtterVilkårsvurdering.behandlingId,
-                    null)
+                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING,begrunnelse = "begrunnelse"))
         }
 
         generellAssertFagsak(restFagsak = restFagsakEtterVurderTilbakekreving,
@@ -356,7 +357,7 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
 
             restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
                     behandlingEtterVilkårsvurdering.behandlingId,
-                    null)
+                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING,begrunnelse = "begrunnelse"))
         }
 
 
@@ -436,7 +437,7 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
 
             restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
                     behandlingEtterVilkårsvurdering.behandlingId,
-                    null)
+                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING,begrunnelse = "begrunnelse"))
         }
 
         generellAssertFagsak(restFagsak = restFagsakEtterVurderTilbakekreving,
@@ -527,7 +528,7 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
 
             restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
                     behandlingEtterVilkårsvurdering.behandlingId,
-                    null)
+                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING,begrunnelse = "begrunnelse"))
         }
 
         generellAssertFagsak(restFagsak = restFagsakEtterVurderTilbakekreving,
@@ -623,7 +624,7 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
 
             restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
                     behandlingEtterVilkårsvurdering.behandlingId,
-                    null)
+                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING,begrunnelse = "begrunnelse"))
         }
 
         generellAssertFagsak(restFagsak = restFagsakEtterVurderTilbakekreving,

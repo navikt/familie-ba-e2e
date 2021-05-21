@@ -15,6 +15,7 @@ import no.nav.ba.e2e.familie_ba_sak.domene.RestJournalpostDokument
 import no.nav.ba.e2e.familie_ba_sak.domene.RestPersonResultat
 import no.nav.ba.e2e.familie_ba_sak.domene.RestPostVedtakBegrunnelse
 import no.nav.ba.e2e.familie_ba_sak.domene.RestRegistrerSøknad
+import no.nav.ba.e2e.familie_ba_sak.domene.RestTilbakekreving
 import no.nav.ba.e2e.familie_ba_sak.domene.Resultat
 import no.nav.ba.e2e.familie_ba_sak.domene.StegType
 import no.nav.ba.e2e.familie_ba_sak.domene.SøkerMedOpplysninger
@@ -23,6 +24,7 @@ import no.nav.ba.e2e.familie_ba_sak.domene.VedtakBegrunnelseSpesifikasjon
 import no.nav.ba.e2e.mockserver.domene.RestScenario
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.journalpost.LogiskVedlegg
+import no.nav.familie.kontrakter.felles.tilbakekreving.Tilbakekrevingsvalg
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
 import java.time.Duration
@@ -137,7 +139,7 @@ fun kjørStegprosessForFGB(
 
         restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
                 behandlingEtterVilkårsvurdering.behandlingId,
-                null)
+                RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING, begrunnelse = "begrunnelse"))
 
         if (tilSteg == StegType.VURDER_TILBAKEKREVING) return restFagsakEtterVurderTilbakekreving
     }

@@ -14,6 +14,7 @@ import no.nav.ba.e2e.familie_ba_sak.domene.RestBeslutningPåVedtak
 import no.nav.ba.e2e.familie_ba_sak.domene.RestPersonResultat
 import no.nav.ba.e2e.familie_ba_sak.domene.RestPostVedtakBegrunnelse
 import no.nav.ba.e2e.familie_ba_sak.domene.RestRegistrerSøknad
+import no.nav.ba.e2e.familie_ba_sak.domene.RestTilbakekreving
 import no.nav.ba.e2e.familie_ba_sak.domene.Resultat
 import no.nav.ba.e2e.familie_ba_sak.domene.StegType
 import no.nav.ba.e2e.familie_ba_sak.domene.VedtakBegrunnelseSpesifikasjon
@@ -21,6 +22,7 @@ import no.nav.ba.e2e.mockserver.MockserverKlient
 import no.nav.ba.e2e.mockserver.domene.RestScenario
 import no.nav.ba.e2e.mockserver.domene.RestScenarioPerson
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.tilbakekreving.Tilbakekrevingsvalg
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
 import org.junit.jupiter.api.Assertions
@@ -122,7 +124,7 @@ class ManuellBehandlingAvJournalfortForstegangssoknad(
 
             restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
                     behandlingEtterVilkårsvurdering.behandlingId,
-                    null)
+                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING,begrunnelse = "begrunnelse"))
         }
 
         generellAssertFagsak(restFagsak = restFagsakEtterVurderTilbakekreving,
