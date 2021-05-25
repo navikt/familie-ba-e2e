@@ -250,7 +250,7 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
 
         if (behandlingEtterVilkårsvurdering.steg == StegType.VURDER_TILBAKEKREVING) {
             generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
-                                 fagsakStatus = FagsakStatus.OPPRETTET,
+                                 fagsakStatus = FagsakStatus.LØPENDE,
                                  behandlingStegType = StegType.VURDER_TILBAKEKREVING,
                                  behandlingResultat = BehandlingResultat.ENDRET_OG_OPPHØRT)
 
@@ -351,7 +351,7 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
 
         if (behandlingEtterVilkårsvurdering.steg == StegType.VURDER_TILBAKEKREVING) {
             generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
-                                 fagsakStatus = FagsakStatus.OPPRETTET,
+                                 fagsakStatus = FagsakStatus.LØPENDE,
                                  behandlingStegType = StegType.VURDER_TILBAKEKREVING,
                                  behandlingResultat = BehandlingResultat.ENDRET)
 
@@ -522,7 +522,7 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
 
         if (behandlingEtterVilkårsvurdering.steg == StegType.VURDER_TILBAKEKREVING) {
             generellAssertFagsak(restFagsak = restFagsakEtterVilkårsvurdering,
-                                 fagsakStatus = FagsakStatus.OPPRETTET,
+                                 fagsakStatus = FagsakStatus.LØPENDE,
                                  behandlingStegType = StegType.VURDER_TILBAKEKREVING,
                                  behandlingResultat = BehandlingResultat.OPPHØRT)
 
