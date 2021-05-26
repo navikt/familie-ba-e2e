@@ -164,7 +164,7 @@
 				<configuration>
 					<threadCount>2</threadCount>
 					<rerunFailingTestsCount>3</rerunFailingTestsCount>
-					<parallel>suitesAndClasses</parallel>
+					<parallel>all</parallel>
 					<forkCount>3</forkCount>
 				</configuration>
 			</plugin>
