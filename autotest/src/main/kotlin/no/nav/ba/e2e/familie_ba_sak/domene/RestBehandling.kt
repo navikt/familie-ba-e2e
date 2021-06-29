@@ -100,9 +100,9 @@ data class RestVilkårResultat(
 data class RestVedtak(
         val aktiv: Boolean,
         val vedtaksdato: LocalDateTime?,
+        val vedtaksperioderMedBegrunnelser: List<RestVedtaksperiodeMedBegrunnelser>,
         val id: Long
 )
-
 
 enum class Resultat {
     OPPFYLT,

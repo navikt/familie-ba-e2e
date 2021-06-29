@@ -50,16 +50,9 @@ data class Logg(
         val rolle: BehandlerRolle,
         val tekst: String)
 
-enum class VedtakBegrunnelseSpesifikasjon {
-    INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER,
-    REDUKSJON_UNDER_6_ÅR,
-    AVSLAG_BOSATT_I_RIKET,
-}
-
 data class RestPostVedtakBegrunnelse(
         val fom: LocalDate,
         val tom: LocalDate?,
         val vedtakBegrunnelse: VedtakBegrunnelseSpesifikasjon
 )
-
 

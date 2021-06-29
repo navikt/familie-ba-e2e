@@ -1,8 +1,29 @@
 package no.nav.ba.e2e.autotest
 
-import no.nav.ba.e2e.commons.*
+import no.nav.ba.e2e.commons.generellAssertFagsak
+import no.nav.ba.e2e.commons.hentAktivBehandling
+import no.nav.ba.e2e.commons.hentAktivtVedtak
+import no.nav.ba.e2e.commons.hentNåværendeEllerNesteMånedsUtbetaling
+import no.nav.ba.e2e.commons.kjørStegprosessForFGB
+import no.nav.ba.e2e.commons.lagSøknadDTO
+import no.nav.ba.e2e.commons.ordinærSats
+import no.nav.ba.e2e.commons.tilleggOrdinærSats
 import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
-import no.nav.ba.e2e.familie_ba_sak.domene.*
+import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingResultat
+import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingType
+import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingÅrsak
+import no.nav.ba.e2e.familie_ba_sak.domene.Beslutning
+import no.nav.ba.e2e.familie_ba_sak.domene.FagsakStatus
+import no.nav.ba.e2e.familie_ba_sak.domene.RestBeslutningPåVedtak
+import no.nav.ba.e2e.familie_ba_sak.domene.RestPersonResultat
+import no.nav.ba.e2e.familie_ba_sak.domene.RestPostVedtakBegrunnelse
+import no.nav.ba.e2e.familie_ba_sak.domene.RestPutVedtaksperiodeMedStandardbegrunnelser
+import no.nav.ba.e2e.familie_ba_sak.domene.RestRegistrerSøknad
+import no.nav.ba.e2e.familie_ba_sak.domene.RestTilbakekreving
+import no.nav.ba.e2e.familie_ba_sak.domene.Resultat
+import no.nav.ba.e2e.familie_ba_sak.domene.StegType
+import no.nav.ba.e2e.familie_ba_sak.domene.VedtakBegrunnelseSpesifikasjon
+import no.nav.ba.e2e.familie_ba_sak.domene.Vilkår
 import no.nav.ba.e2e.mockserver.MockserverKlient
 import no.nav.ba.e2e.mockserver.domene.RestScenario
 import no.nav.ba.e2e.mockserver.domene.RestScenarioPerson
@@ -10,9 +31,14 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.tilbakekreving.Tilbakekrevingsvalg
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Order
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.Duration
@@ -156,6 +182,15 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
                         vedtakBegrunnelse = VedtakBegrunnelseSpesifikasjon.INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER)
         )
 
+        val vedtaksperiodeId =
+                hentAktivtVedtak(restFagsakEtterVurderTilbakekreving.data!!)!!.vedtaksperioderMedBegrunnelser.first()
+        familieBaSakKlient.oppdaterVedtaksperiodeMedStandardbegrunnelser(vedtaksperiodeId = vedtaksperiodeId.id,
+                                                                         restPutVedtaksperiodeMedStandardbegrunnelser = RestPutVedtaksperiodeMedStandardbegrunnelser(
+                                                                                 standardbegrunnelser = listOf(
+                                                                                         VedtakBegrunnelseSpesifikasjon.INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER)
+                                                                         ))
+
+
         assertEquals(ordinærSats.beløp + tilleggOrdinærSats.beløp,
                      hentNåværendeEllerNesteMånedsUtbetaling(
                              behandling = hentAktivBehandling(restFagsakEtterVurderTilbakekreving.data!!)
@@ -172,9 +207,10 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.BESLUTTE_VEDTAK)
 
-        val restFagsakEtterIverksetting = familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
-                                                                             restBeslutningPåVedtak = RestBeslutningPåVedtak(
-                                                                                     Beslutning.GODKJENT))
+        val restFagsakEtterIverksetting =
+                familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
+                                                   restBeslutningPåVedtak = RestBeslutningPåVedtak(
+                                                           Beslutning.GODKJENT))
         generellAssertFagsak(restFagsak = restFagsakEtterIverksetting,
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.IVERKSETT_MOT_OPPDRAG)
@@ -256,7 +292,7 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
 
             restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
                     behandlingEtterVilkårsvurdering.behandlingId,
-                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING,begrunnelse = "begrunnelse"))
+                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING, begrunnelse = "begrunnelse"))
         }
 
         generellAssertFagsak(restFagsak = restFagsakEtterVurderTilbakekreving,
@@ -264,7 +300,8 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
                              behandlingStegType = StegType.SEND_TIL_BESLUTTER,
                              behandlingResultat = BehandlingResultat.ENDRET_OG_OPPHØRT)
 
-        val vedtaksperiode = hentAktivBehandling(restFagsak = restFagsakEtterVurderTilbakekreving.data!!)!!.vedtaksperioder.first()
+        val vedtaksperiode =
+                hentAktivBehandling(restFagsak = restFagsakEtterVurderTilbakekreving.data!!)!!.vedtaksperioder.first()
         val restFagsakEtterVedtaksbegrunnelser = familieBaSakKlient.leggTilVedtakBegrunnelse(
                 fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
                 vedtakBegrunnelse = RestPostVedtakBegrunnelse(
@@ -272,6 +309,15 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
                         tom = vedtaksperiode.periodeTom,
                         vedtakBegrunnelse = VedtakBegrunnelseSpesifikasjon.INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER)
         )
+
+        val vedtaksperiodeId =
+                hentAktivtVedtak(restFagsakEtterVurderTilbakekreving.data!!)!!.vedtaksperioderMedBegrunnelser.first()
+        familieBaSakKlient.oppdaterVedtaksperiodeMedStandardbegrunnelser(vedtaksperiodeId = vedtaksperiodeId.id,
+                                                                         restPutVedtaksperiodeMedStandardbegrunnelser = RestPutVedtaksperiodeMedStandardbegrunnelser(
+                                                                                 standardbegrunnelser = listOf(
+                                                                                         VedtakBegrunnelseSpesifikasjon.INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER)
+                                                                         ))
+
 
         var vedtaksbrevRevurderingEndret = familieBaSakKlient.genererOgHentVedtaksbrev(
                 hentAktivtVedtak(restFagsak = restFagsakEtterVedtaksbegrunnelser.data!!)!!.id)
@@ -284,9 +330,10 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
                              fagsakStatus = FagsakStatus.LØPENDE,
                              behandlingStegType = StegType.BESLUTTE_VEDTAK)
 
-        val restFagsakEtterIverksetting = familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
-                                                                             restBeslutningPåVedtak = RestBeslutningPåVedtak(
-                                                                                     Beslutning.GODKJENT))
+        val restFagsakEtterIverksetting =
+                familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
+                                                   restBeslutningPåVedtak = RestBeslutningPåVedtak(
+                                                           Beslutning.GODKJENT))
         generellAssertFagsak(restFagsak = restFagsakEtterIverksetting,
                              fagsakStatus = FagsakStatus.LØPENDE,
                              behandlingStegType = StegType.IVERKSETT_MOT_OPPDRAG)
@@ -357,7 +404,7 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
 
             restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
                     behandlingEtterVilkårsvurdering.behandlingId,
-                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING,begrunnelse = "begrunnelse"))
+                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING, begrunnelse = "begrunnelse"))
         }
 
 
@@ -366,7 +413,8 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
                              behandlingStegType = StegType.SEND_TIL_BESLUTTER,
                              behandlingResultat = BehandlingResultat.ENDRET)
 
-        val vedtaksperiode = hentAktivBehandling(restFagsak = restFagsakEtterVurderTilbakekreving.data!!)!!.vedtaksperioder.first()
+        val vedtaksperiode =
+                hentAktivBehandling(restFagsak = restFagsakEtterVurderTilbakekreving.data!!)!!.vedtaksperioder.first()
         val restFagsakEtterVedtaksbegrunnelser = familieBaSakKlient.leggTilVedtakBegrunnelse(
                 fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
                 vedtakBegrunnelse = RestPostVedtakBegrunnelse(
@@ -375,7 +423,16 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
                         vedtakBegrunnelse = VedtakBegrunnelseSpesifikasjon.INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER)
         )
 
-        var vedtaksbrevEndret = familieBaSakKlient.genererOgHentVedtaksbrev(
+        val vedtaksperiodeId =
+                hentAktivtVedtak(restFagsakEtterVurderTilbakekreving.data!!)!!.vedtaksperioderMedBegrunnelser.first()
+        familieBaSakKlient.oppdaterVedtaksperiodeMedStandardbegrunnelser(vedtaksperiodeId = vedtaksperiodeId.id,
+                                                                         restPutVedtaksperiodeMedStandardbegrunnelser = RestPutVedtaksperiodeMedStandardbegrunnelser(
+                                                                                 standardbegrunnelser = listOf(
+                                                                                         VedtakBegrunnelseSpesifikasjon.INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER)
+                                                                         ))
+
+
+        val vedtaksbrevEndret = familieBaSakKlient.genererOgHentVedtaksbrev(
                 hentAktivtVedtak(restFagsak = restFagsakEtterVedtaksbegrunnelser.data!!)!!.id)
         Assertions.assertTrue(vedtaksbrevEndret?.status == Ressurs.Status.SUKSESS)
         Assertions.assertTrue(vedtaksbrevEndret?.data?.size ?: 0 > 0)
@@ -437,7 +494,7 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
 
             restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
                     behandlingEtterVilkårsvurdering.behandlingId,
-                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING,begrunnelse = "begrunnelse"))
+                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING, begrunnelse = "begrunnelse"))
         }
 
         generellAssertFagsak(restFagsak = restFagsakEtterVurderTilbakekreving,
@@ -451,9 +508,10 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
                              fagsakStatus = FagsakStatus.LØPENDE,
                              behandlingStegType = StegType.BESLUTTE_VEDTAK)
 
-        val restFagsakEtterIverksetting = familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
-                                                                             restBeslutningPåVedtak = RestBeslutningPåVedtak(
-                                                                                     Beslutning.GODKJENT))
+        val restFagsakEtterIverksetting =
+                familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
+                                                   restBeslutningPåVedtak = RestBeslutningPåVedtak(
+                                                           Beslutning.GODKJENT))
         generellAssertFagsak(restFagsak = restFagsakEtterIverksetting,
                              fagsakStatus = FagsakStatus.LØPENDE,
                              behandlingStegType = StegType.IVERKSETT_MOT_OPPDRAG)
@@ -528,7 +586,7 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
 
             restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
                     behandlingEtterVilkårsvurdering.behandlingId,
-                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING,begrunnelse = "begrunnelse"))
+                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING, begrunnelse = "begrunnelse"))
         }
 
         generellAssertFagsak(restFagsak = restFagsakEtterVurderTilbakekreving,
@@ -536,7 +594,8 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
                              behandlingStegType = StegType.SEND_TIL_BESLUTTER,
                              behandlingResultat = BehandlingResultat.OPPHØRT)
 
-        val vedtaksperiode = hentAktivBehandling(restFagsak = restFagsakEtterVurderTilbakekreving.data!!)!!.vedtaksperioder.first()
+        val vedtaksperiode =
+                hentAktivBehandling(restFagsak = restFagsakEtterVurderTilbakekreving.data!!)!!.vedtaksperioder.first()
         val restFagsakEtterVedtaksbegrunnelser = familieBaSakKlient.leggTilVedtakBegrunnelse(
                 fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
                 vedtakBegrunnelse = RestPostVedtakBegrunnelse(
@@ -544,6 +603,15 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
                         tom = vedtaksperiode.periodeTom,
                         vedtakBegrunnelse = VedtakBegrunnelseSpesifikasjon.INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER)
         )
+
+        val vedtaksperiodeId =
+                hentAktivtVedtak(restFagsakEtterVurderTilbakekreving.data!!)!!.vedtaksperioderMedBegrunnelser.first()
+        familieBaSakKlient.oppdaterVedtaksperiodeMedStandardbegrunnelser(vedtaksperiodeId = vedtaksperiodeId.id,
+                                                                         restPutVedtaksperiodeMedStandardbegrunnelser = RestPutVedtaksperiodeMedStandardbegrunnelser(
+                                                                                 standardbegrunnelser = listOf(
+                                                                                         VedtakBegrunnelseSpesifikasjon.INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER)
+                                                                         ))
+
 
         val vedtaksbrevOpphørt = familieBaSakKlient.genererOgHentVedtaksbrev(
                 hentAktivtVedtak(restFagsak = restFagsakEtterVedtaksbegrunnelser.data!!)!!.id)
@@ -624,7 +692,7 @@ class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
 
             restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
                     behandlingEtterVilkårsvurdering.behandlingId,
-                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING,begrunnelse = "begrunnelse"))
+                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING, begrunnelse = "begrunnelse"))
         }
 
         generellAssertFagsak(restFagsak = restFagsakEtterVurderTilbakekreving,

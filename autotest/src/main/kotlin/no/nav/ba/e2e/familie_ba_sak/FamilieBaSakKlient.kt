@@ -18,6 +18,7 @@ import no.nav.ba.e2e.familie_ba_sak.domene.RestHenleggelse
 import no.nav.ba.e2e.familie_ba_sak.domene.RestJournalføring
 import no.nav.ba.e2e.familie_ba_sak.domene.RestPersonResultat
 import no.nav.ba.e2e.familie_ba_sak.domene.RestPostVedtakBegrunnelse
+import no.nav.ba.e2e.familie_ba_sak.domene.RestPutVedtaksperiodeMedStandardbegrunnelser
 import no.nav.ba.e2e.familie_ba_sak.domene.RestRegistrerSøknad
 import no.nav.ba.e2e.familie_ba_sak.domene.RestSøkParam
 import no.nav.ba.e2e.familie_ba_sak.domene.RestTilbakekreving
@@ -165,6 +166,13 @@ class FamilieBaSakKlient(
     fun leggTilVedtakBegrunnelse(fagsakId: Long, vedtakBegrunnelse: RestPostVedtakBegrunnelse): Ressurs<RestFagsak> {
         val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId/vedtak/begrunnelser")
         return postForEntity(uri, vedtakBegrunnelse)
+    }
+
+    fun oppdaterVedtaksperiodeMedStandardbegrunnelser(vedtaksperiodeId: Long,
+                                                      restPutVedtaksperiodeMedStandardbegrunnelser: RestPutVedtaksperiodeMedStandardbegrunnelser): Ressurs<RestFagsak> {
+        val uri = URI.create("$baSakUrl/api/vedtaksperioder/standardbegrunnelser/$vedtaksperiodeId")
+
+        return putForEntity(uri, restPutVedtaksperiodeMedStandardbegrunnelser)
     }
 
     fun triggerAutobrev18og6år(): Ressurs<String> {

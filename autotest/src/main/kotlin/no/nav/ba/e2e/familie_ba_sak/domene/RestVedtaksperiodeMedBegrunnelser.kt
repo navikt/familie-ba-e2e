@@ -1,8 +1,5 @@
-package no.nav.familie.ba.sak.ekstern.restDomene
+package no.nav.ba.e2e.familie_ba_sak.domene
 
-import no.nav.familie.ba.sak.kjerne.vedtak.begrunnelser.VedtakBegrunnelseSpesifikasjon
-import no.nav.familie.ba.sak.kjerne.vedtak.begrunnelser.VedtakBegrunnelseType
-import no.nav.familie.ba.sak.kjerne.vedtak.vedtaksperiode.Vedtaksperiodetype
 import java.time.LocalDate
 
 data class RestVedtaksperiodeMedBegrunnelser(
@@ -20,6 +17,14 @@ data class RestVedtaksbegrunnelse(
         val personIdenter: List<String> = emptyList(),
 )
 
+enum class VedtakBegrunnelseType {
+    INNVILGELSE,
+    REDUKSJON,
+    AVSLAG,
+    OPPHØR,
+    FORTSATT_INNVILGET
+}
+
 data class RestPutVedtaksperiodeMedBegrunnelse(
         val begrunnelser: List<RestPutVedtaksbegrunnelse>,
         val fritekster: List<String> = emptyList(),
@@ -36,3 +41,9 @@ data class RestPutVedtaksperiodeMedStandardbegrunnelser(
 data class RestPutVedtaksbegrunnelse(
         val vedtakBegrunnelseSpesifikasjon: VedtakBegrunnelseSpesifikasjon,
 )
+
+enum class VedtakBegrunnelseSpesifikasjon {
+    INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER,
+    REDUKSJON_UNDER_6_ÅR,
+    AVSLAG_BOSATT_I_RIKET,
+}

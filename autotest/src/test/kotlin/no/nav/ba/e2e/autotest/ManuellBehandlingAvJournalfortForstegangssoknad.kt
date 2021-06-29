@@ -2,6 +2,7 @@ package no.nav.ba.e2e.autotest
 
 import no.nav.ba.e2e.commons.generellAssertFagsak
 import no.nav.ba.e2e.commons.hentAktivBehandling
+import no.nav.ba.e2e.commons.hentAktivtVedtak
 import no.nav.ba.e2e.commons.hentNåværendeEllerNesteMånedsUtbetaling
 import no.nav.ba.e2e.commons.lagMockRestJournalføring
 import no.nav.ba.e2e.commons.lagSøknadDTO
@@ -13,6 +14,7 @@ import no.nav.ba.e2e.familie_ba_sak.domene.NavnOgIdent
 import no.nav.ba.e2e.familie_ba_sak.domene.RestBeslutningPåVedtak
 import no.nav.ba.e2e.familie_ba_sak.domene.RestPersonResultat
 import no.nav.ba.e2e.familie_ba_sak.domene.RestPostVedtakBegrunnelse
+import no.nav.ba.e2e.familie_ba_sak.domene.RestPutVedtaksperiodeMedStandardbegrunnelser
 import no.nav.ba.e2e.familie_ba_sak.domene.RestRegistrerSøknad
 import no.nav.ba.e2e.familie_ba_sak.domene.RestTilbakekreving
 import no.nav.ba.e2e.familie_ba_sak.domene.Resultat
@@ -123,7 +125,7 @@ class ManuellBehandlingAvJournalfortForstegangssoknad(
 
             restFagsakEtterVurderTilbakekreving = familieBaSakKlient.lagreTilbakekrevingOgGåVidereTilNesteSteg(
                     behandlingEtterVilkårsvurdering.behandlingId,
-                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING,begrunnelse = "begrunnelse"))
+                    RestTilbakekreving(Tilbakekrevingsvalg.IGNORER_TILBAKEKREVING, begrunnelse = "begrunnelse"))
         }
 
         generellAssertFagsak(restFagsak = restFagsakEtterVurderTilbakekreving,
@@ -139,6 +141,14 @@ class ManuellBehandlingAvJournalfortForstegangssoknad(
                         vedtakBegrunnelse = VedtakBegrunnelseSpesifikasjon.INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER)
         )
 
+        val vedtaksperiodeId =
+                hentAktivtVedtak(restFagsakEtterVurderTilbakekreving.data!!)!!.vedtaksperioderMedBegrunnelser.first()
+        familieBaSakKlient.oppdaterVedtaksperiodeMedStandardbegrunnelser(vedtaksperiodeId = vedtaksperiodeId.id,
+                                                                         restPutVedtaksperiodeMedStandardbegrunnelser = RestPutVedtaksperiodeMedStandardbegrunnelser(
+                                                                                 standardbegrunnelser = listOf(
+                                                                                         VedtakBegrunnelseSpesifikasjon.INNVILGET_LOVLIG_OPPHOLD_EØS_BORGER)
+                                                                         ))
+
         Assertions.assertEquals(tilleggOrdinærSats.beløp,
                                 hentNåværendeEllerNesteMånedsUtbetaling(
                                         behandling = hentAktivBehandling(restFagsakEtterVurderTilbakekreving.data!!)
@@ -151,9 +161,10 @@ class ManuellBehandlingAvJournalfortForstegangssoknad(
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.BESLUTTE_VEDTAK)
 
-        val restFagsakEtterIverksetting = familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
-                                                                             restBeslutningPåVedtak = RestBeslutningPåVedtak(
-                                                                                     Beslutning.GODKJENT))
+        val restFagsakEtterIverksetting =
+                familieBaSakKlient.iverksettVedtak(fagsakId = restFagsakEtterVurderTilbakekreving.data!!.id,
+                                                   restBeslutningPåVedtak = RestBeslutningPåVedtak(
+                                                           Beslutning.GODKJENT))
         generellAssertFagsak(restFagsak = restFagsakEtterIverksetting,
                              fagsakStatus = FagsakStatus.OPPRETTET,
                              behandlingStegType = StegType.IVERKSETT_MOT_OPPDRAG)
