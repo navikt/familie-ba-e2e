@@ -11,7 +11,6 @@ import no.nav.familie.prosessering.domene.Status
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Autowired
@@ -45,7 +44,6 @@ class LeesahTest(
         assertThat(erHendelseMottatt.body).isTrue
     }
 
-    @Disabled
     @Test
     fun `skal sende utflyttingshendelse`() {
         val scenario = mockserverKlient!!.lagScenario(
