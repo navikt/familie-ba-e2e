@@ -11,7 +11,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.core.ConditionTimeoutException
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -43,7 +42,6 @@ class JournaforingHendlserTest(
                 .contains("JFR")
     }
 
-    @Disabled
     @Test
     fun `skal sende journalhendelse som fører til opprettJournalføringsoppgave med info om sak i oppgavebeskrivelsen`() {
         baSakKlient.opprettFagsak(søkersIdent = morPersonident)
@@ -65,7 +63,6 @@ class JournaforingHendlserTest(
                 
     }
 
-    @Disabled
     @Test
     fun `mottak av digital søknad skal føre til opprettJournalføringsoppgave når bruker har sak i ba-sak`() {
         baSakKlient.opprettFagsak(søkersIdent = morPersonident)
@@ -85,7 +82,6 @@ class JournaforingHendlserTest(
                 .contains("JFR")
     }
 
-    @Disabled
     @Test
     fun `mottak av søknad skal ikke føre til oppgave når bruker har avsluttet sak i ba-sak som følge av henleggelse`() {
         val fagsakId = baSakKlient.opprettFagsak(DEFAULT_PERSON).data!!.id
