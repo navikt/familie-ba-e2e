@@ -11,12 +11,13 @@ import no.nav.familie.prosessering.domene.Status
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 class LeesahTest(
@@ -40,6 +41,24 @@ class LeesahTest(
 
         //Sjekk om det er et innslag i hendelselogg på meldingen
         val erHendelseMottatt = mottakKlient.erHendelseMottatt(dødsfallResponse.body!!, "PDL")
+        assertThat(erHendelseMottatt.statusCode.is2xxSuccessful).isTrue
+        assertThat(erHendelseMottatt.body).isTrue
+    }
+
+    @Disabled
+    @Test
+    fun `skal sende utflyttingshendelse`() {
+        val scenario = mockserverKlient!!.lagScenario(
+                RestScenario(søker = RestScenarioPerson(fødselsdato = "1990-04-20", fornavn = "Mor", etternavn = "Søker"),
+                             barna = listOf(RestScenarioPerson(fødselsdato = LocalDate.now().minusDays(10).toString(),
+                                                               fornavn = "Barn",
+                                                               etternavn = "Barnesen"))))
+        val utflyttingResponse = mottakKlient.utflytting(scenario.barna.first().run { listOf(aktørId!!, ident!!) })
+        assertThat(utflyttingResponse.statusCode.is2xxSuccessful).isTrue
+        assertThat(utflyttingResponse.body).isNotNull
+
+        //Sjekk om det er et innslag i hendelselogg på meldingen
+        val erHendelseMottatt = mottakKlient.erHendelseMottatt(utflyttingResponse.body!!, "PDL")
         assertThat(erHendelseMottatt.statusCode.is2xxSuccessful).isTrue
         assertThat(erHendelseMottatt.body).isTrue
     }

@@ -29,6 +29,12 @@ class FamilieBaMottakKlient(
         return restOperations.postForEntity(uri, identer)
     }
 
+    fun utflytting(identer: List<String>): ResponseEntity<String> {
+        val uri = URI.create("$baMottakUrl/internal/e2e/pdl/utflytting")
+
+        return restOperations.postForEntity(uri, identer)
+    }
+
     fun postJournalhendelse(journalpostId: String): ResponseEntity<String> {
         val uri = URI.create("$baMottakUrl/internal/e2e/journal")
 
