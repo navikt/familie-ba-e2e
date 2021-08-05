@@ -2,6 +2,7 @@ package no.nav.ba.e2e.familie_ba_sak.domene
 
 enum class StegType {
     HENLEGG_SØKNAD,
+    HENLEGG_BEHANDLING,
     REGISTRERE_PERSONGRUNNLAG,
     REGISTRERE_SØKNAD,
     VILKÅRSVURDERING,
