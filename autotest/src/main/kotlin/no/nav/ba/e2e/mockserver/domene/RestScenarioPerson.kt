@@ -6,7 +6,7 @@ import no.nav.familie.kontrakter.ba.infotrygd.Sak
 data class RestScenarioPerson(
         val ident: String? = null, // Settes av mock-server
         val aktørId: String? = null, // Settes av mock-server
-        val familierelasjoner: List<Familierelasjon>? = emptyList(), // Settes av mock-server
+        val forelderBarnRelasjoner: List<ForelderBarnRelasjon>? = emptyList(), // Settes av mock-server
         val fødselsdato: String, //yyyy-mm-dd
         val fornavn: String,
         val etternavn: String,
@@ -15,7 +15,7 @@ data class RestScenarioPerson(
     val navn = "$fornavn $etternavn"
 }
 
-data class Familierelasjon(
+data class ForelderBarnRelasjon(
         val relatertPersonsIdent: String,
         val relatertPersonsRolle: String
 )
