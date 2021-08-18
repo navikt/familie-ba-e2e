@@ -1,5 +1,6 @@
 package no.nav.ba.e2e.autotest
 
+import no.nav.ba.e2e.commons.nyttTilleggOrdinærSats
 import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
 import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingType
 import no.nav.ba.e2e.familie_ba_sak.domene.LoggType
@@ -19,8 +20,6 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.awaitility.core.ConditionTimeoutException
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -31,7 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 @SpringBootTest(classes = [ApplicationConfig::class])
@@ -143,7 +142,7 @@ class AutotestMigrering(
                     infotrygdSaker = InfotrygdSøkResponse(
                         bruker = listOf(
                             lagInfotrygdSak(
-                                1354.0,
+                                nyttTilleggOrdinærSats.beløp.toDouble(),
                                 barn?.søker?.ident!!,
                                 valg,
                                 undervalg
