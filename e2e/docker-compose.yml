@@ -17,6 +17,7 @@ services:
   postgres-sak:
     image: postgres:11
     environment:
+      log_min_messages: DEBUG
       POSTGRES_USER: familie
       POSTGRES_DB: familiebasak
       POSTGRES_PASSWORD: familie-pwd
