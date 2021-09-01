@@ -21,7 +21,7 @@ fun hentNåværendeEllerNesteMånedsUtbetaling(behandling: RestBehandling?): Int
     val utbetalingsperioder =
             behandling?.vedtaksperioder?.filterIsInstance(Utbetalingsperiode::class.java)?.sortedBy { it.periodeFom }
     val nåværendeUtbetalingsperiode = utbetalingsperioder
-            ?.firstOrNull { it.periodeFom.isBefore(LocalDate.now()) && it.periodeTom.isAfter(LocalDate.now()) }
+            ?.firstOrNull { it.periodeFom.isBefore(LocalDate.now().plusDays(1)) && it.periodeTom.isAfter(LocalDate.now().minusDays(1)) }
 
     val nesteUtbetalingsperiode = utbetalingsperioder?.firstOrNull { it.periodeFom.isAfter(LocalDate.now()) }
 
