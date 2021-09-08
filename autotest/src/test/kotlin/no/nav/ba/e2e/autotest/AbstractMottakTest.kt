@@ -89,7 +89,7 @@ abstract class AbstractMottakTest(val mottakKlient: FamilieBaMottakKlient,
         try {
             Assertions.assertThat(tasker.body)
                     .hasSizeGreaterThan(0)
-                    .extracting("taskStepType").contains(taskStepType)
+                    .extracting("type").contains(taskStepType)
         } catch (e: AssertionError) {
             return false
         }
