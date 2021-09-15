@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit
 @SpringBootTest(classes = [ApplicationConfig::class])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
+@Disabled
 class ManuellBehandlingAvSoknadOgTekniskOpphorTest(
         @Autowired
         private val familieBaSakKlient: FamilieBaSakKlient,
