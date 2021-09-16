@@ -187,24 +187,24 @@ class AutotestMigrering(
         )
     }
 
-    protected fun erTaskOpprettetISak(taskStepType: String, callId: String) {
+    protected fun erTaskOpprettetISak(type: String, callId: String) {
         try {
             await.atMost(60, TimeUnit.SECONDS)
                 .withPollInterval(Duration.ofSeconds(1))
                 .until {
-                    sjekkOmTaskEksistererISak(taskStepType, callId)
+                    sjekkOmTaskEksistererISak(type, callId)
                 }
         } catch (e: ConditionTimeoutException) {
-            error("TaskStepType $taskStepType ikke opprettet for callId $callId")
+            error("type $type ikke opprettet for callId $callId")
         }
     }
 
-    protected fun sjekkOmTaskEksistererISak(taskStepType: String, callId: String): Boolean {
+    protected fun sjekkOmTaskEksistererISak(type: String, callId: String): Boolean {
         val tasker = familieBaSakKlient.hentTasker("callId", callId)
         try {
             Assertions.assertThat(tasker.body)
                 .hasSizeGreaterThan(0)
-                .extracting("taskStepType").contains(taskStepType)
+                .extracting("type").contains(type)
         } catch (e: AssertionError) {
             return false
         }
