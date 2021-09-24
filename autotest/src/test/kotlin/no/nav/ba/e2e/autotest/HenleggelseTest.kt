@@ -17,6 +17,7 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,6 +28,7 @@ import java.util.concurrent.TimeUnit
 
 @SpringBootTest(classes = [ApplicationConfig::class])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Disabled
 class HenleggelseTest(
         @Autowired
         private val baSakKlient: FamilieBaSakKlient,

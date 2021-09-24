@@ -20,6 +20,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.awaitility.core.ConditionTimeoutException
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -36,6 +37,7 @@ import java.util.concurrent.TimeUnit
 @SpringBootTest(classes = [ApplicationConfig::class])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
+@Disabled
 class AutotestMigrering(
     @Autowired
     private val familieBaSakKlient: FamilieBaSakKlient,

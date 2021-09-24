@@ -11,6 +11,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.core.ConditionTimeoutException
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.withPollInterval
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -83,6 +84,7 @@ class JournaforingHendlserTest(
     }
 
     @Test
+    @Disabled
     fun `mottak av søknad skal ikke føre til oppgave når bruker har avsluttet sak i ba-sak som følge av henleggelse`() {
         val fagsakId = baSakKlient.opprettFagsak(DEFAULT_PERSON).data!!.id
         baSakKlient.opprettBehandling(DEFAULT_PERSON).data!!.apply {
