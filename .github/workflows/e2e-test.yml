@@ -42,6 +42,7 @@ jobs:
           INTEGRASJONER_SCOPE: ${{ secrets.INTEGRASJONER_SCOPE }}
           OPPDRAG_SCOPE: ${{ secrets.OPPDRAG_SCOPE }}
           BA_SAK_SCOPE: ${{ secrets.BA_SAK_SCOPE }}
+          SAF_SCOPE: ${{ secrets.SAF_SCOPE }}
         run: |
           cd e2e; ./e2e.sh
       - name: Kjør tester (e2e)
