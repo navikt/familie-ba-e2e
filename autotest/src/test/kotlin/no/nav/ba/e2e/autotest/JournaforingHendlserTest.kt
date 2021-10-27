@@ -1,6 +1,5 @@
 package no.nav.ba.e2e.autotest
 
-import no.nav.ba.e2e.commons.morPersonident
 import no.nav.ba.e2e.familie_ba_mottak.FamilieBaMottakKlient
 import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
 import no.nav.ba.e2e.familie_ba_sak.domene.FagsakStatus
@@ -24,6 +23,8 @@ class JournaforingHendlserTest(
         @Autowired baSakKlient: FamilieBaSakKlient) : AbstractMottakTest(mottakKlient, baSakKlient, mockserverKlient
 
 ) {
+
+    val morPersonident = "12345678901"
 
 
     @Test

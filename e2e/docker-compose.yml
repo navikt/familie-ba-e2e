@@ -75,33 +75,6 @@ services:
       FAMILIE_TILBAKE_API_URL_SCOPE: ${FAMILIE_TILBAKE_API_URL_SCOPE}
     ports:
       - 8089:8089
-  familie-redis:
-    restart: always
-    image: redis
-    ports:
-      - 6379:6379
-  #  familie-ba-sak-frontend:
-  #    restart: always
-  #    depends_on:
-  #      - mock-oauth2-server
-  #      - familie-ba-sak
-  #      - familie-redis
-  #    image: docker.pkg.github.com/navikt/familie-ba-sak-frontend/familie-ba-sak-frontend:latest
-  #    ports:
-  #      - 8000:8000
-  #    environment:
-  #      ENV: e2e
-  #      SESSION_SECRET: ${SESSION_SECRET}
-  #      CLIENT_ID: ${SAK_FRONTEND_CLIENT_ID}
-  #      CLIENT_SECRET: ${SAK_FRONTEND_CLIENT_SECRET}
-  #      BA_SAK_SCOPE: ${BA_SAK_SCOPE}
-  #      PASSPORTCOOKIE_KEY1: KEY1
-  #      PASSPORTCOOKIE_KEY2: KEY2
-  #      PASSPORTCOOKIE_KEY3: KEY3
-  #      PASSPORTCOOKIE_KEY4: KEY4
-  #      COOKIE_KEY1: COOKIE_KEY1
-  #      COOKIE_KEY2: COOKIE_KEY1
-  #      SLACK_TOKEN: SLACK_TOKEN
   familie-integrasjoner:
     restart: always
     image: ghcr.io/navikt/familie-integrasjoner:latest
@@ -120,22 +93,6 @@ services:
       SAF_SCOPE: ${SAF_SCOPE}
     ports:
       - 8085:8085
-  familie-tilbake:
-    restart: always
-    image: docker.pkg.github.com/navikt/familie-tilbake/familie-tilbake:latest
-    depends_on:
-      - familie-mock-server
-      - mock-oauth2-server
-    volumes:
-      - ./modig:/root/.modig
-    environment:
-      SPRING_PROFILES_ACTIVE: e2e
-      APPD_ENABLED: 0
-      CLIENT_ID: ${TILBAKE_CLIENT_ID}
-      BA_SAK_CLIENT_ID: ${SAK_CLIENT_ID}
-      AZURE_APP_CLIENT_ID: ${AZURE_APP_CLIENT_ID}
-    ports:
-      - 8030:8030
   familie-oppdrag:
     restart: always
     image: docker.pkg.github.com/navikt/familie-oppdrag/familie-oppdrag:latest

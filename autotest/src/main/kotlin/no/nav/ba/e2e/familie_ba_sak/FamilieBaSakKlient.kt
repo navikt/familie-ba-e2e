@@ -37,22 +37,6 @@ class FamilieBaSakKlient(
         private val restOperations: RestOperations
 ) : AbstractRestClient(restOperations, "familie-ba-sak") {
 
-    fun truncate(): ResponseEntity<Ressurs<String>> {
-        val uri = URI.create("$baSakUrl/api/e2e/truncate")
-
-        return restOperations.getForEntity(uri)
-    }
-
-    fun journalfør(journalpostId: String,
-                   oppgaveId: String,
-                   journalførendeEnhet: String,
-                   restJournalføring: RestJournalføring): Ressurs<String> {
-        return postForEntity(
-                uri = URI.create("$baSakUrl/api/journalpost/$journalpostId/journalfør/$oppgaveId?journalfoerendeEnhet=$journalførendeEnhet"),
-                payload = restJournalføring
-        )
-    }
-
     fun opprettFagsak(søkersIdent: String): Ressurs<RestFagsak> {
         val uri = URI.create("$baSakUrl/api/fagsaker")
 
@@ -74,43 +58,6 @@ class FamilieBaSakKlient(
                 behandlingÅrsak = behandlingÅrsak
         ))
     }
-
-    fun registrererSøknad(behandlingId: Long, restRegistrerSøknad: RestRegistrerSøknad): Ressurs<RestFagsak> {
-        val uri = URI.create("$baSakUrl/api/behandlinger/$behandlingId/registrere-søknad-og-hent-persongrunnlag")
-
-        return postForEntity(uri, restRegistrerSøknad)
-    }
-
-    fun putVilkår(behandlingId: Long, vilkårId: Long, restPersonResultat: RestPersonResultat): Ressurs<RestFagsak> {
-        val uri = URI.create("$baSakUrl/api/vilkaarsvurdering/$behandlingId/$vilkårId")
-
-        return putForEntity(uri, restPersonResultat)
-    }
-
-    fun validerVilkårsvurdering(behandlingId: Long): Ressurs<RestFagsak> {
-        val uri = URI.create("$baSakUrl/api/vilkaarsvurdering/$behandlingId/valider")
-
-        return postForEntity(uri, "")
-    }
-
-    fun lagreTilbakekrevingOgGåVidereTilNesteSteg(behandlingId: Long,
-                                                  restTilbakekreving: RestTilbakekreving?): Ressurs<RestFagsak> {
-        val uri = URI.create("$baSakUrl/api/behandlinger/$behandlingId/tilbakekreving")
-        return postForEntity(uri, restTilbakekreving ?: "")
-    }
-
-    fun sendTilBeslutter(fagsakId: Long): Ressurs<RestFagsak> {
-        val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId/send-til-beslutter?behandlendeEnhet=9999")
-
-        return postForEntity(uri, "")
-    }
-
-    fun iverksettVedtak(fagsakId: Long, restBeslutningPåVedtak: RestBeslutningPåVedtak): Ressurs<RestFagsak> {
-        val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId/iverksett-vedtak")
-
-        return postForEntity(uri, restBeslutningPåVedtak)
-    }
-
     fun hentFagsak(fagsakId: Long): Ressurs<RestFagsak> {
         val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId")
 
@@ -130,51 +77,15 @@ class FamilieBaSakKlient(
     fun hentTasker(key: String, value: String): ResponseEntity<List<Task>> {
         return restOperations.getForEntity("$baSakUrl/api/e2e/task/$key/$value")
     }
-
-    fun forhaandsvisHenleggelseBrev(behandlingId: Long, restHenleggDocGen: RestHenleggDocGen): Ressurs<ByteArray>? {
-        val uri = URI.create("$baSakUrl/api/dokument/forhaandsvis-brev/${behandlingId}")
-        return postForEntity(uri, restHenleggDocGen)
-    }
-
-    fun genererOgHentVedtaksbrev(vedtakId: Long): Ressurs<ByteArray>? {
-        val uri = URI.create("$baSakUrl/api/dokument/vedtaksbrev/${vedtakId}")
-        return postForEntity(uri, vedtakId)
-    }
-
-    fun hentVedtaksbrev(vedtakId: Long): Ressurs<ByteArray>? {
-        val uri = URI.create("$baSakUrl/api/dokument/vedtaksbrev/${vedtakId}")
-        return getForEntity(uri)
-    }
-
     fun henleggSøknad(behandlingId: Long, restHenleggelse: RestHenleggelse): Ressurs<RestFagsak>? {
         val uri = URI.create("$baSakUrl/api/behandlinger/${behandlingId}/henlegg")
         return putForEntity(uri, restHenleggelse)
-    }
-
-    fun hentLogg(behandlingId: Long): Ressurs<List<Logg>>? {
-        val uri = URI.create("$baSakUrl/api/logg/${behandlingId}")
-        return getForEntity(uri)
     }
 
     fun tellMetrikk(metrikkNavn: String, tag: Pair<String, String>): Long {
         val metric = restOperations.getForObject("$baSakUrl/internal/metrics/$metrikkNavn?tag=${tag.first}:${tag.second}",
                                                  Metrikk::class.java)
         return metric?.measurements?.first { it.statistic == "COUNT" }?.value ?: 0
-    }
-
-    fun leggTilVedtakBegrunnelse(fagsakId: Long, vedtakBegrunnelse: RestPostVedtakBegrunnelse): Ressurs<RestFagsak> {
-        val uri = URI.create("$baSakUrl/api/fagsaker/$fagsakId/vedtak/begrunnelser")
-        return postForEntity(uri, vedtakBegrunnelse)
-    }
-
-    fun triggerAutobrev18og6år(): Ressurs<String> {
-        return getForEntity(URI.create("$baSakUrl/testverktoy/autobrev"))
-    }
-
-    fun migrering(ident: String): Ressurs<MigreringResponseDto> {
-        val uri = URI.create("$baSakUrl/api/migrering")
-
-        return postForEntity(uri, PersonIdent(ident))!!
     }
 }
 
