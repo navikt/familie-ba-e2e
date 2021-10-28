@@ -5,3 +5,5 @@ docker-compose pull
 docker-compose build
 docker-compose up
 ```
+
+Brukes kun for mottak
