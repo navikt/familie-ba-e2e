@@ -1,8 +1,8 @@
 package no.nav.ba.e2e.autotest
 
 import no.nav.ba.e2e.commons.nyttTilleggOrdinærSats
+import no.nav.ba.e2e.familie_ba_sak.BehandlingType
 import no.nav.ba.e2e.familie_ba_sak.FamilieBaSakKlient
-import no.nav.ba.e2e.familie_ba_sak.domene.BehandlingType
 import no.nav.ba.e2e.familie_ba_sak.domene.LoggType
 import no.nav.ba.e2e.mockserver.MockserverKlient
 import no.nav.ba.e2e.mockserver.domene.RestScenario
@@ -14,7 +14,6 @@ import no.nav.familie.kontrakter.ba.infotrygd.Sak
 import no.nav.familie.kontrakter.ba.infotrygd.Stønad
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.getDataOrThrow
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.awaitility.core.ConditionTimeoutException
@@ -51,34 +50,34 @@ class AutotestMigrering(
 
         assertThatThrownBy {
             familieBaSakKlient.migrering(
-                lagTestScenarioForMigrering(
-                    valg = "OR",
-                    undervalg = "EU"
-                )!!.søker.ident!!
+                    lagTestScenarioForMigrering(
+                            valg = "OR",
+                            undervalg = "EU"
+                    ).søker.ident!!
             )
         }.hasMessageContaining("Kan kun migrere ordinære saker")
         assertThatThrownBy {
             familieBaSakKlient.migrering(
-                lagTestScenarioForMigrering(
-                    valg = "OR",
-                    undervalg = "IB"
-                )!!.søker.ident!!
+                    lagTestScenarioForMigrering(
+                            valg = "OR",
+                            undervalg = "IB"
+                    ).søker.ident!!
             )
         }.hasMessageContaining("Kan kun migrere ordinære saker")
         assertThatThrownBy {
             familieBaSakKlient.migrering(
-                lagTestScenarioForMigrering(
-                    valg = "UT",
-                    undervalg = "EF"
-                )!!.søker.ident!!
+                    lagTestScenarioForMigrering(
+                            valg = "UT",
+                            undervalg = "EF"
+                    ).søker.ident!!
             )
         }.hasMessageContaining("Kan kun migrere ordinære saker")
         assertThatThrownBy {
             familieBaSakKlient.migrering(
-                lagTestScenarioForMigrering(
-                    valg = "UT",
-                    undervalg = "EU"
-                )!!.søker.ident!!
+                    lagTestScenarioForMigrering(
+                            valg = "UT",
+                            undervalg = "EU"
+                    ).søker.ident!!
             )
         }.hasMessageContaining("Kan kun migrere ordinære saker")
     }
@@ -91,7 +90,7 @@ class AutotestMigrering(
 
         val scenarioMorMedBarn = lagTestScenarioForMigrering()
 
-        println("Skal migrerer ${scenarioMorMedBarn?.søker?.ident!!}")
+        println("Skal migrerer ${scenarioMorMedBarn.søker.ident!!}")
 
         val migreringRessurs = familieBaSakKlient.migrering(scenarioMorMedBarn.søker.ident!!)
         println("Kall mot migrering returnerte $migreringRessurs")
@@ -106,25 +105,25 @@ class AutotestMigrering(
 
         val saksLogg = familieBaSakKlient.hentLogg(migreringRessurs.data!!.behandlingId)
         println("Validerer saksLogg etter migrering $saksLogg")
-        assertThat(saksLogg?.status).isEqualTo(Ressurs.Status.SUKSESS)
+        assertThat(saksLogg.status).isEqualTo(Ressurs.Status.SUKSESS)
         assertThat(
-            saksLogg?.getDataOrThrow()
-                ?.filter { it.type == LoggType.BEHANDLING_OPPRETTET && it.tittel == "Migrering fra infotrygd opprettet" }?.size == 1
+            saksLogg.getDataOrThrow()
+                    .filter { it.type == LoggType.BEHANDLING_OPPRETTET && it.tittel == "Migrering fra infotrygd opprettet" }.size == 1
         )
-        assertThat(saksLogg?.getDataOrThrow()?.filter { it.type == LoggType.DISTRIBUERE_BREV }?.size == 0)
-        assertThat(saksLogg?.getDataOrThrow()?.filter { it.type == LoggType.FERDIGSTILLE_BEHANDLING }?.size == 1)
+        assertThat(saksLogg.getDataOrThrow().none { it.type == LoggType.DISTRIBUERE_BREV })
+        assertThat(saksLogg.getDataOrThrow().filter { it.type == LoggType.FERDIGSTILLE_BEHANDLING }.size == 1)
 
-        val fagsak = familieBaSakKlient.hentFagsak(migreringRessurs.data?.fagsakId!!)
+        val fagsak = familieBaSakKlient.hentMinimalFagsak(migreringRessurs.data?.fagsakId!!)
         assertThat(fagsak.status).isEqualTo(Ressurs.Status.SUKSESS)
         val migreringBehandling = fagsak.getDataOrThrow().behandlinger.find { it.type == BehandlingType.MIGRERING_FRA_INFOTRYGD }
         println("Validerer at migreringsBehandling vedtaksperiode er satt for $migreringBehandling")
         assertThat(migreringBehandling).isNotNull
         assertThat(listOf(LocalDate.now().withDayOfMonth(1), LocalDate.now().withDayOfMonth(1).plusMonths(1))).contains(
-            migreringBehandling?.vedtaksperioder?.first()?.periodeFom
+                fagsak.data?.gjeldendeUtbetalingsperioder?.first()?.periodeFom
         )
     }
 
-    private fun lagTestScenarioForMigrering(valg: String? = "OR", undervalg: String? = "OS"): RestScenario? {
+    private fun lagTestScenarioForMigrering(valg: String? = "OR", undervalg: String? = "OS"): RestScenario {
         val barn = mockserverKlient.lagScenario(
             RestScenario(
                 søker = RestScenarioPerson(
@@ -144,10 +143,10 @@ class AutotestMigrering(
                     infotrygdSaker = InfotrygdSøkResponse(
                         bruker = listOf(
                             lagInfotrygdSak(
-                                nyttTilleggOrdinærSats.beløp.toDouble(),
-                                barn?.søker?.ident!!,
-                                valg,
-                                undervalg
+                                    nyttTilleggOrdinærSats.beløp.toDouble(),
+                                    barn.søker.ident!!,
+                                    valg,
+                                    undervalg
                             )
                         ), barn = emptyList()
                     )
@@ -204,7 +203,7 @@ class AutotestMigrering(
     protected fun sjekkOmTaskEksistererISak(type: String, callId: String): Boolean {
         val tasker = familieBaSakKlient.hentTasker("callId", callId)
         try {
-            Assertions.assertThat(tasker.body)
+            assertThat(tasker.body)
                 .hasSizeGreaterThan(0)
                 .extracting("type").contains(type)
         } catch (e: AssertionError) {

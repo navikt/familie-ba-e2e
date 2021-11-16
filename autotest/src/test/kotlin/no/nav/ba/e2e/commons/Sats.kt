@@ -25,6 +25,4 @@ private val satser = listOf(
         Sats(SatsType.FINN_SVAL, 1054, LocalDate.MIN, LocalDate.of(2014, 3, 31))
 )
 
-val ordinærSats: Sats = satser.find { it.type == SatsType.ORBA && it.gyldigTom == LocalDate.MAX }!!
-val tilleggOrdinærSats: Sats = satser.first { it.type == SatsType.TILLEGG_ORBA && it.gyldigTom.isAfter(LocalDate.now())}!!
 val nyttTilleggOrdinærSats: Sats = satser.find { it.type == SatsType.TILLEGG_ORBA && it.gyldigTom == LocalDate.MAX }!!
